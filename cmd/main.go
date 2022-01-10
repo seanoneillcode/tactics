@@ -13,7 +13,7 @@ import (
 
 type Game struct {
 	keys             []ebiten.Key
-	level            *core.TileGrid
+	level            *core.TiledGrid
 	player           *core.Character
 	lastUpdateCalled time.Time
 }
