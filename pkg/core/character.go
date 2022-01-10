@@ -1,4 +1,4 @@
-package sprite
+package core
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
@@ -11,9 +11,10 @@ const (
 )
 
 type Character struct {
-	sprite   *Sprite
-	x        float64
-	y        float64
+	sprite *Sprite
+	x      float64
+	y      float64
+	// movement
 	isMoving bool
 	vx       float64
 	vy       float64
