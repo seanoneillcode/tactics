@@ -3,6 +3,7 @@ package core
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/seanoneillcode/go-tactics/pkg/common"
+	"log"
 )
 
 const (
@@ -33,7 +34,7 @@ func (c *Character) Draw(screen *ebiten.Image) {
 	c.sprite.Draw(screen)
 }
 
-func (c *Character) Update(delta int64) {
+func (c *Character) Update(delta int64, state *State) {
 	if c.isMoving {
 		c.moveTime = c.moveTime - delta
 		if c.moveTime < 0 {
@@ -63,12 +64,21 @@ func (c *Character) Update(delta int64) {
 			inputY = inputY + 1
 		}
 		if inputX != 0 || inputY != 0 {
-			c.isMoving = true
-			c.moveTime = characterMoveTime
-			c.goalX = c.x + float64(inputX*common.TileSize)
-			c.goalY = c.y + float64(inputY*common.TileSize)
-			c.vx = float64(inputX) * (characterMoveAmount)
-			c.vy = float64(inputY) * (characterMoveAmount)
+			// check can move
+			tileX := (int(c.x) / common.TileSize) + inputX
+			tileY := (int(c.y) / common.TileSize) + inputY
+			log.Printf("tileX, %v tileY: %v", tileX, tileY)
+			td := state.Level.GetTileData(tileX, tileY)
+			if !td.isBlock {
+				// perform move
+				c.isMoving = true
+				c.moveTime = characterMoveTime
+				c.goalX = c.x + float64(inputX*common.TileSize)
+				c.goalY = c.y + float64(inputY*common.TileSize)
+				c.vx = float64(inputX) * (characterMoveAmount)
+				c.vy = float64(inputY) * (characterMoveAmount)
+			}
+
 		}
 	}
 	c.sprite.x = c.x

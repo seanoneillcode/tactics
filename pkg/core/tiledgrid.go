@@ -40,14 +40,25 @@ type TileSet struct {
 	ImageHeight   int    `json:"imageheight"`
 	numTilesX     int
 	numTilesY     int
+	Tiles         []*TileConfig `json:"tiles"`
+}
+
+type TileConfig struct {
+	Id         int               `json:"id"`
+	Properties []*TileConfigProp `json:"properties"`
+}
+
+type TileConfigProp struct {
+	Name  string      `json:"name"`
+	Type  string      `json:"type"`
+	Value interface{} `json:"value"`
 }
 
 func NewTileGrid() *TiledGrid {
 	var tiledGrid TiledGrid
 	var tileSet TileSet
-	var tiledFileName = filepath.Join(resourceDirectory, "home.json")
 
-	configFile, err := os.Open(tiledFileName)
+	configFile, err := os.Open(filepath.Join(resourceDirectory, "home.json"))
 	if err != nil {
 		log.Fatal("opening config file", err.Error())
 	}
@@ -105,4 +116,50 @@ func (l *TiledGrid) Draw(screen *ebiten.Image) {
 
 		}
 	}
+}
+
+type TileData struct {
+	x       int
+	y       int
+	isBlock bool
+}
+
+func (l *TiledGrid) GetTileData(x int, y int) *TileData {
+	td := TileData{
+		x: x,
+		y: y,
+	}
+
+	index := (y * l.Layers[0].Width) + x
+
+	log.Printf("index: %v", index)
+
+	if index < 0 || index >= len(l.Layers[0].Data) {
+		// no tile here
+		td.isBlock = true
+		return &td
+	}
+
+	if x < 0 || y < 0 {
+		// no tile here
+		td.isBlock = true
+		return &td
+	}
+
+	tileSetIndex := l.Layers[0].Data[index]
+
+	log.Printf("tielsetindex: %v", tileSetIndex)
+	for _, tile := range l.TileSet[0].Tiles {
+		if tile.Id == tileSetIndex {
+			for _, prop := range tile.Properties {
+				if prop.Name == "isBlock" {
+					td.isBlock = (prop.Value).(bool)
+				}
+				break
+			}
+			break
+		}
+	}
+
+	return &td
 }
