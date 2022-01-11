@@ -1,18 +1,19 @@
 package main
 
 import (
+	"errors"
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/seanoneillcode/go-tactics/pkg/common"
 	"github.com/seanoneillcode/go-tactics/pkg/core"
 	"log"
 	"time"
 )
 
-type Game struct {
-	keys  []ebiten.Key
-	state *core.State
+var NormalEscapeError = errors.New("normal escape termination")
 
+type Game struct {
+	keys             []ebiten.Key
+	state            *core.State
 	lastUpdateCalled time.Time
 }
 
@@ -22,17 +23,17 @@ func (g *Game) Update() error {
 	g.state.Level.Update(delta)
 	g.state.Player.Update(delta, g.state)
 
-	g.keys = inpututil.AppendPressedKeys(g.keys[:0])
+	if ebiten.IsKeyPressed(ebiten.KeyEscape) {
+		return NormalEscapeError
+	}
 
 	g.lastUpdateCalled = time.Now()
 	return nil
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-
 	g.state.Level.Draw(screen)
 	g.state.Player.Draw(screen)
-
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
@@ -47,10 +48,14 @@ func main() {
 			Level:  core.NewTileGrid(),
 		},
 	}
-
 	ebiten.SetWindowSize(common.ScreenWidth*common.Scale, common.ScreenHeight*common.Scale)
 	ebiten.SetWindowTitle("Fantasy Game")
-	if err := ebiten.RunGame(g); err != nil {
-		log.Fatal(err)
+	err := ebiten.RunGame(g)
+	if err != nil {
+		if errors.Is(err, NormalEscapeError) {
+			log.Println("exiting normally")
+		} else {
+			log.Fatal(err)
+		}
 	}
 }

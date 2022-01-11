@@ -129,10 +129,7 @@ func (l *TiledGrid) GetTileData(x int, y int) *TileData {
 		x: x,
 		y: y,
 	}
-
 	index := (y * l.Layers[0].Width) + x
-
-	log.Printf("index: %v", index)
 
 	if index < 0 || index >= len(l.Layers[0].Data) {
 		// no tile here
@@ -148,7 +145,6 @@ func (l *TiledGrid) GetTileData(x int, y int) *TileData {
 
 	tileSetIndex := l.Layers[0].Data[index]
 
-	log.Printf("tielsetindex: %v", tileSetIndex)
 	for _, tile := range l.TileSet[0].Tiles {
 		if tile.Id == tileSetIndex {
 			for _, prop := range tile.Properties {
