@@ -24,9 +24,9 @@ type Character struct {
 	lastInput string
 }
 
-func NewCharacter() *Character {
+func NewCharacter(imageFileName string) *Character {
 	return &Character{
-		sprite: NewSprite(),
+		sprite: NewSprite(imageFileName),
 	}
 }
 
@@ -34,7 +34,7 @@ func (c *Character) Draw(screen *ebiten.Image) {
 	c.sprite.Draw(screen)
 }
 
-func (c *Character) Update(delta int64, state *State) {
+func (c *Character) Update(delta int64) {
 	if c.isMoving {
 		c.moveTime = c.moveTime - delta
 		if c.moveTime < 0 {
@@ -47,50 +47,26 @@ func (c *Character) Update(delta int64, state *State) {
 		c.x = c.x + (c.vx * float64(delta))
 		c.y = c.y + (c.vy * float64(delta))
 	}
-	if !c.isMoving {
-		var inputX = 0
-		var inputY = 0
-		if ebiten.IsKeyPressed(ebiten.KeyArrowLeft) || ebiten.IsKeyPressed(ebiten.KeyA) {
-			inputX = inputX - 1
-		}
-		if ebiten.IsKeyPressed(ebiten.KeyArrowRight) || ebiten.IsKeyPressed(ebiten.KeyD) {
-			inputX = inputX + 1
-		}
-		if ebiten.IsKeyPressed(ebiten.KeyArrowUp) || ebiten.IsKeyPressed(ebiten.KeyW) {
-			inputY = inputY - 1
-		}
-		if ebiten.IsKeyPressed(ebiten.KeyArrowDown) || ebiten.IsKeyPressed(ebiten.KeyS) {
-			inputY = inputY + 1
-		}
-		if inputX != 0 && inputY != 0 {
-			if c.lastInput == "x" {
-				inputX = 0
-			} else {
-				inputY = 0
-			}
-		}
-		if inputX != 0 || inputY != 0 {
-			if inputX != 0 {
-				c.lastInput = "x"
-			}
-			if inputY != 0 {
-				c.lastInput = "y"
-			}
-			// check can move
-			tileX := (int(c.x) / common.TileSize) + inputX
-			tileY := (int(c.y) / common.TileSize) + inputY
-			td := state.Level.GetTileData(tileX, tileY)
-			if !td.isBlock {
-				// perform move
-				c.isMoving = true
-				c.moveTime = characterMoveTime
-				c.goalX = c.x + float64(inputX*common.TileSize)
-				c.goalY = c.y + float64(inputY*common.TileSize)
-				c.vx = float64(inputX) * (characterMoveAmount)
-				c.vy = float64(inputY) * (characterMoveAmount)
-			}
-		}
+	c.sprite.SetPosition(c.x, c.y)
+}
+
+func (c *Character) TryToMove(dirX int, dirY int, state *State) {
+	// check can move
+	tileX, tileY := common.WorldToTile(c.x, c.y)
+	tileX = tileX + dirX
+	tileY = tileY + dirY
+	ti := state.Level.GetTileInfo(tileX, tileY)
+	if ti.tileData.isBlock {
+		return
 	}
-	c.sprite.x = c.x
-	c.sprite.y = c.y
+	if len(ti.npcs) > 0 {
+		return
+	}
+	// perform move
+	c.isMoving = true
+	c.moveTime = characterMoveTime
+	c.goalX = c.x + float64(dirX*common.TileSize)
+	c.goalY = c.y + float64(dirY*common.TileSize)
+	c.vx = float64(dirX) * (characterMoveAmount)
+	c.vy = float64(dirY) * (characterMoveAmount)
 }

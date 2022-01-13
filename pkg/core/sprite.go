@@ -15,8 +15,8 @@ type Sprite struct {
 	image *ebiten.Image
 }
 
-func NewSprite() *Sprite {
-	b, err := ioutil.ReadFile("res/sprite.png")
+func NewSprite(imageFileName string) *Sprite {
+	b, err := ioutil.ReadFile("res/" + imageFileName)
 	if err != nil {
 		log.Fatalf("failed to open file: %v", err)
 	}
@@ -34,4 +34,9 @@ func (s *Sprite) Draw(screen *ebiten.Image) {
 	op.GeoM.Translate(s.x, s.y)
 	op.GeoM.Scale(common.Scale, common.Scale)
 	screen.DrawImage(s.image, op)
+}
+
+func (s *Sprite) SetPosition(x float64, y float64) {
+	s.x = x
+	s.y = y
 }

@@ -1,6 +1,7 @@
 package core
 
 type State struct {
-	Level  *TiledGrid
-	Player *Character
+	Player      *Player
+	DialogueBox *DialogueBox
+	Level       *Level
 }

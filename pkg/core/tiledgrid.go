@@ -25,9 +25,17 @@ type TiledGrid struct {
 }
 
 type Layer struct {
-	Data   []int `json:"data"`
-	Height int   `json:"height"`
-	Width  int   `json:"width"`
+	Data    []int         `json:"data"`
+	Height  int           `json:"height"`
+	Width   int           `json:"width"`
+	Objects []TiledObject `json:"objects"`
+}
+
+type TiledObject struct {
+	Name string `json:"name"`
+	Type string `json:"type"`
+	X    int    `json:"x"`
+	Y    int    `json:"y"`
 }
 
 type TileSetReference struct {
@@ -54,11 +62,11 @@ type TileConfigProp struct {
 	Value interface{} `json:"value"`
 }
 
-func NewTileGrid() *TiledGrid {
+func NewTileGrid(fileName string) *TiledGrid {
 	var tiledGrid TiledGrid
 	var tileSet TileSet
 
-	configFile, err := os.Open(filepath.Join(resourceDirectory, "home.json"))
+	configFile, err := os.Open(filepath.Join(resourceDirectory, fileName))
 	if err != nil {
 		log.Fatal("opening config file", err.Error())
 	}
@@ -93,14 +101,9 @@ func NewTileGrid() *TiledGrid {
 	return &tiledGrid
 }
 
-func (l *TiledGrid) Update(delta int64) {
-
-}
-
-func (l *TiledGrid) Draw(screen *ebiten.Image) {
-	for _, layer := range l.Layers {
+func (tg *TiledGrid) Draw(screen *ebiten.Image) {
+	for _, layer := range tg.Layers {
 		for i, t := range layer.Data {
-
 			if t == 0 {
 				continue
 			}
@@ -109,13 +112,34 @@ func (l *TiledGrid) Draw(screen *ebiten.Image) {
 			op.GeoM.Translate(float64((i%layer.Width)*common.TileSize), float64((i/layer.Height)*common.TileSize))
 			op.GeoM.Scale(common.Scale, common.Scale)
 
-			sx := (t%l.TileSet[0].numTilesX - 1) * common.TileSize
-			sy := (t / l.TileSet[0].numTilesY) * common.TileSize
+			sx := (t%tg.TileSet[0].numTilesX - 1) * common.TileSize
+			sy := (t / tg.TileSet[0].numTilesY) * common.TileSize
 
-			screen.DrawImage(l.image.SubImage(image.Rect(sx, sy, sx+common.TileSize, sy+common.TileSize)).(*ebiten.Image), op)
-
+			screen.DrawImage(tg.image.SubImage(image.Rect(sx, sy, sx+common.TileSize, sy+common.TileSize)).(*ebiten.Image), op)
 		}
 	}
+}
+
+type ObjectData struct {
+	name       string
+	objectType string
+	x          int
+	y          int
+}
+
+func (tg *TiledGrid) GetObjectData() []*ObjectData {
+	var od []*ObjectData
+	for _, l := range tg.Layers {
+		for _, obj := range l.Objects {
+			od = append(od, &ObjectData{
+				name:       obj.Name,
+				objectType: obj.Type,
+				x:          obj.X,
+				y:          obj.Y,
+			})
+		}
+	}
+	return od
 }
 
 type TileData struct {
@@ -124,14 +148,14 @@ type TileData struct {
 	isBlock bool
 }
 
-func (l *TiledGrid) GetTileData(x int, y int) *TileData {
+func (tg *TiledGrid) GetTileData(x int, y int) *TileData {
 	td := TileData{
 		x: x,
 		y: y,
 	}
-	index := (y * l.Layers[0].Width) + x
+	index := (y * tg.Layers[0].Width) + x
 
-	if index < 0 || index >= len(l.Layers[0].Data) {
+	if index < 0 || index >= len(tg.Layers[0].Data) {
 		// no tile here
 		td.isBlock = true
 		return &td
@@ -143,9 +167,9 @@ func (l *TiledGrid) GetTileData(x int, y int) *TileData {
 		return &td
 	}
 
-	tileSetIndex := l.Layers[0].Data[index]
+	tileSetIndex := tg.Layers[0].Data[index]
 
-	for _, tile := range l.TileSet[0].Tiles {
+	for _, tile := range tg.TileSet[0].Tiles {
 		if tile.Id == tileSetIndex {
 			for _, prop := range tile.Properties {
 				if prop.Name == "isBlock" {
