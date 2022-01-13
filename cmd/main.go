@@ -5,6 +5,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/seanoneillcode/go-tactics/pkg/common"
 	"github.com/seanoneillcode/go-tactics/pkg/core"
+	"github.com/seanoneillcode/go-tactics/pkg/gui"
 	"log"
 	"time"
 )
@@ -15,6 +16,7 @@ type Game struct {
 	keys             []ebiten.Key
 	state            *core.State
 	lastUpdateCalled time.Time
+	dialogBox        *gui.DialogueBox
 }
 
 func (g *Game) Update() error {
@@ -26,6 +28,9 @@ func (g *Game) Update() error {
 	g.state.Level.Update(delta, g.state)
 	g.state.Player.Update(delta, g.state)
 
+	// update UI
+	g.dialogBox.Update(delta, g.state)
+
 	// handle escape
 	if ebiten.IsKeyPressed(ebiten.KeyEscape) {
 		return NormalEscapeError
@@ -36,7 +41,7 @@ func (g *Game) Update() error {
 func (g *Game) Draw(screen *ebiten.Image) {
 	g.state.Level.Draw(screen)
 	g.state.Player.Draw(screen)
-	g.state.DialogueBox.Draw(screen)
+	g.dialogBox.Draw(screen)
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
@@ -47,10 +52,10 @@ func main() {
 	g := &Game{
 		lastUpdateCalled: time.Now(),
 		state: &core.State{
-			Player:      core.NewPlayer(),
-			Level:       core.NewLevel("home.json"),
-			DialogueBox: core.NewDialogueBox(),
+			Player: core.NewPlayer(),
+			Level:  core.NewLevel("home.json"),
 		},
+		dialogBox: gui.NewDialogueBox(),
 	}
 	//g.state.DialogueBox.AddTextBox("The quick brown fox jumps over the moon, however I don't jump at all. Testing this to completion. Making sure there are no breaks in the line and they don't overrun.")
 

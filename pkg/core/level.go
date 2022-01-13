@@ -39,6 +39,7 @@ func (l *Level) GetTileInfo(x int, y int) *TileInfo {
 		tileData: l.tiledGrid.GetTileData(x, y),
 		npcs:     []*Npc{},
 	}
+	// todo this could be a performance bottleneck, consider making a level state and updating it
 	for _, npc := range l.npcs {
 		nx, ny := common.WorldToTile(npc.GetPosition())
 		if nx == x && ny == y {

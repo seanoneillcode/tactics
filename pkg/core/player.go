@@ -2,11 +2,15 @@ package core
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
+	"github.com/seanoneillcode/go-tactics/pkg/common"
+	"github.com/seanoneillcode/go-tactics/pkg/dialog"
 )
 
 type Player struct {
-	character *Character
-	lastInput string
+	character    *Character
+	lastInput    string
+	ActiveDialog *dialog.NpcDialog
 }
 
 func NewPlayer() *Player {
@@ -21,6 +25,17 @@ func (p *Player) Draw(screen *ebiten.Image) {
 
 func (p *Player) Update(delta int64, state *State) {
 	p.character.Update(delta)
+
+	if p.ActiveDialog != nil {
+		if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
+			isDone := p.ActiveDialog.NextLine()
+			if isDone {
+				p.ActiveDialog = nil
+			}
+		}
+		return
+	}
+
 	if !p.character.isMoving {
 		var inputX = 0
 		var inputY = 0
@@ -51,6 +66,14 @@ func (p *Player) Update(delta int64, state *State) {
 				p.lastInput = "y"
 			}
 			p.character.TryToMove(inputX, inputY, state)
+
+			// check for dialogs
+			tileX, tileY := common.WorldToTile(p.character.x, p.character.y)
+			ti := state.Level.GetTileInfo(inputX+tileX, tileY+inputY)
+			for _, npc := range ti.npcs {
+				p.ActiveDialog = npc.GetNpcDialog()
+			}
 		}
 	}
+
 }

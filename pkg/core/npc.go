@@ -1,14 +1,19 @@
 package core
 
-import "github.com/hajimehoshi/ebiten/v2"
+import (
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/seanoneillcode/go-tactics/pkg/dialog"
+)
 
 type Npc struct {
 	character *Character
+	npcDialog *dialog.NpcDialog
 }
 
 func NewNpc(name string) *Npc {
 	return &Npc{
 		character: NewCharacter(name + ".png"),
+		npcDialog: dialog.GetNpcDialog(name),
 	}
 }
 
@@ -27,4 +32,8 @@ func (n *Npc) SetPosition(x int, y int) {
 
 func (n *Npc) GetPosition() (float64, float64) {
 	return n.character.x, n.character.y
+}
+
+func (n *Npc) GetNpcDialog() *dialog.NpcDialog {
+	return n.npcDialog
 }
