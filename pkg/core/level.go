@@ -7,6 +7,7 @@ import (
 
 type Level struct {
 	npcs      []*Npc
+	links     []*Link
 	tiledGrid *TiledGrid
 	// pickups, dialogues, enemies ...
 }
@@ -17,6 +18,7 @@ func NewLevel(fileName string) *Level {
 
 	return &Level{
 		npcs:      loadNpcs(objects),
+		links:     loadLinks(objects),
 		tiledGrid: tiledGrid,
 	}
 }
@@ -37,13 +39,19 @@ func (l *Level) Draw(screen *ebiten.Image) {
 func (l *Level) GetTileInfo(x int, y int) *TileInfo {
 	ti := &TileInfo{
 		tileData: l.tiledGrid.GetTileData(x, y),
-		npcs:     []*Npc{},
 	}
-	// todo this could be a performance bottleneck, consider making a level state and updating it
 	for _, npc := range l.npcs {
 		nx, ny := common.WorldToTile(npc.GetPosition())
 		if nx == x && ny == y {
-			ti.npcs = append(ti.npcs, npc)
+			ti.npc = npc
+			break
+		}
+	}
+	for _, link := range l.links {
+		nx, ny := common.WorldToTileInt(link.GetPosition())
+		if nx == x && ny == y {
+			ti.link = link
+			break
 		}
 	}
 	return ti
@@ -52,13 +60,13 @@ func (l *Level) GetTileInfo(x int, y int) *TileInfo {
 // TileInfo is a read only struct of references to handle tile based queries
 type TileInfo struct {
 	tileData *TileData
-	npcs     []*Npc
+	npc      *Npc
+	link     *Link
 	// etc
 }
 
 func loadNpcs(objects []*ObjectData) []*Npc {
 	var npcs []*Npc
-
 	for _, obj := range objects {
 		if obj.objectType == "npc" {
 			npc := NewNpc(obj.name)
@@ -66,6 +74,28 @@ func loadNpcs(objects []*ObjectData) []*Npc {
 			npcs = append(npcs, npc)
 		}
 	}
-
 	return npcs
+}
+
+func loadLinks(objects []*ObjectData) []*Link {
+	var links []*Link
+	for _, obj := range objects {
+		if obj.objectType == "link" {
+			link := &Link{
+				x:    obj.x,
+				y:    obj.y,
+				name: obj.name,
+			}
+			for _, p := range obj.properties {
+				if p.name == "direction" {
+					link.direction = (p.value).(string)
+				}
+				if p.name == "to-level" {
+					link.toLevel = (p.value).(string)
+				}
+			}
+			links = append(links, link)
+		}
+	}
+	return links
 }

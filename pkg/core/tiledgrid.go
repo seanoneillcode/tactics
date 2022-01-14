@@ -32,10 +32,11 @@ type Layer struct {
 }
 
 type TiledObject struct {
-	Name string `json:"name"`
-	Type string `json:"type"`
-	X    int    `json:"x"`
-	Y    int    `json:"y"`
+	Name       string            `json:"name"`
+	Type       string            `json:"type"`
+	X          int               `json:"x"`
+	Y          int               `json:"y"`
+	Properties []*TileConfigProp `json:"properties"`
 }
 
 type TileSetReference struct {
@@ -125,21 +126,37 @@ type ObjectData struct {
 	objectType string
 	x          int
 	y          int
+	properties []*ObjectProperty
+}
+
+type ObjectProperty struct {
+	name    string
+	objType string
+	value   interface{}
 }
 
 func (tg *TiledGrid) GetObjectData() []*ObjectData {
-	var od []*ObjectData
+	var ods []*ObjectData
 	for _, l := range tg.Layers {
 		for _, obj := range l.Objects {
-			od = append(od, &ObjectData{
+			od := &ObjectData{
 				name:       obj.Name,
 				objectType: obj.Type,
 				x:          obj.X,
 				y:          obj.Y,
-			})
+				properties: []*ObjectProperty{},
+			}
+			for _, p := range obj.Properties {
+				od.properties = append(od.properties, &ObjectProperty{
+					name:    p.Name,
+					objType: p.Type,
+					value:   p.Value,
+				})
+			}
+			ods = append(ods, od)
 		}
 	}
-	return od
+	return ods
 }
 
 type TileData struct {

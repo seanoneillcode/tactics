@@ -89,6 +89,42 @@
                  "type":"bool",
                  "value":false
                 }]
+        }, 
+        {
+         "id":30,
+         "properties":[
+                {
+                 "name":"isBlock",
+                 "type":"string",
+                 "value":"true"
+                }]
+        }, 
+        {
+         "id":31,
+         "properties":[
+                {
+                 "name":"isBlock",
+                 "type":"string",
+                 "value":"true"
+                }]
+        }, 
+        {
+         "id":32,
+         "properties":[
+                {
+                 "name":"isBlock",
+                 "type":"string",
+                 "value":"true"
+                }]
+        }, 
+        {
+         "id":33,
+         "properties":[
+                {
+                 "name":"isBlock",
+                 "type":"string",
+                 "value":"true"
+                }]
         }],
  "tilewidth":16,
  "type":"tileset",

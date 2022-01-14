@@ -25,7 +25,7 @@ func (g *Game) Update() error {
 	g.lastUpdateCalled = time.Now()
 
 	// update state
-	g.state.Level.Update(delta, g.state)
+	g.state.Map.Update(delta, g.state)
 	g.state.Player.Update(delta, g.state)
 
 	// update UI
@@ -39,7 +39,7 @@ func (g *Game) Update() error {
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	g.state.Level.Draw(screen)
+	g.state.Map.Level.Draw(screen)
 	g.state.Player.Draw(screen)
 	g.dialogBox.Draw(screen)
 }
@@ -53,11 +53,12 @@ func main() {
 		lastUpdateCalled: time.Now(),
 		state: &core.State{
 			Player: core.NewPlayer(),
-			Level:  core.NewLevel("home.json"),
+			Map:    core.NewMap(),
 		},
 		dialogBox: gui.NewDialogueBox(),
 	}
-	//g.state.DialogueBox.AddTextBox("The quick brown fox jumps over the moon, however I don't jump at all. Testing this to completion. Making sure there are no breaks in the line and they don't overrun.")
+	g.state.Map.LoadLevel("test-level-a")
+	g.state.Player.EnterLevel(g.state.Map.Level)
 
 	ebiten.SetWindowSize(common.ScreenWidth*common.Scale, common.ScreenHeight*common.Scale)
 	ebiten.SetWindowTitle("Fantasy Game")

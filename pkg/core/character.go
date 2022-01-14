@@ -55,11 +55,13 @@ func (c *Character) TryToMove(dirX int, dirY int, state *State) {
 	tileX, tileY := common.WorldToTile(c.x, c.y)
 	tileX = tileX + dirX
 	tileY = tileY + dirY
-	ti := state.Level.GetTileInfo(tileX, tileY)
+	ti := state.Map.Level.GetTileInfo(tileX, tileY)
 	if ti.tileData.isBlock {
-		return
+		if ti.link == nil {
+			return
+		}
 	}
-	if len(ti.npcs) > 0 {
+	if ti.npc != nil {
 		return
 	}
 	// perform move
@@ -69,4 +71,13 @@ func (c *Character) TryToMove(dirX int, dirY int, state *State) {
 	c.goalY = c.y + float64(dirY*common.TileSize)
 	c.vx = float64(dirX) * (characterMoveAmount)
 	c.vy = float64(dirY) * (characterMoveAmount)
+}
+
+func (c *Character) SetPosition(x float64, y float64) {
+	offsetX := c.goalX - c.x
+	offsetY := c.goalY - c.y
+	c.goalX = x + offsetX
+	c.goalY = y + offsetY
+	c.x = x
+	c.y = y
 }

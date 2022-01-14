@@ -69,11 +69,25 @@ func (p *Player) Update(delta int64, state *State) {
 
 			// check for dialogs
 			tileX, tileY := common.WorldToTile(p.character.x, p.character.y)
-			ti := state.Level.GetTileInfo(inputX+tileX, tileY+inputY)
-			for _, npc := range ti.npcs {
-				p.ActiveDialog = npc.GetNpcDialog()
+			ti := state.Map.Level.GetTileInfo(inputX+tileX, tileY+inputY)
+			if ti.npc != nil {
+				p.ActiveDialog = ti.npc.GetNpcDialog()
+			}
+			if ti.link != nil {
+				state.Map.StartTransition(ti.link)
 			}
 		}
 	}
+}
 
+func (p *Player) EnterLevel(level *Level) {
+	for _, link := range level.links {
+		p.character.x = float64(link.x)
+		p.character.y = float64(link.y)
+		return
+	}
+}
+
+func (p *Player) SetPosition(x float64, y float64) {
+	p.character.SetPosition(x, y)
 }
