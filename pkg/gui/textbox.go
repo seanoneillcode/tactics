@@ -9,24 +9,22 @@ import (
 )
 
 type TextBox struct {
-	text   *Text
-	x      int
-	y      int
-	width  int
-	height int
-	image  *ebiten.Image
+	text     *Text
+	x        int
+	y        int
+	image    *ebiten.Image
+	isActive bool
 }
 
 func NewTextBox(value string, x int, y int, width int, height int) *TextBox {
 	image := ebiten.NewImage(width, height)
 	image.Fill(color.White)
 	return &TextBox{
-		text:   NewText(getFormattedValue(value), x+8, y+8), // introduce a small margin
-		x:      x,
-		y:      y,
-		width:  width,
-		height: height,
-		image:  image,
+		text:     NewText(getFormattedValue(value), x, y), // introduce a small margin
+		x:        x,
+		y:        y,
+		image:    image,
+		isActive: true,
 	}
 }
 
@@ -35,12 +33,26 @@ func (tb *TextBox) SetTextValue(value string) {
 }
 
 func (tb *TextBox) Draw(screen *ebiten.Image) {
+	if !tb.isActive {
+		return
+	}
 	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Translate(float64(tb.x), float64(tb.y))
 	op.GeoM.Scale(common.Scale, common.Scale)
 	op.ColorM.Scale(0, 0.1, 0.5, 1)
 	screen.DrawImage(tb.image, op)
 	tb.text.Draw(screen)
+}
+
+func (tb *TextBox) SetPosition(x int, y int) {
+	tb.x = x
+	tb.y = y
+	tb.text.x = x
+	tb.text.y = y
+}
+
+func (tb *TextBox) SetActive(isActive bool) {
+	tb.isActive = isActive
 }
 
 func getFormattedValue(value string) string {

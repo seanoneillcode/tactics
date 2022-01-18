@@ -6,30 +6,46 @@ import (
 )
 
 type DialogueBox struct {
-	IsActive bool
+	isActive bool
 	textBox  *TextBox
+	nameBox  *TextBox
+	lastLine string
 }
 
 func NewDialogueBox() *DialogueBox {
 	return &DialogueBox{
 		textBox: NewTextBox("", 0, 160, 256, 80),
+		nameBox: NewTextBox("", 0, 136, 64, 23),
 	}
 }
 
-func (g *DialogueBox) Draw(screen *ebiten.Image) {
-	if g.IsActive {
-		g.textBox.Draw(screen)
+func (b *DialogueBox) Draw(screen *ebiten.Image) {
+	if b.isActive {
+		b.nameBox.Draw(screen)
+		b.textBox.Draw(screen)
 	}
 }
 
-func (g *DialogueBox) Update(delta int64, state *core.State) {
+func (b *DialogueBox) Update(delta int64, state *core.State) {
 	ad := state.Player.ActiveDialog
 	if ad == nil {
-		g.IsActive = false
-		g.textBox.SetTextValue("")
+		b.isActive = false
+		b.lastLine = ""
+		b.textBox.SetTextValue("")
+		b.nameBox.SetTextValue("")
 	} else {
-		g.IsActive = true
-		_, text := ad.GetCurrentLine()
-		g.textBox.SetTextValue(text)
+		b.isActive = true
+		name, text := ad.GetCurrentLine()
+		if text != b.lastLine {
+			b.lastLine = text
+			b.textBox.SetTextValue(text)
+			b.nameBox.SetTextValue(name + ":")
+			if name != "" {
+				b.nameBox.SetActive(true)
+			} else {
+				b.nameBox.SetActive(false)
+			}
+		}
+
 	}
 }

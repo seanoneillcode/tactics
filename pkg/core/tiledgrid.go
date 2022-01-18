@@ -189,7 +189,7 @@ func (tg *TiledGrid) GetTileData(x int, y int) *TileData {
 	for _, tile := range tg.TileSet[0].Tiles {
 		if tile.Id == tileSetIndex {
 			for _, prop := range tile.Properties {
-				if prop.Name == "isBlock" {
+				if prop.Name == "isBlock" && prop.Value != nil {
 					td.isBlock = (prop.Value).(bool)
 				}
 				break

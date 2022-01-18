@@ -28,8 +28,10 @@ func (p *Player) Update(delta int64, state *State) {
 
 	if p.ActiveDialog != nil {
 		if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
-			isDone := p.ActiveDialog.NextLine()
-			if isDone {
+			if p.ActiveDialog.HasNextLine() {
+				p.ActiveDialog.NextLine()
+			} else {
+				p.ActiveDialog.Reset()
 				p.ActiveDialog = nil
 			}
 		}

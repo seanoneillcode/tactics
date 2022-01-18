@@ -1,17 +1,19 @@
 package dialog
 
-// NextLine moves to the next line and returns true if the dialog is done
-func (n *NpcDialog) NextLine() bool {
+func (n *NpcDialog) Reset() {
 	cd := n.dialogs[n.currentDialog]
+	cd.currentLineIndex = 0
+}
 
-	// if we reached the end
-	if cd.currentLineIndex+1 == len(cd.lines) {
-		cd.currentLineIndex = 0
-		return true
-	}
+func (n *NpcDialog) HasNextLine() bool {
+	cd := n.dialogs[n.currentDialog]
+	return cd.currentLineIndex+1 < len(cd.lines)
+}
 
+// NextLine moves to the next line and returns true if the dialog is done
+func (n *NpcDialog) NextLine() {
+	cd := n.dialogs[n.currentDialog]
 	cd.currentLineIndex = cd.currentLineIndex + 1
-	return false
 }
 
 func (n *NpcDialog) GetCurrentLine() (string, string) {
@@ -48,12 +50,46 @@ var dialogData = map[string]*NpcDialog{
 			"": {
 				lines: []*Line{
 					{
-						name: "dave",
+						name: "player",
+						text: "who are you?",
+					},
+					{
+						name: "",
 						text: "my name is dave.",
 					},
 					{
 						name: "dave",
 						text: "welcome to the game!",
+					},
+					{
+						name: "player",
+						text: "great thanks",
+					},
+				},
+			},
+		},
+	},
+	"peter": {
+		// each dialog has a key, this can be changed by events
+		// i.e. player kills a king -> change to king based context dialog
+		dialogs: map[string]*Dialog{
+			"": {
+				lines: []*Line{
+					{
+						name: "peter",
+						text: "Can you fetch my fish for me?",
+					},
+				},
+			},
+			"got-fish": {
+				lines: []*Line{
+					{
+						name: "peter",
+						text: "Hey it's my fish!",
+					},
+					{
+						name: "peter",
+						text: "Thanks!",
 					},
 				},
 			},

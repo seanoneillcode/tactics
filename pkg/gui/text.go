@@ -51,5 +51,5 @@ func NewText(value string, x int, y int) *Text {
 
 func (t *Text) Draw(screen *ebiten.Image) {
 	// add offset to y to account for text height
-	text.Draw(screen, t.value, standardFont, t.x*common.Scale, (t.y+8)*common.Scale, color.White)
+	text.Draw(screen, t.value, standardFont, (t.x+8)*common.Scale, (t.y)*common.Scale, color.White)
 }
