@@ -17,6 +17,7 @@ type Game struct {
 	state            *core.State
 	lastUpdateCalled time.Time
 	dialogBox        *gui.DialogueBox
+	camera           *core.Camera
 }
 
 func (g *Game) Update() error {
@@ -27,6 +28,9 @@ func (g *Game) Update() error {
 	// update state
 	g.state.Map.Update(delta, g.state)
 	g.state.Player.Update(delta, g.state)
+
+	// update camera
+	g.camera.Update(delta, g.state)
 
 	// update UI
 	g.dialogBox.Update(delta, g.state)
@@ -39,8 +43,9 @@ func (g *Game) Update() error {
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	g.state.Map.Level.Draw(screen)
-	g.state.Player.Draw(screen)
+	g.state.Map.Level.Draw(g.camera.GetBuffer())
+	g.state.Player.Draw(g.camera.GetBuffer())
+	g.camera.DrawBuffer(screen)
 	g.dialogBox.Draw(screen)
 }
 
@@ -56,6 +61,7 @@ func main() {
 			Map:    core.NewMap(),
 		},
 		dialogBox: gui.NewDialogueBox(),
+		camera:    core.NewCamera(),
 	}
 	g.state.Map.LoadLevel("test-level-a")
 	g.state.Player.EnterLevel(g.state.Map.Level)
