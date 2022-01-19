@@ -6,16 +6,14 @@ import (
 )
 
 type Camera struct {
-	x            float64
-	y            float64
+	pos          *common.VectorF
 	buffer       *ebiten.Image
 	followPlayer bool
 }
 
 func NewCamera() *Camera {
 	return &Camera{
-		x:            0,
-		y:            0,
+		pos:          &common.VectorF{},
 		followPlayer: true,
 		buffer:       ebiten.NewImage(common.ScreenWidth*common.Scale, common.ScreenHeight*common.Scale),
 	}
@@ -24,8 +22,9 @@ func NewCamera() *Camera {
 func (c *Camera) Update(delta int64, state *State) {
 	c.buffer.Clear()
 	if c.followPlayer {
-		c.x = (state.Player.character.x - common.HalfScreenWidth + common.HalfTileSize) * common.Scale
-		c.y = (state.Player.character.y - common.HalfScreenHeight + common.HalfTileSize) * common.Scale
+		screenOffset := common.VectorFromInt(common.HalfScreenWidth, common.HalfScreenHeight)
+		tileOffset := common.VectorFromInt(common.HalfTileSize, common.HalfTileSize)
+		c.pos = (state.Player.character.pos.Sub(screenOffset).Add(tileOffset)).Mul(common.ScaleF)
 	}
 }
 
@@ -37,7 +36,7 @@ func (c *Camera) DrawBuffer(screen *ebiten.Image) {
 
 func (c *Camera) worldMatrix() ebiten.GeoM {
 	m := ebiten.GeoM{}
-	m.Translate(-c.x, -c.y)
+	m.Translate(-c.pos.X, -c.pos.Y)
 	return m
 }
 

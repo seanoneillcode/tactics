@@ -2,6 +2,7 @@ package core
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/seanoneillcode/go-tactics/pkg/common"
 	"github.com/seanoneillcode/go-tactics/pkg/dialog"
 )
 
@@ -26,12 +27,11 @@ func (n *Npc) Update(delta int64, state *State) {
 }
 
 func (n *Npc) SetPosition(x int, y int) {
-	n.character.x = float64(x)
-	n.character.y = float64(y)
+	n.character.pos = common.VectorFromInt(x, y)
 }
 
-func (n *Npc) GetPosition() (float64, float64) {
-	return n.character.x, n.character.y
+func (n *Npc) GetPosition() *common.VectorF {
+	return n.character.pos
 }
 
 func (n *Npc) GetCurrentDialog() *dialog.Dialog {

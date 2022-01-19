@@ -12,15 +12,12 @@ const (
 
 type Character struct {
 	sprite *Sprite
-	x      float64
-	y      float64
+	pos    *common.VectorF
 	// movement
 	isMoving  bool
-	vx        float64
-	vy        float64
+	velocity  *common.VectorF
 	moveTime  int64
-	goalX     float64
-	goalY     float64
+	goalPos   *common.VectorF
 	lastInput string
 }
 
@@ -38,21 +35,18 @@ func (c *Character) Update(delta int64) {
 	if c.isMoving {
 		c.moveTime = c.moveTime - delta
 		if c.moveTime < 0 {
-			c.x = c.goalX
-			c.y = c.goalY
+			c.pos = c.goalPos
 			c.isMoving = false
-			c.vx = 0
-			c.vy = 0
+			c.velocity = &common.VectorF{}
 		}
-		c.x = c.x + (c.vx * float64(delta))
-		c.y = c.y + (c.vy * float64(delta))
+		c.pos = c.pos.Add(c.velocity.Mul(float64(delta)))
 	}
-	c.sprite.SetPosition(c.x, c.y)
+	c.sprite.SetPosition(c.pos.X, c.pos.Y)
 }
 
 func (c *Character) TryToMove(dirX int, dirY int, state *State) {
 	// check can move
-	tileX, tileY := common.WorldToTile(c.x, c.y)
+	tileX, tileY := common.WorldToTile(c.pos)
 	tileX = tileX + dirX
 	tileY = tileY + dirY
 	ti := state.Map.Level.GetTileInfo(tileX, tileY)
@@ -67,17 +61,12 @@ func (c *Character) TryToMove(dirX int, dirY int, state *State) {
 	// perform move
 	c.isMoving = true
 	c.moveTime = characterMoveTime
-	c.goalX = c.x + float64(dirX*common.TileSize)
-	c.goalY = c.y + float64(dirY*common.TileSize)
-	c.vx = float64(dirX) * (characterMoveAmount)
-	c.vy = float64(dirY) * (characterMoveAmount)
+	c.goalPos = c.pos.Add(common.VectorFromInt(dirX, dirY).Mul(common.TileSizeF))
+	c.velocity = common.VectorFromInt(dirX, dirY).Mul(characterMoveAmount)
 }
 
-func (c *Character) SetPosition(x float64, y float64) {
-	offsetX := c.goalX - c.x
-	offsetY := c.goalY - c.y
-	c.goalX = x + offsetX
-	c.goalY = y + offsetY
-	c.x = x
-	c.y = y
+func (c *Character) SetPosition(pos *common.VectorF) {
+	offset := c.goalPos.Sub(c.pos)
+	c.goalPos = offset.Add(pos)
+	c.pos = pos
 }

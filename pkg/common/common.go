@@ -4,20 +4,25 @@ const (
 	ScreenWidth      = 256
 	ScreenHeight     = 240
 	TileSize         = 16
+	TileSizeF        = 16.0
 	Scale            = 4
+	ScaleF           = 4.0
 	HalfScreenWidth  = ScreenWidth / 2
 	HalfScreenHeight = ScreenHeight / 2
 	HalfTileSize     = TileSize / 2
 )
 
-func WorldToTile(x float64, y float64) (int, int) {
-	return int(x / TileSize), int(y / TileSize)
+func WorldToTile(pos *VectorF) (int, int) {
+	return int(pos.X / TileSize), int(pos.Y / TileSize)
 }
 
 func WorldToTileInt(x int, y int) (int, int) {
 	return x / TileSize, y / TileSize
 }
 
-func TileToWorld(x int, y int) (float64, float64) {
-	return float64(x * TileSize), float64(y * TileSize)
+func TileToWorld(vector TileVector) *VectorF {
+	return &VectorF{
+		X: float64(TileSizeF * vector.X),
+		Y: float64(TileSizeF * vector.Y),
+	}
 }
