@@ -10,7 +10,7 @@ import (
 type Player struct {
 	character    *Character
 	lastInput    string
-	ActiveDialog *dialog.NpcDialog
+	ActiveDialog *dialog.Dialog
 }
 
 func NewPlayer() *Player {
@@ -73,7 +73,7 @@ func (p *Player) Update(delta int64, state *State) {
 			tileX, tileY := common.WorldToTile(p.character.x, p.character.y)
 			ti := state.Map.Level.GetTileInfo(inputX+tileX, tileY+inputY)
 			if ti.npc != nil {
-				p.ActiveDialog = ti.npc.GetNpcDialog()
+				p.ActiveDialog = ti.npc.GetCurrentDialog()
 			}
 			if ti.link != nil {
 				state.Map.StartTransition(ti.link)

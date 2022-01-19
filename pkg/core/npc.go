@@ -34,6 +34,6 @@ func (n *Npc) GetPosition() (float64, float64) {
 	return n.character.x, n.character.y
 }
 
-func (n *Npc) GetNpcDialog() *dialog.NpcDialog {
-	return n.npcDialog
+func (n *Npc) GetCurrentDialog() *dialog.Dialog {
+	return n.npcDialog.GetCurrentDialog()
 }

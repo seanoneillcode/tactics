@@ -15,36 +15,37 @@ type DialogueBox struct {
 func NewDialogueBox() *DialogueBox {
 	return &DialogueBox{
 		textBox: NewTextBox("", 0, 160, 256, 80),
-		nameBox: NewTextBox("", 0, 136, 64, 23),
+		//nameBox: NewTextBox("", 0, 136, 64, 23),
 	}
 }
 
 func (b *DialogueBox) Draw(screen *ebiten.Image) {
 	if b.isActive {
-		b.nameBox.Draw(screen)
+		//b.nameBox.Draw(screen)
 		b.textBox.Draw(screen)
 	}
 }
 
 func (b *DialogueBox) Update(delta int64, state *core.State) {
 	ad := state.Player.ActiveDialog
+
 	if ad == nil {
 		b.isActive = false
 		b.lastLine = ""
 		b.textBox.SetTextValue("")
-		b.nameBox.SetTextValue("")
+		//b.nameBox.SetTextValue("")
 	} else {
 		b.isActive = true
-		name, text := ad.GetCurrentLine()
+		_, text := ad.GetCurrentLine()
 		if text != b.lastLine {
 			b.lastLine = text
 			b.textBox.SetTextValue(text)
-			b.nameBox.SetTextValue(name + ":")
-			if name != "" {
-				b.nameBox.SetActive(true)
-			} else {
-				b.nameBox.SetActive(false)
-			}
+			//b.nameBox.SetTextValue(name)
+			//if name != "" {
+			//	b.nameBox.SetActive(true)
+			//} else {
+			//	b.nameBox.SetActive(false)
+			//}
 		}
 
 	}
