@@ -1,84 +1,96 @@
 package gui
 
 import (
-	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/seanoneillcode/go-tactics/pkg/common"
-	"image/color"
-	"strings"
+	"github.com/seanoneillcode/go-tactics/pkg/core"
+	"image"
 )
+
+const marginX = 4
+const marginY = 4
 
 type TextBox struct {
 	text     *Text
 	x        int
 	y        int
-	image    *ebiten.Image
-	isActive bool
+	width    int
+	height   int
+	partial1 image.Image
+	partial2 image.Image
+	partial3 image.Image
+	partial4 image.Image
 }
 
-func NewTextBox(value string, x int, y int, width int, height int) *TextBox {
-	image := ebiten.NewImage(width, height)
-	image.Fill(color.White)
+func NewTextBox(x int, y int, width int, height int) *TextBox {
+	borderImage1 := core.LoadImage("text-border-1.png")
+	partial1 := borderImage1.SubImage(image.Rect(0, 0, width+marginX+marginX, height+marginY+marginY))
+
+	borderImage2 := core.LoadImage("text-border-2.png")
+	partial2 := borderImage2.SubImage(image.Rect(0, 0, width+marginX+marginX, height))
+
+	borderImage3 := core.LoadImage("text-border-3.png")
+	partial3 := borderImage3
+
+	borderImage4 := core.LoadImage("text-border-4.png")
+	partial4 := borderImage4.SubImage(image.Rect(0, 0, width, height+marginY))
+
 	return &TextBox{
-		text:     NewText(getFormattedValue(value), x, y), // introduce a small margin
+		text:     NewText(x+marginX, y+marginY),
 		x:        x,
 		y:        y,
-		image:    image,
-		isActive: true,
+		width:    width,
+		height:   height,
+		partial1: partial1,
+		partial2: partial2,
+		partial3: partial3,
+		partial4: partial4,
 	}
 }
 
 func (tb *TextBox) SetTextValue(value string) {
-	tb.text.value = getFormattedValue(value)
+	tb.text.SetValue(value)
 }
 
 func (tb *TextBox) Draw(screen *ebiten.Image) {
-	if !tb.isActive {
+	if tb.text.value == "" {
 		return
 	}
+
 	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Translate(float64(tb.x), float64(tb.y))
 	op.GeoM.Scale(common.Scale, common.Scale)
-	op.ColorM.Scale(0, 0.1, 0.5, 1)
-	screen.DrawImage(tb.image, op)
+	temp := ebiten.NewImageFromImage(tb.partial1)
+
+	screen.DrawImage(temp, op)
+
+	op = &ebiten.DrawImageOptions{}
+	op.GeoM.Translate(float64(tb.x), float64(tb.y+tb.height+marginY))
+	op.GeoM.Scale(common.Scale, common.Scale)
+	temp = ebiten.NewImageFromImage(tb.partial2)
+
+	screen.DrawImage(temp, op)
+
+	op = &ebiten.DrawImageOptions{}
+	op.GeoM.Translate(float64(tb.x+tb.width+marginX), float64(tb.y+tb.height+marginY))
+	op.GeoM.Scale(common.Scale, common.Scale)
+	temp = ebiten.NewImageFromImage(tb.partial3)
+
+	screen.DrawImage(temp, op)
+
+	op = &ebiten.DrawImageOptions{}
+	op.GeoM.Translate(float64(tb.x+tb.width+marginX), float64(tb.y))
+	op.GeoM.Scale(common.Scale, common.Scale)
+	temp = ebiten.NewImageFromImage(tb.partial4)
+
+	screen.DrawImage(temp, op)
+
 	tb.text.Draw(screen)
 }
 
 func (tb *TextBox) SetPosition(x int, y int) {
 	tb.x = x
 	tb.y = y
-	tb.text.x = x
-	tb.text.y = y
-}
-
-func (tb *TextBox) SetActive(isActive bool) {
-	tb.isActive = isActive
-}
-
-func getFormattedValue(value string) string {
-	// 40 chars per line
-	var formatted string
-	var line []string
-	words := strings.Split(value, " ")
-
-	count := 0
-	for _, word := range words {
-		// if adding a new word overruns, start a new line
-		if count+len(word) > 40 {
-			if formatted == "" {
-				formatted = strings.Join(line, " ")
-			} else {
-				formatted = fmt.Sprintf("%s\n%s", formatted, strings.Join(line, " "))
-			}
-			line = []string{}
-			count = 0
-		}
-		count = count + len(word) + 1
-		line = append(line, word)
-
-	}
-	if len(line) > 0 {
-		formatted = fmt.Sprintf("%s\n%s", formatted, strings.Join(line, " "))
-	}
-	return formatted
+	tb.text.x = x + marginX
+	tb.text.y = y + marginY
 }

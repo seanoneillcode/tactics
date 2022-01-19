@@ -27,12 +27,17 @@ func (p *Player) Update(delta int64, state *State) {
 	p.character.Update(delta)
 
 	if p.ActiveDialog != nil {
+		p.ActiveDialog.Update(delta)
 		if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
-			if p.ActiveDialog.HasNextLine() {
-				p.ActiveDialog.NextLine()
+			if p.ActiveDialog.IsBuffering() {
+				p.ActiveDialog.SkipBuffer()
 			} else {
-				p.ActiveDialog.Reset()
-				p.ActiveDialog = nil
+				if p.ActiveDialog.HasNextLine() {
+					p.ActiveDialog.NextLine()
+				} else {
+					p.ActiveDialog.Reset()
+					p.ActiveDialog = nil
+				}
 			}
 		}
 		return
@@ -80,6 +85,7 @@ func (p *Player) Update(delta int64, state *State) {
 			}
 		}
 	}
+
 }
 
 func (p *Player) EnterLevel(level *Level) {

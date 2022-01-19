@@ -16,6 +16,12 @@ type Sprite struct {
 }
 
 func NewSprite(imageFileName string) *Sprite {
+	return &Sprite{
+		image: LoadImage(imageFileName),
+	}
+}
+
+func LoadImage(imageFileName string) *ebiten.Image {
 	b, err := ioutil.ReadFile("res/" + imageFileName)
 	if err != nil {
 		log.Fatalf("failed to open file: %v", err)
@@ -24,9 +30,7 @@ func NewSprite(imageFileName string) *Sprite {
 	if err != nil {
 		log.Fatal(err)
 	}
-	return &Sprite{
-		image: ebiten.NewImageFromImage(img),
-	}
+	return ebiten.NewImageFromImage(img)
 }
 
 func (s *Sprite) Draw(screen *ebiten.Image) {

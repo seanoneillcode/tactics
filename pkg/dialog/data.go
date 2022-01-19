@@ -9,24 +9,28 @@ var dialogData = map[string]*NpcDialog{
 			"": {
 				lines: []*Line{
 					{
-						name: "player",
-						text: "\"Great thanks. Do you know where I can get some gameplay around here?\"",
+						name: "Dave",
+						text: "\"I'm Dave... \nWhat do you want?\"",
 					},
 					{
-						name: "player",
-						text: "\"Who are you?\"",
+						name: "Player",
+						text: "\"I'm looking for some fish\"",
 					},
 					{
-						name: "",
-						text: "\"My name is dave.\"",
+						name: "Player",
+						text: "\"Have you seen any?\"",
 					},
 					{
-						name: "dave",
-						text: "\"Welcome to the game!\"",
+						name: "Dave",
+						text: "\"No.\"",
 					},
 					{
-						name: "player",
-						text: "\"Great thanks. Do you know where I can get some gameplay around here?\"",
+						name: "Dave",
+						text: "\"...\"",
+					},
+					{
+						name: "Player",
+						text: "\"Great, thanks...\"",
 					},
 				},
 			},
@@ -40,7 +44,7 @@ var dialogData = map[string]*NpcDialog{
 				lines: []*Line{
 					{
 						name: "peter",
-						text: "Can you fetch my fish for me?",
+						text: "Can you fetch a fish for me?",
 					},
 				},
 			},
