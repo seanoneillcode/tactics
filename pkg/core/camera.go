@@ -24,7 +24,7 @@ func (c *Camera) Update(delta int64, state *State) {
 	if c.followPlayer {
 		screenOffset := common.VectorFromInt(common.HalfScreenWidth, common.HalfScreenHeight)
 		tileOffset := common.VectorFromInt(common.HalfTileSize, common.HalfTileSize)
-		c.pos = (state.Player.character.pos.Sub(screenOffset).Add(tileOffset)).Mul(common.ScaleF)
+		c.pos = (state.Player.Character.pos.Sub(screenOffset).Add(tileOffset)).Mul(common.ScaleF)
 	}
 }
 

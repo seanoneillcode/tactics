@@ -20,8 +20,12 @@ type Dialog struct {
 }
 
 type Line struct {
-	name string
-	text string
+	Name string
+	Text string
+}
+
+func (l *Line) FullText() string {
+	return l.Name + "\n" + l.Text
 }
 
 func (d *Dialog) Reset() {
@@ -32,8 +36,8 @@ func (d *Dialog) Reset() {
 	d.order = 0
 	names := map[string]bool{}
 	for _, line := range d.lines {
-		if ok, _ := names[line.name]; !ok {
-			names[line.name] = true
+		if ok, _ := names[line.Name]; !ok {
+			names[line.Name] = true
 		}
 	}
 	d.names = []string{}
@@ -41,8 +45,8 @@ func (d *Dialog) Reset() {
 		d.names = append(d.names, name)
 	}
 	line := d.lines[d.currentLineIndex]
-	d.currentName = line.name
-	d.formattedText = getFormattedValue(line.text)
+	d.currentName = line.Name
+	d.formattedText = getFormattedValue(line.Text)
 }
 
 func (d *Dialog) IsBuffering() bool {
@@ -64,30 +68,39 @@ func (d *Dialog) NextLine() {
 	d.index = 0
 	d.timer = 0
 	line := d.lines[d.currentLineIndex]
-	if line.name != d.currentName {
+	if line.Name != d.currentName {
 		d.order = d.order + 1
 		if d.order == len(d.names) {
 			d.order = 0
 		}
 	}
-	d.currentName = line.name
-	d.formattedText = getFormattedValue(line.text)
+	d.currentName = line.Name
+	d.formattedText = getFormattedValue(line.Text)
 }
 
 func (d *Dialog) GetNameOrder() int {
 	return d.order
 }
 
-func (d *Dialog) GetAllFormattedLines() []string {
+func (d *Dialog) GetNextLinesForName() []string {
 	var f []string
-	for _, line := range d.lines {
-		f = append(f, getFormattedValue(line.text))
+	for index, line := range d.lines {
+		if index >= d.currentLineIndex {
+			if d.currentName == line.Name {
+				f = append(f, getFormattedValue(line.FullText()))
+			} else {
+				break
+			}
+		}
 	}
 	return f
 }
 
-func (d *Dialog) GetCurrentText() string {
-	return d.bufferedText
+func (d *Dialog) GetCurrentLine() *Line {
+	return &Line{
+		Name: d.currentName,
+		Text: d.bufferedText,
+	}
 }
 
 func (d *Dialog) Update(delta int64) {

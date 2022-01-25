@@ -8,23 +8,23 @@ import (
 )
 
 type Player struct {
-	character    *Character
+	Character    *Character
 	lastInput    string
 	ActiveDialog *dialog.Dialog
 }
 
 func NewPlayer() *Player {
 	return &Player{
-		character: NewCharacter("player.png"),
+		Character: NewCharacter("player.png"),
 	}
 }
 
 func (p *Player) Draw(screen *ebiten.Image) {
-	p.character.Draw(screen)
+	p.Character.Draw(screen)
 }
 
 func (p *Player) Update(delta int64, state *State) {
-	p.character.Update(delta)
+	p.Character.Update(delta)
 
 	if p.ActiveDialog != nil {
 		p.ActiveDialog.Update(delta)
@@ -43,7 +43,7 @@ func (p *Player) Update(delta int64, state *State) {
 		return
 	}
 
-	if !p.character.isMoving {
+	if !p.Character.isMoving {
 		var inputX = 0
 		var inputY = 0
 		if ebiten.IsKeyPressed(ebiten.KeyArrowLeft) || ebiten.IsKeyPressed(ebiten.KeyA) {
@@ -72,10 +72,10 @@ func (p *Player) Update(delta int64, state *State) {
 			if inputY != 0 {
 				p.lastInput = "y"
 			}
-			p.character.TryToMove(inputX, inputY, state)
+			p.Character.TryToMove(inputX, inputY, state)
 
 			// check for dialogs
-			tileX, tileY := common.WorldToTile(p.character.pos)
+			tileX, tileY := common.WorldToTile(p.Character.pos)
 			ti := state.Map.Level.GetTileInfo(inputX+tileX, tileY+inputY)
 			if ti.npc != nil {
 				p.ActiveDialog = ti.npc.GetCurrentDialog()
@@ -90,11 +90,11 @@ func (p *Player) Update(delta int64, state *State) {
 
 func (p *Player) EnterLevel(level *Level) {
 	for _, link := range level.links {
-		p.character.pos = common.VectorFromInt(link.x, link.y)
+		p.Character.pos = common.VectorFromInt(link.x, link.y)
 		return
 	}
 }
 
 func (p *Player) SetPosition(pos *common.VectorF) {
-	p.character.SetPosition(pos)
+	p.Character.SetPosition(pos)
 }

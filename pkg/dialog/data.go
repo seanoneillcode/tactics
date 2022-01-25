@@ -1,6 +1,6 @@
 package dialog
 
-// the map is organized by npc name
+// the map is organized by npc Name
 var dialogData = map[string]*NpcDialog{
 	"dave": {
 		// each dialog has a key, this can be changed by events
@@ -9,28 +9,28 @@ var dialogData = map[string]*NpcDialog{
 			"": {
 				lines: []*Line{
 					{
-						name: "Dave",
-						text: "\"I'm Dave... \nWhat do you want?\"",
+						Name: "Dave",
+						Text: "\"I'm Dave... \nWhat do you want?\"",
 					},
 					{
-						name: "Player",
-						text: "\"I'm looking for some fish\"",
+						Name: "Player",
+						Text: "\"I'm looking for some fish\"",
 					},
 					{
-						name: "Player",
-						text: "\"Have you seen any?\"",
+						Name: "Player",
+						Text: "\"Have you seen any?\"",
 					},
 					{
-						name: "Dave",
-						text: "\"No.\"",
+						Name: "Dave",
+						Text: "\"No...\"",
 					},
 					{
-						name: "Dave",
-						text: "\"...\"",
+						Name: "Dave",
+						Text: "\"...\"",
 					},
 					{
-						name: "Player",
-						text: "\"Great, thanks...\"",
+						Name: "Player",
+						Text: "\"Great, thanks...\"",
 					},
 				},
 			},
@@ -43,20 +43,20 @@ var dialogData = map[string]*NpcDialog{
 			"": {
 				lines: []*Line{
 					{
-						name: "peter",
-						text: "Can you fetch a fish for me?",
+						Name: "Peter",
+						Text: "\"Can you fetch a fish for me?\"",
 					},
 				},
 			},
 			"got-fish": {
 				lines: []*Line{
 					{
-						name: "peter",
-						text: "Hey it's my fish!",
+						Name: "Peter",
+						Text: "\"Hey it's my fish!\"",
 					},
 					{
-						name: "peter",
-						text: "Thanks!",
+						Name: "Peter",
+						Text: "\"Thanks!\"",
 					},
 				},
 			},

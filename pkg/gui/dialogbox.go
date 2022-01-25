@@ -2,18 +2,21 @@ package gui
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/seanoneillcode/go-tactics/pkg/common"
 	"github.com/seanoneillcode/go-tactics/pkg/core"
 )
 
 type DialogueBox struct {
-	isActive    bool
-	textBox     *TextBox
-	nameBox     *TextBox
-	currentText string
-	x           int
-	y           int
-	width       int
-	height      int
+	isActive         bool
+	textBox          *TextBox
+	nameBox          *TextBox
+	currentText      string
+	currentName      string
+	x                int
+	y                int
+	width            int
+	height           int
+	currentDirection *common.Vector
 }
 
 func NewDialogueBox() *DialogueBox {
@@ -34,28 +37,74 @@ func (b *DialogueBox) Update(delta int64, state *core.State) {
 	if ad != nil {
 		if !b.isActive {
 			// switch
-			b.width, b.height = GetMaxWidthHeight(ad.GetAllFormattedLines())
+			b.currentDirection = state.Player.Character.Direction
 		}
 
 		b.isActive = true
-		text2 := ad.GetCurrentText()
-		if text2 != b.currentText {
-			offsetX, offsetY := 240-8-b.width, 100-b.height
-			if ad.GetNameOrder() == 0 {
-				offsetX = 8
-				offsetY = 160
-				if b.width < 120 {
-					offsetX = offsetX + 120 - b.width
+
+		line := ad.GetCurrentLine()
+		if line.Text != b.currentText {
+			b.currentText = line.Text
+			if b.currentName != line.Name {
+				b.width, b.height = GetMaxWidthHeight(ad.GetNextLinesForName())
+				if b.currentName != "" {
+					b.currentDirection = invertDirection(b.currentDirection)
 				}
 			}
-			b.textBox = NewTextBox(b.x+offsetX, b.y+offsetY, b.width+1, b.height+1)
-			b.textBox.SetTextValue(text2)
+			b.currentName = line.Name
+			offset := b.getOffset()
+			b.textBox = NewTextBox(b.x+offset.X, b.y+offset.Y, b.width+1, b.height+1)
+			b.textBox.SetTextValue(line.FullText())
 		}
 	}
 
 	if ad == nil && b.isActive {
 		b.isActive = false
 		b.textBox.SetTextValue("")
+		b.currentName = ""
+		b.currentText = ""
 	}
 
+}
+
+func dialogPosition(direction *common.Vector) *common.Vector {
+	newDir := &common.Vector{
+		X: direction.X,
+		Y: direction.Y,
+	}
+	if newDir.X == 0 {
+		newDir.X = -1
+	}
+	if newDir.Y == 0 {
+		newDir.Y = -1
+	}
+	return newDir
+}
+
+func invertDirection(direction *common.Vector) *common.Vector {
+	newDir := &common.Vector{
+		X: direction.X * -1,
+		Y: direction.Y * -1,
+	}
+	if newDir.X == 0 {
+		newDir.X = -1
+	}
+	if newDir.Y == 0 {
+		newDir.Y = -1
+	}
+	return newDir
+}
+
+func (b *DialogueBox) getOffset() *common.Vector {
+	offset := &common.Vector{
+		X: 8,
+		Y: 80 - b.height,
+	}
+	if b.currentDirection.Y == 1 {
+		offset.Y = 150
+	}
+	if b.currentDirection.X == 1 {
+		offset.X = 240 - 8 - b.width
+	}
+	return offset
 }

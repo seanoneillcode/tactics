@@ -20,7 +20,7 @@ func WorldToTileInt(x int, y int) (int, int) {
 	return x / TileSize, y / TileSize
 }
 
-func TileToWorld(vector TileVector) *VectorF {
+func TileToWorld(vector Vector) *VectorF {
 	return &VectorF{
 		X: float64(TileSizeF * vector.X),
 		Y: float64(TileSizeF * vector.Y),

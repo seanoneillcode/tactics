@@ -1,6 +1,6 @@
 package common
 
-type TileVector struct {
+type Vector struct {
 	X int
 	Y int
 }

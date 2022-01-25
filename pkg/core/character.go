@@ -19,6 +19,7 @@ type Character struct {
 	moveTime  int64
 	goalPos   *common.VectorF
 	lastInput string
+	Direction *common.Vector
 }
 
 func NewCharacter(imageFileName string) *Character {
@@ -46,6 +47,10 @@ func (c *Character) Update(delta int64) {
 
 func (c *Character) TryToMove(dirX int, dirY int, state *State) {
 	// check can move
+	c.Direction = &common.Vector{
+		X: dirX,
+		Y: dirY,
+	}
 	tileX, tileY := common.WorldToTile(c.pos)
 	tileX = tileX + dirX
 	tileY = tileY + dirY
