@@ -5,6 +5,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/seanoneillcode/go-tactics/pkg/common"
 	"github.com/seanoneillcode/go-tactics/pkg/dialog"
+	"log"
 )
 
 type Player struct {
@@ -74,14 +75,21 @@ func (p *Player) Update(delta int64, state *State) {
 			}
 			p.Character.TryToMove(inputX, inputY, state)
 
-			// check for dialogs
 			tileX, tileY := common.WorldToTile(p.Character.pos)
 			ti := state.Map.Level.GetTileInfo(inputX+tileX, tileY+inputY)
+
+			// check for dialogs
 			if ti.npc != nil {
 				p.ActiveDialog = ti.npc.GetCurrentDialog()
 			}
+			// check for links
 			if ti.link != nil {
 				state.Map.StartTransition(ti.link)
+			}
+			// check for pickups
+			if ti.pickup != nil && !ti.pickup.isUsed {
+				ti.pickup.isUsed = true
+				p.Pickup(ti.pickup)
 			}
 		}
 	}
@@ -97,4 +105,9 @@ func (p *Player) EnterLevel(level *Level) {
 
 func (p *Player) SetPosition(pos *common.VectorF) {
 	p.Character.SetPosition(pos)
+}
+
+func (p *Player) Pickup(pickup *Pickup) {
+	// add item to inventory
+	log.Printf("picked up %v", pickup.itemName)
 }

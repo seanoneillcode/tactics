@@ -63,6 +63,9 @@ func (c *Character) TryToMove(dirX int, dirY int, state *State) {
 	if ti.npc != nil {
 		return
 	}
+	if ti.pickup != nil {
+		return
+	}
 	// perform move
 	c.isMoving = true
 	c.moveTime = characterMoveTime

@@ -40,6 +40,41 @@
                  "width":16,
                  "x":80,
                  "y":64
+                }, 
+                {
+                 "gid":91,
+                 "height":16,
+                 "id":7,
+                 "name":"dave",
+                 "rotation":0,
+                 "type":"npc",
+                 "visible":true,
+                 "width":16,
+                 "x":112,
+                 "y":48
+                }, 
+                {
+                 "gid":91,
+                 "height":16,
+                 "id":8,
+                 "name":"chest",
+                 "properties":[
+                        {
+                         "name":"item",
+                         "type":"string",
+                         "value":"lint"
+                        }, 
+                        {
+                         "name":"used-image",
+                         "type":"string",
+                         "value":"used-chest"
+                        }],
+                 "rotation":0,
+                 "type":"pickup",
+                 "visible":true,
+                 "width":16,
+                 "x":64,
+                 "y":48
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -48,7 +83,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":7,
+ "nextobjectid":9,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.7.2",

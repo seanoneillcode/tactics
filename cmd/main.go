@@ -63,7 +63,7 @@ func main() {
 		dialogBox: gui.NewDialogueBox(),
 		camera:    core.NewCamera(),
 	}
-	g.state.Map.LoadLevel("test-level-a")
+	g.state.Map.LoadLevel("house")
 	g.state.Player.EnterLevel(g.state.Map.Level)
 
 	ebiten.SetWindowSize(common.ScreenWidth*common.Scale, common.ScreenHeight*common.Scale)

@@ -8,8 +8,9 @@ import (
 type Level struct {
 	npcs      []*Npc
 	links     []*Link
+	pickups   []*Pickup
 	tiledGrid *TiledGrid
-	// pickups, dialogues, enemies ...
+	// enemies ...
 }
 
 func NewLevel(fileName string) *Level {
@@ -19,6 +20,7 @@ func NewLevel(fileName string) *Level {
 	return &Level{
 		npcs:      loadNpcs(objects),
 		links:     loadLinks(objects),
+		pickups:   loadPickups(objects),
 		tiledGrid: tiledGrid,
 	}
 }
@@ -33,6 +35,9 @@ func (l *Level) Draw(screen *ebiten.Image) {
 	l.tiledGrid.Draw(screen)
 	for _, npc := range l.npcs {
 		npc.Draw(screen)
+	}
+	for _, pickup := range l.pickups {
+		pickup.Draw(screen)
 	}
 }
 
@@ -54,6 +59,13 @@ func (l *Level) GetTileInfo(x int, y int) *TileInfo {
 			break
 		}
 	}
+	for _, pickup := range l.pickups {
+		nx, ny := common.WorldToTile(pickup.GetPosition())
+		if nx == x && ny == y {
+			ti.pickup = pickup
+			break
+		}
+	}
 	return ti
 }
 
@@ -62,6 +74,7 @@ type TileInfo struct {
 	tileData *TileData
 	npc      *Npc
 	link     *Link
+	pickup   *Pickup
 	// etc
 }
 
@@ -70,11 +83,34 @@ func loadNpcs(objects []*ObjectData) []*Npc {
 	for _, obj := range objects {
 		if obj.objectType == "npc" {
 			npc := NewNpc(obj.name)
-			npc.SetPosition(obj.x, obj.y)
+			npc.SetPosition(obj.x, obj.y-common.TileSize)
 			npcs = append(npcs, npc)
 		}
 	}
 	return npcs
+}
+
+func loadPickups(objects []*ObjectData) []*Pickup {
+	var pickups []*Pickup
+	for _, obj := range objects {
+		if obj.objectType == "pickup" {
+			var itemName string
+			var usedImageName string
+			for _, p := range obj.properties {
+				if p.name == "item" {
+					itemName = (p.value).(string)
+				}
+				if p.name == "used-image" {
+					usedImageName = (p.value).(string)
+				}
+			}
+
+			pickup := NewPickup(obj.name, itemName, usedImageName)
+			pickup.SetPosition(obj.x, obj.y-common.TileSize)
+			pickups = append(pickups, pickup)
+		}
+	}
+	return pickups
 }
 
 func loadLinks(objects []*ObjectData) []*Link {
