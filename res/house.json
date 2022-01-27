@@ -61,8 +61,8 @@
                  "type":"pickup",
                  "visible":true,
                  "width":16,
-                 "x":64,
-                 "y":48
+                 "x":80,
+                 "y":16
                 }, 
                 {
                  "gid":91,
@@ -84,8 +84,8 @@
                  "type":"pickup",
                  "visible":true,
                  "width":16,
-                 "x":112,
-                 "y":32
+                 "x":96,
+                 "y":16
                 }, 
                 {
                  "height":16,

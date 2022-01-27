@@ -28,6 +28,10 @@ func (g *Game) Update() error {
 	// update state
 	g.state.Map.Update(delta, g.state)
 	g.state.Player.Update(delta, g.state)
+	if g.state.ActiveDialog != nil {
+		g.state.ActiveDialog.Update(delta, g.state)
+	}
+	g.state.Shop.Update(delta, g.state)
 
 	// update camera
 	g.camera.Update(delta, g.state)
@@ -46,6 +50,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	g.state.Map.Level.Draw(g.camera.GetBuffer())
 	g.state.Player.Draw(g.camera.GetBuffer())
 	g.camera.DrawBuffer(screen)
+	g.state.Shop.Draw(screen)
 	g.dialogBox.Draw(screen)
 }
 
@@ -59,11 +64,12 @@ func main() {
 		state: &core.State{
 			Player: core.NewPlayer(),
 			Map:    core.NewMap(),
+			Shop:   core.NewShop(),
 		},
 		dialogBox: gui.NewDialogueBox(),
 		camera:    core.NewCamera(),
 	}
-	g.state.Map.LoadLevel("house")
+	g.state.Map.LoadLevel("siopa")
 	g.state.Player.EnterLevel(g.state.Map.Level)
 
 	ebiten.SetWindowSize(common.ScreenWidth*common.Scale, common.ScreenHeight*common.Scale)

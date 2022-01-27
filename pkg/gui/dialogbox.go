@@ -32,7 +32,7 @@ func (b *DialogueBox) Draw(screen *ebiten.Image) {
 }
 
 func (b *DialogueBox) Update(delta int64, state *core.State) {
-	ad := state.Player.ActiveDialog
+	ad := state.ActiveDialog
 
 	if ad != nil {
 		if !b.isActive {

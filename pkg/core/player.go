@@ -2,23 +2,25 @@ package core
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/seanoneillcode/go-tactics/pkg/common"
-	"github.com/seanoneillcode/go-tactics/pkg/dialog"
 	"log"
 )
 
 type Player struct {
-	Character      *Character
-	lastInput      string
-	ActiveDialog   *dialog.Dialog
+	isActive  bool
+	Character *Character
+	lastInput string
+
+	ActiveShop     *ShopData
 	CharacterState *CharacterState
 	// not sure about this
-	isSleeping bool
+	isSleeping  bool
+	playerState string
 }
 
 func NewPlayer() *Player {
 	return &Player{
+		isActive:       true,
 		Character:      NewCharacter("player.png"),
 		CharacterState: NewCharacterState(),
 	}
@@ -31,23 +33,9 @@ func (p *Player) Draw(screen *ebiten.Image) {
 func (p *Player) Update(delta int64, state *State) {
 	p.Character.Update(delta)
 
-	if p.ActiveDialog != nil {
-		p.ActiveDialog.Update(delta)
-		if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
-			if p.ActiveDialog.IsBuffering() {
-				p.ActiveDialog.SkipBuffer()
-			} else {
-				if p.ActiveDialog.HasNextLine() {
-					p.ActiveDialog.NextLine()
-				} else {
-					p.ActiveDialog.Reset()
-					p.ActiveDialog = nil
-				}
-			}
-		}
+	if !p.isActive {
 		return
 	}
-
 	if !p.Character.isMoving {
 		var inputX = 0
 		var inputY = 0
@@ -82,29 +70,34 @@ func (p *Player) Update(delta int64, state *State) {
 			tileX, tileY := common.WorldToTile(p.Character.pos)
 			ti := state.Map.Level.GetTileInfo(inputX+tileX, tileY+inputY)
 
-			// check for dialogs
+			// check for things on the tile
 			if ti.npc != nil {
-				p.ActiveDialog = ti.npc.GetCurrentDialog()
+				state.ActiveDialog = ti.npc.GetCurrentDialog()
 			}
-			// check for links
 			if ti.link != nil {
 				state.Map.StartTransition(ti.link)
 			}
-			// check for pickups
 			if ti.pickup != nil && !ti.pickup.isUsed {
 				ti.pickup.isUsed = true
 				p.Pickup(ti.pickup)
 			}
-			// check for actions
 			if ti.action != nil {
 				if ti.action.name == "bed" {
 					p.SetSleep(true)
 					p.CharacterState.Health = p.CharacterState.MaxHealth
 				}
 			}
+			if ti.shop != nil {
+				// pause everything else and open 'shop mode'
+				state.Shop.Open(ti.shop)
+				p.isActive = false
+			}
 		}
 	}
+}
 
+func (p *Player) Activate() {
+	p.isActive = true
 }
 
 func (p *Player) EnterLevel(level *Level) {

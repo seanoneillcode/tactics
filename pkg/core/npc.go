@@ -3,18 +3,17 @@ package core
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/seanoneillcode/go-tactics/pkg/common"
-	"github.com/seanoneillcode/go-tactics/pkg/dialog"
 )
 
 type Npc struct {
 	character *Character
-	npcDialog *dialog.NpcDialog
+	npcDialog *NpcDialog
 }
 
 func NewNpc(name string) *Npc {
 	return &Npc{
 		character: NewCharacter(name + ".png"),
-		npcDialog: dialog.GetNpcDialog(name),
+		npcDialog: GetNpcDialog(name),
 	}
 }
 
@@ -34,6 +33,6 @@ func (n *Npc) GetPosition() *common.VectorF {
 	return n.character.pos
 }
 
-func (n *Npc) GetCurrentDialog() *dialog.Dialog {
+func (n *Npc) GetCurrentDialog() *Dialog {
 	return n.npcDialog.GetCurrentDialog()
 }

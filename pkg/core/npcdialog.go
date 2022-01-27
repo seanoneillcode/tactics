@@ -1,4 +1,6 @@
-package dialog
+package core
+
+import "log"
 
 type NpcDialog struct {
 	currentDialogName string
@@ -12,6 +14,9 @@ func (nd NpcDialog) GetCurrentDialog() *Dialog {
 
 func GetNpcDialog(name string) *NpcDialog {
 	nd := dialogData[name]
+	if nd == nil {
+		log.Fatalf("missing dialog for npc: %s", name)
+	}
 	nd.currentDialog = nd.dialogs[nd.currentDialogName] // todo move this
 	nd.currentDialog.Reset()
 	return nd

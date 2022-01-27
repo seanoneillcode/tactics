@@ -11,6 +11,7 @@ type Level struct {
 	links     []*Link
 	pickups   []*Pickup
 	actions   []*Action
+	shops     []*ShopData
 	tiledGrid *TiledGrid
 	// enemies ...
 }
@@ -25,6 +26,7 @@ func NewLevel(name string) *Level {
 		links:     loadLinks(objects),
 		pickups:   loadPickups(objects),
 		actions:   loadActions(objects),
+		shops:     loadShops(objects),
 		tiledGrid: tiledGrid,
 	}
 }
@@ -77,6 +79,13 @@ func (l *Level) GetTileInfo(x int, y int) *TileInfo {
 			break
 		}
 	}
+	for _, s := range l.shops {
+		nx, ny := common.WorldToTile(s.GetPosition())
+		if nx == x && ny == y {
+			ti.shop = s
+			break
+		}
+	}
 	return ti
 }
 
@@ -87,6 +96,8 @@ type TileInfo struct {
 	link     *Link
 	pickup   *Pickup
 	action   *Action
+	shop     *ShopData
+
 	// etc
 }
 
@@ -134,6 +145,17 @@ func loadActions(objects []*ObjectData) []*Action {
 		}
 	}
 	return actions
+}
+
+func loadShops(objects []*ObjectData) []*ShopData {
+	var shops []*ShopData
+	for _, obj := range objects {
+		if obj.objectType == "shop" {
+			s := NewShopData(obj.name, float64(obj.x), float64(obj.y))
+			shops = append(shops, s)
+		}
+	}
+	return shops
 }
 
 func loadLinks(objects []*ObjectData) []*Link {

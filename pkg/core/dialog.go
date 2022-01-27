@@ -1,6 +1,8 @@
-package dialog
+package core
 
 import (
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"strings"
 )
 
@@ -103,7 +105,20 @@ func (d *Dialog) GetCurrentLine() *Line {
 	}
 }
 
-func (d *Dialog) Update(delta int64) {
+func (d *Dialog) Update(delta int64, state *State) {
+	if inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
+		if d.IsBuffering() {
+			d.SkipBuffer()
+		} else {
+			if d.HasNextLine() {
+				d.NextLine()
+			} else {
+				d.Reset()
+				state.ActiveDialog = nil
+			}
+		}
+	}
+
 	if d.bufferedText != d.formattedText {
 		d.timer = d.timer + delta
 		if d.timer > letterSpeed {

@@ -152,6 +152,24 @@
                  "type":"bool",
                  "value":true
                 }]
+        }, 
+        {
+         "id":42,
+         "properties":[
+                {
+                 "name":"isBlock",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":43,
+         "properties":[
+                {
+                 "name":"isBlock",
+                 "type":"bool",
+                 "value":true
+                }]
         }],
  "tilewidth":16,
  "type":"tileset",

@@ -1,6 +1,8 @@
 package core
 
-import "log"
+import (
+	"log"
+)
 
 type Item struct {
 	Name        string
@@ -12,7 +14,7 @@ type Item struct {
 
 func NewItem(name string) *Item {
 	switch name {
-	case "herb":
+	case HerbItemName:
 		return &Item{
 			Name:        "Herb",
 			Description: "A plant that soothes and heals wounds.",
@@ -25,7 +27,7 @@ func NewItem(name string) *Item {
 				},
 			},
 		}
-	case "potion":
+	case PotionItemName:
 		return &Item{
 			Name:        "Potion",
 			Description: "A distilled herb that significantly heals wounds.",
@@ -38,7 +40,7 @@ func NewItem(name string) *Item {
 				},
 			},
 		}
-	case "padded-armor":
+	case PaddedArmorItemName:
 		return &Item{
 			Name:        "Padded Armour",
 			Description: "A tunic made from several layer of cotton that reduces damage.",
@@ -55,3 +57,9 @@ func NewItem(name string) *Item {
 	log.Fatalf("unknown item: %s", name)
 	return nil
 }
+
+const (
+	HerbItemName        = "herb"
+	PotionItemName      = "potion"
+	PaddedArmorItemName = "padded-armor"
+)

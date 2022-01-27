@@ -1,7 +1,7 @@
 package common
 
 const (
-	ScreenWidth      = 256
+	ScreenWidth      = 384
 	ScreenHeight     = 240
 	TileSize         = 16
 	TileSizeF        = 16.0

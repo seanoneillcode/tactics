@@ -1,4 +1,4 @@
-package dialog
+package core
 
 // the map is organized by npc Name
 var dialogData = map[string]*NpcDialog{
@@ -57,6 +57,18 @@ var dialogData = map[string]*NpcDialog{
 					{
 						Name: "Anne",
 						Text: "\"Thanks!\"",
+					},
+				},
+			},
+		},
+	},
+	"wallace": {
+		dialogs: map[string]*Dialog{
+			"": {
+				lines: []*Line{
+					{
+						Name: "Wallace",
+						Text: "\"How did you get back here?\"",
 					},
 				},
 			},
