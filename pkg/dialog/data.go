@@ -36,14 +36,14 @@ var dialogData = map[string]*NpcDialog{
 			},
 		},
 	},
-	"peter": {
+	"anne": {
 		// each dialog has a key, this can be changed by events
 		// i.e. player kills a king -> change to king based context dialog
 		dialogs: map[string]*Dialog{
 			"": {
 				lines: []*Line{
 					{
-						Name: "Peter",
+						Name: "Anne",
 						Text: "\"Can you fetch a fish for me?\"",
 					},
 				},
@@ -51,11 +51,11 @@ var dialogData = map[string]*NpcDialog{
 			"got-fish": {
 				lines: []*Line{
 					{
-						Name: "Peter",
+						Name: "Anne",
 						Text: "\"Hey it's my fish!\"",
 					},
 					{
-						Name: "Peter",
+						Name: "Anne",
 						Text: "\"Thanks!\"",
 					},
 				},

@@ -20,15 +20,59 @@ type Character struct {
 	goalPos   *common.VectorF
 	lastInput string
 	Direction *common.Vector
+	// animation
+	isAFrame bool
 }
 
 func NewCharacter(imageFileName string) *Character {
 	return &Character{
 		sprite: NewSprite(imageFileName),
+		Direction: &common.Vector{
+			X: 0,
+			Y: 1,
+		},
 	}
 }
 
 func (c *Character) Draw(screen *ebiten.Image) {
+	if !c.isMoving {
+		if c.Direction.Y == -1 {
+			c.sprite.SetFrame(1)
+		}
+		if c.Direction.Y == 1 {
+			c.sprite.SetFrame(0)
+		}
+		if c.Direction.X == -1 {
+			c.sprite.SetFrame(2)
+		}
+		if c.Direction.X == 1 {
+			c.sprite.SetFrame(7)
+		}
+	} else {
+		var frameA int
+		var frameB int
+		if c.Direction.Y == 1 {
+			frameA = 4
+			frameB = 5
+		}
+		if c.Direction.Y == -1 {
+			frameA = 8
+			frameB = 9
+		}
+		if c.Direction.X == 1 {
+			frameA = 6
+			frameB = 7
+		}
+		if c.Direction.X == -1 {
+			frameA = 2
+			frameB = 3
+		}
+		if c.isAFrame {
+			c.sprite.SetFrame(frameA)
+		} else {
+			c.sprite.SetFrame(frameB)
+		}
+	}
 	c.sprite.Draw(screen)
 }
 
@@ -41,6 +85,8 @@ func (c *Character) Update(delta int64) {
 			c.velocity = &common.VectorF{}
 		}
 		c.pos = c.pos.Add(c.velocity.Mul(float64(delta)))
+
+		c.isAFrame = c.moveTime > (characterMoveTime / 2)
 	}
 	c.sprite.SetPosition(c.pos.X, c.pos.Y)
 }
@@ -51,6 +97,7 @@ func (c *Character) TryToMove(dirX int, dirY int, state *State) {
 		X: dirX,
 		Y: dirY,
 	}
+
 	tileX, tileY := common.WorldToTile(c.pos)
 	tileX = tileX + dirX
 	tileY = tileY + dirY
@@ -67,6 +114,7 @@ func (c *Character) TryToMove(dirX int, dirY int, state *State) {
 		return
 	}
 	// perform move
+	c.isAFrame = !c.isAFrame
 	c.isMoving = true
 	c.moveTime = characterMoveTime
 	c.goalPos = c.pos.Add(common.VectorFromInt(dirX, dirY).Mul(common.TileSizeF))

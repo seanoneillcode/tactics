@@ -44,18 +44,6 @@
                 {
                  "gid":91,
                  "height":16,
-                 "id":7,
-                 "name":"dave",
-                 "rotation":0,
-                 "type":"npc",
-                 "visible":true,
-                 "width":16,
-                 "x":112,
-                 "y":48
-                }, 
-                {
-                 "gid":91,
-                 "height":16,
                  "id":8,
                  "name":"chest",
                  "properties":[
