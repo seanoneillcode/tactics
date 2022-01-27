@@ -10,6 +10,7 @@ type Level struct {
 	npcs      []*Npc
 	links     []*Link
 	pickups   []*Pickup
+	actions   []*Action
 	tiledGrid *TiledGrid
 	// enemies ...
 }
@@ -23,6 +24,7 @@ func NewLevel(name string) *Level {
 		npcs:      loadNpcs(objects),
 		links:     loadLinks(objects),
 		pickups:   loadPickups(objects),
+		actions:   loadActions(objects),
 		tiledGrid: tiledGrid,
 	}
 }
@@ -68,6 +70,13 @@ func (l *Level) GetTileInfo(x int, y int) *TileInfo {
 			break
 		}
 	}
+	for _, action := range l.actions {
+		nx, ny := common.WorldToTile(action.GetPosition())
+		if nx == x && ny == y {
+			ti.action = action
+			break
+		}
+	}
 	return ti
 }
 
@@ -77,6 +86,7 @@ type TileInfo struct {
 	npc      *Npc
 	link     *Link
 	pickup   *Pickup
+	action   *Action
 	// etc
 }
 
@@ -113,6 +123,17 @@ func loadPickups(objects []*ObjectData) []*Pickup {
 		}
 	}
 	return pickups
+}
+
+func loadActions(objects []*ObjectData) []*Action {
+	var actions []*Action
+	for _, obj := range objects {
+		if obj.objectType == "action" {
+			action := NewAction(obj.name, float64(obj.x), float64(obj.y))
+			actions = append(actions, action)
+		}
+	}
+	return actions
 }
 
 func loadLinks(objects []*ObjectData) []*Link {

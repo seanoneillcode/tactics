@@ -13,6 +13,8 @@ type Player struct {
 	lastInput      string
 	ActiveDialog   *dialog.Dialog
 	CharacterState *CharacterState
+	// not sure about this
+	isSleeping bool
 }
 
 func NewPlayer() *Player {
@@ -93,6 +95,13 @@ func (p *Player) Update(delta int64, state *State) {
 				ti.pickup.isUsed = true
 				p.Pickup(ti.pickup)
 			}
+			// check for actions
+			if ti.action != nil {
+				if ti.action.name == "bed" {
+					p.SetSleep(true)
+					p.CharacterState.Health = p.CharacterState.MaxHealth
+				}
+			}
 		}
 	}
 
@@ -112,4 +121,8 @@ func (p *Player) SetPosition(pos *common.VectorF) {
 func (p *Player) Pickup(pickup *Pickup) {
 	p.CharacterState.Items = append(p.CharacterState.Items, NewItem(pickup.itemName))
 	log.Printf("picked up %v", pickup.itemName)
+}
+
+func (p *Player) SetSleep(b bool) {
+	p.isSleeping = b
 }
