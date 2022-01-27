@@ -6,6 +6,7 @@ import (
 )
 
 type Level struct {
+	name      string
 	npcs      []*Npc
 	links     []*Link
 	pickups   []*Pickup
@@ -13,11 +14,12 @@ type Level struct {
 	// enemies ...
 }
 
-func NewLevel(fileName string) *Level {
-	tiledGrid := NewTileGrid(fileName)
+func NewLevel(name string) *Level {
+	tiledGrid := NewTileGrid(name + ".json")
 	objects := tiledGrid.GetObjectData()
 
 	return &Level{
+		name:      name,
 		npcs:      loadNpcs(objects),
 		links:     loadLinks(objects),
 		pickups:   loadPickups(objects),

@@ -9,15 +9,27 @@ type Map struct {
 	Level           *Level
 	transitionTimer int64
 	link            *Link
+	levels          []*Level
 }
 
 func NewMap() *Map {
-	return &Map{}
+	return &Map{
+		levels: []*Level{},
+	}
 }
 
 func (m *Map) LoadLevel(name string) {
-	newLevel := NewLevel(name + ".json")
+	for _, level := range m.levels {
+		if level.name == name {
+			log.Printf("using existing loaded level")
+			m.Level = level
+			return
+		}
+	}
+	log.Printf("loading new level")
+	newLevel := NewLevel(name)
 	m.Level = newLevel
+	m.levels = append(m.levels, newLevel)
 }
 
 func (m *Map) Update(delta int64, state *State) {
