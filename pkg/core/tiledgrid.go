@@ -104,17 +104,17 @@ func NewTileGrid(fileName string) *TiledGrid {
 
 func (tg *TiledGrid) Draw(screen *ebiten.Image) {
 	for _, layer := range tg.Layers {
-		for i, t := range layer.Data {
-			if t == 0 {
+		for i, tileIndex := range layer.Data {
+			if tileIndex == 0 {
 				continue
 			}
 
 			op := &ebiten.DrawImageOptions{}
-			op.GeoM.Translate(float64((i%layer.Width)*common.TileSize), float64((i/layer.Height)*common.TileSize))
+			op.GeoM.Translate(float64(((i)%layer.Width)*common.TileSize), float64(((i)/layer.Height)*common.TileSize))
 			op.GeoM.Scale(common.Scale, common.Scale)
 
-			sx := (t%tg.TileSet[0].numTilesX - 1) * common.TileSize
-			sy := (t / tg.TileSet[0].numTilesY) * common.TileSize
+			sx := ((tileIndex - 1) % tg.TileSet[0].numTilesX) * common.TileSize
+			sy := ((tileIndex - 1) / tg.TileSet[0].numTilesX) * common.TileSize
 
 			screen.DrawImage(tg.image.SubImage(image.Rect(sx, sy, sx+common.TileSize, sy+common.TileSize)).(*ebiten.Image), op)
 		}
@@ -185,9 +185,13 @@ func (tg *TiledGrid) GetTileData(x int, y int) *TileData {
 	}
 
 	tileSetIndex := tg.Layers[0].Data[index]
+	if tileSetIndex == 0 {
+		td.isBlock = true
+		return &td
+	}
 
 	for _, tile := range tg.TileSet[0].Tiles {
-		if tile.Id == tileSetIndex {
+		if tile.Id == tileSetIndex-1 {
 			for _, prop := range tile.Properties {
 				if prop.Name == "isBlock" && prop.Value != nil {
 					td.isBlock = (prop.Value).(bool)

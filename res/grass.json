@@ -91,6 +91,15 @@
                 }]
         }, 
         {
+         "id":16,
+         "properties":[
+                {
+                 "name":"isBlock",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
          "id":30,
          "properties":[
                 {
@@ -119,6 +128,24 @@
         }, 
         {
          "id":33,
+         "properties":[
+                {
+                 "name":"isBlock",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":40,
+         "properties":[
+                {
+                 "name":"isBlock",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":41,
          "properties":[
                 {
                  "name":"isBlock",

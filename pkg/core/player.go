@@ -9,14 +9,16 @@ import (
 )
 
 type Player struct {
-	Character    *Character
-	lastInput    string
-	ActiveDialog *dialog.Dialog
+	Character      *Character
+	lastInput      string
+	ActiveDialog   *dialog.Dialog
+	CharacterState *CharacterState
 }
 
 func NewPlayer() *Player {
 	return &Player{
-		Character: NewCharacter("player.png"),
+		Character:      NewCharacter("player.png"),
+		CharacterState: NewCharacterState(),
 	}
 }
 
@@ -108,6 +110,6 @@ func (p *Player) SetPosition(pos *common.VectorF) {
 }
 
 func (p *Player) Pickup(pickup *Pickup) {
-	// add item to inventory
+	p.CharacterState.Items = append(p.CharacterState.Items, NewItem(pickup.itemName))
 	log.Printf("picked up %v", pickup.itemName)
 }
