@@ -47,8 +47,8 @@ func NewShopUi() *ShopUi {
 		moneyLabel:             NewText(16+offsetX, 64+offsetY),
 		shopName:               NewText(128+offsetX, 32+offsetY),
 		informationDescription: NewText(informationX+2+offsetX, informationY+offsetY),
-		confirmationBuy:        NewText(confirmationX+3+offsetX, confirmationY+offsetY),
-		confirmationInfo:       NewText(confirmationX+5+32+offsetX, confirmationY+offsetY),
+		confirmationBuy:        NewText(confirmationX+2+offsetX, confirmationY+offsetY),
+		confirmationInfo:       NewText(confirmationX+6+32+offsetX, confirmationY+offsetY),
 	}
 	s.playerName.SetValue("Player")
 	s.moneyLabel.SetValue("Money")
