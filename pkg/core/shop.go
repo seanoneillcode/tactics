@@ -7,12 +7,11 @@ import (
 )
 
 type Shop struct {
-	Data                      *ShopData
-	IsActive                  bool
-	ActiveElement             string
-	SelectedListIndex         int
-	SelectedConfirmationIndex int
-	justOpened                bool
+	Data              *ShopData
+	IsActive          bool
+	ActiveElement     string
+	SelectedListIndex int
+	justOpened        bool
 }
 
 func NewShop() *Shop {
@@ -46,25 +45,17 @@ func (s *Shop) Update(delta int64, state *State) {
 			state.Player.Activate()
 		case "confirmation":
 			s.ActiveElement = "list"
-		case "information":
-			s.ActiveElement = "confirmation"
 		}
 		return
 	}
 	if inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
-		log.Printf("shop is open, pressed accept")
 		switch s.ActiveElement {
 		case "list":
 			s.ActiveElement = "confirmation"
 		case "confirmation":
-			if s.SelectedConfirmationIndex == 0 {
-				s.ActiveElement = "list"
-				// buy the item
-			} else {
-				s.ActiveElement = "information"
-			}
-		case "information":
-			s.ActiveElement = "confirmation"
+			s.ActiveElement = "list"
+			log.Printf("bought an item: %s", s.Data.Items[s.SelectedListIndex].Item.Name)
+			// buy the item
 		}
 		return
 	}
@@ -72,28 +63,12 @@ func (s *Shop) Update(delta int64, state *State) {
 	if inpututil.IsKeyJustPressed(ebiten.KeyArrowLeft) || ebiten.IsKeyPressed(ebiten.KeyA) {
 		switch s.ActiveElement {
 		case "confirmation":
-			switch s.SelectedConfirmationIndex {
-			case 0:
-				s.ActiveElement = "list"
-			case 1:
-				s.SelectedConfirmationIndex = 0
-			}
-		case "information":
-			s.ActiveElement = "confirmation"
+			s.ActiveElement = "list"
 		}
 	}
 	if inpututil.IsKeyJustPressed(ebiten.KeyArrowRight) || ebiten.IsKeyPressed(ebiten.KeyD) {
 		switch s.ActiveElement {
 		case "list":
-			s.ActiveElement = "confirmation"
-		case "confirmation":
-			switch s.SelectedConfirmationIndex {
-			case 0:
-				s.SelectedConfirmationIndex = 1
-			case 1:
-				s.ActiveElement = "information"
-			}
-		case "information":
 			s.ActiveElement = "confirmation"
 		}
 	}
@@ -104,22 +79,12 @@ func (s *Shop) Update(delta int64, state *State) {
 			if s.SelectedListIndex < 0 {
 				s.SelectedListIndex = 0
 			}
-		case "confirmation":
-			s.SelectedListIndex = s.SelectedListIndex - 1
-			if s.SelectedListIndex < 0 {
-				s.SelectedListIndex = 0
-			}
 		}
 		log.Printf("selected index: %v", s.SelectedListIndex)
 	}
 	if inpututil.IsKeyJustPressed(ebiten.KeyArrowDown) || ebiten.IsKeyPressed(ebiten.KeyS) {
 		switch s.ActiveElement {
 		case "list":
-			s.SelectedListIndex = s.SelectedListIndex + 1
-			if s.SelectedListIndex == len(s.Data.Items) {
-				s.SelectedListIndex = s.SelectedListIndex - 1
-			}
-		case "confirmation":
 			s.SelectedListIndex = s.SelectedListIndex + 1
 			if s.SelectedListIndex == len(s.Data.Items) {
 				s.SelectedListIndex = s.SelectedListIndex - 1
