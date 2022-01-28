@@ -17,7 +17,7 @@ func NewCharacterState() *CharacterState {
 		MaxHealth:  10,
 		Level:      1,
 		Experience: 0,
-		Money:      435,
+		Money:      10,
 		Items:      []*Item{},
 	}
 }

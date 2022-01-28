@@ -56,12 +56,14 @@ type Text struct {
 	value string
 	x     int
 	y     int
+	color color.RGBA
 }
 
 func NewText(x int, y int) *Text {
 	return &Text{
-		x: x,
-		y: y,
+		x:     x,
+		y:     y,
+		color: defaultTextColor,
 	}
 }
 
@@ -69,6 +71,24 @@ func (t *Text) SetValue(value string) {
 	t.value = value
 }
 
+func (t *Text) SetColor(color color.RGBA) {
+	t.color = color
+}
+
+var defaultTextColor = color.RGBA{
+	R: 223,
+	G: 246,
+	B: 245,
+	A: 255,
+}
+
+var greyTextColor = color.RGBA{
+	R: 160,
+	G: 147,
+	B: 142,
+	A: 255,
+}
+
 func (t *Text) Draw(screen *ebiten.Image) {
-	text.Draw(screen, t.value, standardFont, (t.x)*common.Scale, (t.y+8)*common.Scale, color.White)
+	text.Draw(screen, t.value, standardFont, (t.x)*common.Scale, (t.y+8)*common.Scale, t.color)
 }

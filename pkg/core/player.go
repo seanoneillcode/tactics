@@ -119,3 +119,9 @@ func (p *Player) Pickup(pickup *Pickup) {
 func (p *Player) SetSleep(b bool) {
 	p.isSleeping = b
 }
+
+func (p *Player) BuyItem(item *Item, cost int) {
+	p.CharacterState.Items = append(p.CharacterState.Items, item)
+	p.CharacterState.Money = p.CharacterState.Money - cost
+	log.Printf("bought an item: %s", item.Name)
+}
