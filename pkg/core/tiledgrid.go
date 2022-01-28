@@ -25,14 +25,14 @@ type TiledGrid struct {
 }
 
 type Layer struct {
-	Data    []int         `json:"data"`
+	Data    []int         `json:"Data"`
 	Height  int           `json:"height"`
 	Width   int           `json:"width"`
 	Objects []TiledObject `json:"objects"`
 }
 
 type TiledObject struct {
-	Name       string            `json:"name"`
+	Name       string            `json:"Name"`
 	Type       string            `json:"type"`
 	X          int               `json:"x"`
 	Y          int               `json:"y"`
@@ -58,7 +58,7 @@ type TileConfig struct {
 }
 
 type TileConfigProp struct {
-	Name  string      `json:"name"`
+	Name  string      `json:"Name"`
 	Type  string      `json:"type"`
 	Value interface{} `json:"value"`
 }

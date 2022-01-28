@@ -48,7 +48,7 @@ func (d *Dialog) Reset() {
 	}
 	line := d.lines[d.currentLineIndex]
 	d.currentName = line.Name
-	d.formattedText = getFormattedValue(line.Text)
+	d.formattedText = GetFormattedValue(line.Text)
 }
 
 func (d *Dialog) IsBuffering() bool {
@@ -77,7 +77,7 @@ func (d *Dialog) NextLine() {
 		}
 	}
 	d.currentName = line.Name
-	d.formattedText = getFormattedValue(line.Text)
+	d.formattedText = GetFormattedValue(line.Text)
 }
 
 func (d *Dialog) GetNameOrder() int {
@@ -89,7 +89,7 @@ func (d *Dialog) GetNextLinesForName() []string {
 	for index, line := range d.lines {
 		if index >= d.currentLineIndex {
 			if d.currentName == line.Name {
-				f = append(f, getFormattedValue(line.FullText()))
+				f = append(f, GetFormattedValue(line.FullText()))
 			} else {
 				break
 			}
@@ -133,7 +133,15 @@ func (d *Dialog) Update(delta int64, state *State) {
 	}
 }
 
-func getFormattedValue(value string) string {
+func GetFormattedValue(value string) string {
+	return getFormattedValue(value, maxRunePerLine)
+}
+
+func GetFormattedValueMax(value string, max int) string {
+	return getFormattedValue(value, max)
+}
+
+func getFormattedValue(value string, max int) string {
 	var lines []string
 
 	potentialLines := strings.Split(value, "\n")
@@ -145,7 +153,7 @@ func getFormattedValue(value string) string {
 		count := 0
 		for _, word := range words {
 
-			if count+len(word) > maxRunePerLine {
+			if count+len(word) > max {
 				compoundLine := strings.Join(line, " ")
 				lines = append(lines, compoundLine)
 				line = []string{}

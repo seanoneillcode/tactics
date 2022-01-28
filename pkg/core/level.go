@@ -152,6 +152,11 @@ func loadShops(objects []*ObjectData) []*ShopData {
 	for _, obj := range objects {
 		if obj.objectType == "shop" {
 			s := NewShopData(obj.name, float64(obj.x), float64(obj.y))
+			for _, p := range obj.properties {
+				if p.name == "merchantName" {
+					s.MerchantName = (p.value).(string)
+				}
+			}
 			shops = append(shops, s)
 		}
 	}

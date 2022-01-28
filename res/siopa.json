@@ -45,6 +45,12 @@
                  "height":16,
                  "id":10,
                  "name":"shop-home",
+                 "properties":[
+                        {
+                         "name":"merchantName",
+                         "type":"string",
+                         "value":"General Store"
+                        }],
                  "rotation":0,
                  "type":"shop",
                  "visible":true,

@@ -17,6 +17,7 @@ type Game struct {
 	state            *core.State
 	lastUpdateCalled time.Time
 	dialogBox        *gui.DialogueBox
+	shopUi           *gui.ShopUi
 	camera           *core.Camera
 }
 
@@ -38,6 +39,7 @@ func (g *Game) Update() error {
 
 	// update UI
 	g.dialogBox.Update(delta, g.state)
+	g.shopUi.Update(delta, g.state)
 
 	// handle escape
 	if ebiten.IsKeyPressed(ebiten.KeyEscape) {
@@ -50,8 +52,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	g.state.Map.Level.Draw(g.camera.GetBuffer())
 	g.state.Player.Draw(g.camera.GetBuffer())
 	g.camera.DrawBuffer(screen)
-	g.state.Shop.Draw(screen)
+	//g.state.Shop.Draw(screen)
 	g.dialogBox.Draw(screen)
+	g.shopUi.Draw(screen)
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
@@ -67,6 +70,7 @@ func main() {
 			Shop:   core.NewShop(),
 		},
 		dialogBox: gui.NewDialogueBox(),
+		shopUi:    gui.NewShopUi(),
 		camera:    core.NewCamera(),
 	}
 	g.state.Map.LoadLevel("siopa")

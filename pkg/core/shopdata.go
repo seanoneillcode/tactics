@@ -3,19 +3,20 @@ package core
 import "github.com/seanoneillcode/go-tactics/pkg/common"
 
 type ShopData struct {
-	name  string
-	pos   *common.VectorF
-	items []*shopItem
+	Name         string
+	MerchantName string
+	pos          *common.VectorF
+	Items        []*ShopItem
 }
 
 func NewShopData(name string, x float64, y float64) *ShopData {
 	return &ShopData{
-		name: name,
+		Name: name,
 		pos: &common.VectorF{
 			X: x,
 			Y: y,
 		},
-		items: shopData[name],
+		Items: shopData[name],
 	}
 }
 
@@ -23,24 +24,24 @@ func (s *ShopData) GetPosition() *common.VectorF {
 	return s.pos
 }
 
-type shopItem struct {
-	name string
-	cost int
+type ShopItem struct {
+	Item *Item
+	Cost int
 }
 
-var shopData = map[string][]*shopItem{
+var shopData = map[string][]*ShopItem{
 	"shop-home": {
-		&shopItem{
-			name: HerbItemName,
-			cost: 1,
+		&ShopItem{
+			Item: NewItem(HerbItemName),
+			Cost: 2,
 		},
-		&shopItem{
-			name: PotionItemName,
-			cost: 5,
+		&ShopItem{
+			Item: NewItem(PotionItemName),
+			Cost: 5,
 		},
-		&shopItem{
-			name: PaddedArmorItemName,
-			cost: 25,
+		&ShopItem{
+			Item: NewItem(PaddedArmorItemName),
+			Cost: 999999,
 		},
 	},
 }
