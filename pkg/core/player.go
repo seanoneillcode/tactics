@@ -36,6 +36,9 @@ func (p *Player) Update(delta int64, state *State) {
 	if !p.isActive {
 		return
 	}
+	if state.ActiveDialog != nil {
+		return
+	}
 	if !p.Character.isMoving {
 		var inputX = 0
 		var inputY = 0

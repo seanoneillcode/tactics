@@ -67,19 +67,19 @@ func (s *Shop) Update(delta int64, state *State) {
 		return
 	}
 
-	if inpututil.IsKeyJustPressed(ebiten.KeyArrowLeft) || ebiten.IsKeyPressed(ebiten.KeyA) {
+	if inpututil.IsKeyJustPressed(ebiten.KeyArrowLeft) || inpututil.IsKeyJustPressed(ebiten.KeyA) {
 		switch s.ActiveElement {
 		case "confirmation":
 			s.ActiveElement = "list"
 		}
 	}
-	if inpututil.IsKeyJustPressed(ebiten.KeyArrowRight) || ebiten.IsKeyPressed(ebiten.KeyD) {
+	if inpututil.IsKeyJustPressed(ebiten.KeyArrowRight) || inpututil.IsKeyJustPressed(ebiten.KeyD) {
 		switch s.ActiveElement {
 		case "list":
 			s.ActiveElement = "confirmation"
 		}
 	}
-	if inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) || ebiten.IsKeyPressed(ebiten.KeyW) {
+	if inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) || inpututil.IsKeyJustPressed(ebiten.KeyW) {
 		switch s.ActiveElement {
 		case "list":
 			s.SelectedListIndex = s.SelectedListIndex - 1
@@ -89,7 +89,7 @@ func (s *Shop) Update(delta int64, state *State) {
 		}
 		log.Printf("selected index: %v", s.SelectedListIndex)
 	}
-	if inpututil.IsKeyJustPressed(ebiten.KeyArrowDown) || ebiten.IsKeyPressed(ebiten.KeyS) {
+	if inpututil.IsKeyJustPressed(ebiten.KeyArrowDown) || inpututil.IsKeyJustPressed(ebiten.KeyS) {
 		switch s.ActiveElement {
 		case "list":
 			s.SelectedListIndex = s.SelectedListIndex + 1
