@@ -145,8 +145,8 @@ func (s *ShopUi) Update(delta int64, state *core.State) {
 	if s.shop.IsActive && !s.isLoaded {
 		s.isLoaded = true
 		s.shopName.SetValue(s.shop.Data.MerchantName)
-		s.updatePlayerMoney(state.Player.CharacterState.Money)
-		s.shopItems = createListItems(s.shop.Data.Items, listX+offsetX, listY+offsetY, state.Player.CharacterState.Money)
+		s.updatePlayerMoney(state.Player.TeamState.Money)
+		s.shopItems = createListItems(s.shop.Data.Items, listX+offsetX, listY+offsetY, state.Player.TeamState.Money)
 	}
 	if !s.shop.IsActive && s.isLoaded {
 		s.isLoaded = false
@@ -154,9 +154,9 @@ func (s *ShopUi) Update(delta int64, state *core.State) {
 	if s.shop.IsActive {
 		desc := s.shop.Data.Items[s.shop.SelectedListIndex].Item.Description
 		s.informationDescription.SetValue(core.GetFormattedValueMax(desc, 22))
-		if s.oldPlayerMoney != state.Player.CharacterState.Money {
-			s.updatePlayerMoney(state.Player.CharacterState.Money)
-			s.shopItems = createListItems(s.shop.Data.Items, listX+offsetX, listY+offsetY, state.Player.CharacterState.Money)
+		if s.oldPlayerMoney != state.Player.TeamState.Money {
+			s.updatePlayerMoney(state.Player.TeamState.Money)
+			s.shopItems = createListItems(s.shop.Data.Items, listX+offsetX, listY+offsetY, state.Player.TeamState.Money)
 		}
 	}
 	s.cursorTimer = s.cursorTimer + delta

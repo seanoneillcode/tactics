@@ -3,7 +3,6 @@ package core
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/seanoneillcode/go-tactics/pkg/common"
-	"log"
 )
 
 type Player struct {
@@ -11,19 +10,21 @@ type Player struct {
 	Character *Character
 	lastInput string
 
-	ActiveShop     *ShopData
-	CharacterState *CharacterState
+	ActiveShop *ShopData
+	TeamState  *TeamState
 	// not sure about this
 	isSleeping  bool
 	playerState string
 }
 
 func NewPlayer() *Player {
-	return &Player{
-		isActive:       true,
-		Character:      NewCharacter("player.png"),
-		CharacterState: NewCharacterState(),
+	p := &Player{
+		isActive:  true,
+		Character: NewCharacter("player.png"),
+		TeamState: NewTeamState(),
 	}
+	p.TeamState.Characters = append(p.TeamState.Characters, NewCharacterState())
+	return p
 }
 
 func (p *Player) Draw(screen *ebiten.Image) {
@@ -82,12 +83,12 @@ func (p *Player) Update(delta int64, state *State) {
 			}
 			if ti.pickup != nil && !ti.pickup.isUsed {
 				ti.pickup.isUsed = true
-				p.Pickup(ti.pickup)
+				p.TeamState.Pickup(ti.pickup)
 			}
 			if ti.action != nil {
 				if ti.action.name == "bed" {
 					p.SetSleep(true)
-					p.CharacterState.Health = p.CharacterState.MaxHealth
+					p.TeamState.RestoreHealth()
 				}
 			}
 			if ti.shop != nil {
@@ -114,17 +115,6 @@ func (p *Player) SetPosition(pos *common.VectorF) {
 	p.Character.SetPosition(pos)
 }
 
-func (p *Player) Pickup(pickup *Pickup) {
-	p.CharacterState.Items = append(p.CharacterState.Items, NewItem(pickup.itemName))
-	log.Printf("picked up %v", pickup.itemName)
-}
-
 func (p *Player) SetSleep(b bool) {
 	p.isSleeping = b
-}
-
-func (p *Player) BuyItem(item *Item, cost int) {
-	p.CharacterState.Items = append(p.CharacterState.Items, item)
-	p.CharacterState.Money = p.CharacterState.Money - cost
-	log.Printf("bought an item: %s", item.Name)
 }

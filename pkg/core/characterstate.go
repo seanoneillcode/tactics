@@ -5,8 +5,6 @@ type CharacterState struct {
 	MaxHealth  int
 	Level      int
 	Experience int
-	Money      int
-	Items      []*Item
 	// active effects
 	// stats like str, att ...etc
 }
@@ -17,7 +15,5 @@ func NewCharacterState() *CharacterState {
 		MaxHealth:  10,
 		Level:      1,
 		Experience: 0,
-		Money:      10,
-		Items:      []*Item{},
 	}
 }
