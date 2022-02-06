@@ -9,7 +9,7 @@ type TeamState struct {
 func NewTeamState() *TeamState {
 	return &TeamState{
 		Characters: []*CharacterState{},
-		Money:      10,
+		Money:      200,
 		Items:      []*Item{},
 	}
 }
@@ -41,9 +41,26 @@ func (t *TeamState) RemoveItem(index int) {
 }
 
 func (t *TeamState) ConsumeItem(index int) {
+	// todo select character
+	selectedCharacter := t.Characters[0]
+
 	item := t.Items[index]
 	for _, e := range item.Effects {
-		e.Apply(t.Characters[0]) // todo select character
+		e.Apply(selectedCharacter)
 	}
+	t.RemoveItem(index)
+}
+
+func (t *TeamState) EquipItem(index int) {
+	// todo select character
+	selectedCharacter := t.Characters[0]
+
+	item := t.Items[index]
+	existingItem, ok := selectedCharacter.EquippedItems[item.EquipSlot]
+	if ok {
+		// slot already has item, remove it and put it back into the inventory
+		t.Items = append(t.Items, existingItem)
+	}
+	selectedCharacter.EquippedItems[item.EquipSlot] = item
 	t.RemoveItem(index)
 }

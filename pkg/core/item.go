@@ -11,10 +11,21 @@ type Item struct {
 	CanEquip    bool
 	Effects     []StateEffect
 	StatEffects []Stats
+	EquipSlot   string
 }
 
 func NewItem(name string) *Item {
 	switch name {
+	case BreadItemName:
+		return &Item{
+			Name:        "Bread Roll",
+			Description: "A wholesome bread roll. A handy snack any time, any place.",
+			CanConsume:  true,
+			CanEquip:    false,
+			Effects: []StateEffect{
+				&healthEffect{amount: 1},
+			},
+		}
 	case HerbItemName:
 		return &Item{
 			Name:        "Herb",
@@ -47,7 +58,7 @@ func NewItem(name string) *Item {
 		}
 	case SteelArmorItemName:
 		return &Item{
-			Name:        "Steel Plated Armour",
+			Name:        "Plated Armour",
 			Description: "A heavy piece of chest armour made from overlapping steel plates.",
 			CanConsume:  false,
 			CanEquip:    true,
@@ -62,6 +73,7 @@ func NewItem(name string) *Item {
 }
 
 const (
+	BreadItemName       = "bread"
 	HerbItemName        = "herb"
 	PotionItemName      = "potion"
 	PaddedArmorItemName = "padded-armor"

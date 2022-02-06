@@ -32,6 +32,10 @@ type ShopItem struct {
 var shopData = map[string][]*ShopItem{
 	"shop-home": {
 		&ShopItem{
+			Item: NewItem(BreadItemName),
+			Cost: 1,
+		},
+		&ShopItem{
 			Item: NewItem(HerbItemName),
 			Cost: 2,
 		},
@@ -41,7 +45,11 @@ var shopData = map[string][]*ShopItem{
 		},
 		&ShopItem{
 			Item: NewItem(PaddedArmorItemName),
-			Cost: 999999,
+			Cost: 20,
+		},
+		&ShopItem{
+			Item: NewItem(SteelArmorItemName),
+			Cost: 100,
 		},
 	},
 }

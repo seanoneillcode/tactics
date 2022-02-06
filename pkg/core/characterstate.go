@@ -5,6 +5,7 @@ type CharacterState struct {
 	Health              int
 	Magic               int
 	ActiveStatusEffects []string // poison, etc
+	EquippedItems       map[string]*Item
 
 	// stats
 	Stats *Stats
@@ -31,14 +32,7 @@ func NewCharacterState() *CharacterState {
 			Level:      1,
 			Experience: 0,
 		},
+		ActiveStatusEffects: []string{},
+		EquippedItems:       map[string]*Item{},
 	}
 }
-
-// state effects
-// increase health
-// remove specific status
-
-// stat effects
-// stat effect CharacterStat{Defense: 4}
-// stat name ( defense )
-// value change ( +/- 4 )

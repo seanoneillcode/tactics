@@ -68,6 +68,12 @@ func (i *Inventory) Update(delta int64, state *State) {
 				if item.CanConsume {
 					// select character
 					state.Player.TeamState.ConsumeItem(i.SelectedListIndex)
+				} else {
+					if item.CanEquip {
+						// select character
+						state.Player.TeamState.EquipItem(i.SelectedListIndex)
+					}
+					// ??
 				}
 			} else {
 				log.Println("selecting drop")
