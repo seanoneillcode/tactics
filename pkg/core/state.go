@@ -5,4 +5,5 @@ type State struct {
 	Map          *Map
 	ActiveDialog *Dialog
 	Shop         *Shop
+	Inventory    *Inventory
 }

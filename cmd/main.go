@@ -13,12 +13,13 @@ import (
 var NormalEscapeError = errors.New("normal escape termination")
 
 type Game struct {
+	lastUpdateCalled time.Time
 	keys             []ebiten.Key
 	state            *core.State
-	lastUpdateCalled time.Time
+	camera           *core.Camera
 	dialogBox        *gui.DialogueBox
 	shopUi           *gui.ShopUi
-	camera           *core.Camera
+	inventoryUi      *gui.InventoryUi
 }
 
 func (g *Game) Update() error {
@@ -33,6 +34,7 @@ func (g *Game) Update() error {
 		g.state.ActiveDialog.Update(delta, g.state)
 	}
 	g.state.Shop.Update(delta, g.state)
+	g.state.Inventory.Update(delta, g.state)
 
 	// update camera
 	g.camera.Update(delta, g.state)
@@ -40,6 +42,7 @@ func (g *Game) Update() error {
 	// update UI
 	g.dialogBox.Update(delta, g.state)
 	g.shopUi.Update(delta, g.state)
+	g.inventoryUi.Update(delta, g.state)
 
 	// handle escape
 	if ebiten.IsKeyPressed(ebiten.KeyEscape) {
@@ -52,9 +55,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	g.state.Map.Level.Draw(g.camera.GetBuffer())
 	g.state.Player.Draw(g.camera.GetBuffer())
 	g.camera.DrawBuffer(screen)
-	//g.state.Shop.Draw(screen)
 	g.dialogBox.Draw(screen)
 	g.shopUi.Draw(screen)
+	g.inventoryUi.Draw(screen)
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
@@ -65,13 +68,15 @@ func main() {
 	g := &Game{
 		lastUpdateCalled: time.Now(),
 		state: &core.State{
-			Player: core.NewPlayer(),
-			Map:    core.NewMap(),
-			Shop:   core.NewShop(),
+			Player:    core.NewPlayer(),
+			Map:       core.NewMap(),
+			Shop:      core.NewShop(),
+			Inventory: core.NewInventory(),
 		},
-		dialogBox: gui.NewDialogueBox(),
-		shopUi:    gui.NewShopUi(),
-		camera:    core.NewCamera(),
+		dialogBox:   gui.NewDialogueBox(),
+		shopUi:      gui.NewShopUi(),
+		camera:      core.NewCamera(),
+		inventoryUi: gui.NewInventoryUi(),
 	}
 	g.state.Map.LoadLevel("siopa")
 	g.state.Player.EnterLevel(g.state.Map.Level)

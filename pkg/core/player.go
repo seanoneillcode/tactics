@@ -2,6 +2,7 @@ package core
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/seanoneillcode/go-tactics/pkg/common"
 )
 
@@ -97,6 +98,12 @@ func (p *Player) Update(delta int64, state *State) {
 				p.isActive = false
 			}
 		}
+	}
+
+	// consider this key more carefully
+	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
+		state.Inventory.Open(p.TeamState)
+		p.isActive = false
 	}
 }
 

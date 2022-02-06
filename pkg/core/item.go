@@ -9,7 +9,8 @@ type Item struct {
 	Description string
 	CanConsume  bool
 	CanEquip    bool
-	Effects     []*Effect
+	Effects     []StateEffect
+	StatEffects []Stats
 }
 
 func NewItem(name string) *Item {
@@ -20,11 +21,8 @@ func NewItem(name string) *Item {
 			Description: "A plant that soothes and heals wounds.",
 			CanConsume:  true,
 			CanEquip:    false,
-			Effects: []*Effect{
-				{
-					Property: "health",
-					Value:    4,
-				},
+			Effects: []StateEffect{
+				&healthEffect{amount: 4},
 			},
 		}
 	case PotionItemName:
@@ -33,11 +31,8 @@ func NewItem(name string) *Item {
 			Description: "A distilled herb that significantly heals wounds.",
 			CanConsume:  true,
 			CanEquip:    false,
-			Effects: []*Effect{
-				{
-					Property: "health",
-					Value:    15,
-				},
+			Effects: []StateEffect{
+				&healthEffect{amount: 15},
 			},
 		}
 	case PaddedArmorItemName:
@@ -46,11 +41,19 @@ func NewItem(name string) *Item {
 			Description: "A tunic made from several layer of cotton that reduces damage.",
 			CanConsume:  false,
 			CanEquip:    true,
-			Effects: []*Effect{
-				{
-					Property: "defense",
-					Value:    2,
-				},
+			StatEffects: []Stats{
+				{Defence: 1},
+			},
+		}
+	case SteelArmorItemName:
+		return &Item{
+			Name:        "Steel Plated Armour",
+			Description: "A heavy piece of chest armour made from overlapping steel plates.",
+			CanConsume:  false,
+			CanEquip:    true,
+			StatEffects: []Stats{
+				{Defence: 3},
+				{Speed: -1},
 			},
 		}
 	}
@@ -62,4 +65,5 @@ const (
 	HerbItemName        = "herb"
 	PotionItemName      = "potion"
 	PaddedArmorItemName = "padded-armor"
+	SteelArmorItemName  = "steel-armor"
 )

@@ -16,7 +16,7 @@ func NewTeamState() *TeamState {
 
 func (t *TeamState) RestoreHealth() {
 	for _, c := range t.Characters {
-		c.Health = c.MaxHealth
+		c.Health = c.Stats.MaxHealth
 	}
 }
 
@@ -27,4 +27,23 @@ func (t *TeamState) BuyItem(item *Item, cost int) {
 
 func (t *TeamState) Pickup(pickup *Pickup) {
 	t.Items = append(t.Items, NewItem(pickup.itemName))
+}
+
+func (t *TeamState) RemoveItem(index int) {
+	var j int
+	for i, n := range t.Items {
+		if i != index {
+			t.Items[j] = n
+			j++
+		}
+	}
+	t.Items = t.Items[:j]
+}
+
+func (t *TeamState) ConsumeItem(index int) {
+	item := t.Items[index]
+	for _, e := range item.Effects {
+		e.Apply(t.Characters[0]) // todo select character
+	}
+	t.RemoveItem(index)
 }
