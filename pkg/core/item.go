@@ -16,6 +16,16 @@ type Item struct {
 
 func NewItem(name string) *Item {
 	switch name {
+	case MouldyBreadItemName:
+		return &Item{
+			Name:        "Mouldy Bread Roll",
+			Description: "A bread roll with suspicious green edges.",
+			CanConsume:  true,
+			CanEquip:    false,
+			Effects: []StateEffect{
+				&healthEffect{amount: -3},
+			},
+		}
 	case BreadItemName:
 		return &Item{
 			Name:        "Bread Roll",
@@ -74,6 +84,7 @@ func NewItem(name string) *Item {
 
 const (
 	BreadItemName       = "bread"
+	MouldyBreadItemName = "mouldy-bread"
 	HerbItemName        = "herb"
 	PotionItemName      = "potion"
 	PaddedArmorItemName = "padded-armor"

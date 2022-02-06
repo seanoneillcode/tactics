@@ -50,7 +50,7 @@
                         {
                          "name":"item",
                          "type":"string",
-                         "value":"herb"
+                         "value":"bread"
                         }, 
                         {
                          "name":"used-image",
@@ -73,7 +73,7 @@
                         {
                          "name":"item",
                          "type":"string",
-                         "value":"potion"
+                         "value":"mouldy-bread"
                         }, 
                         {
                          "name":"used-image",
