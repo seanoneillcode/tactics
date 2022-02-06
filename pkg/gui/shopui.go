@@ -58,56 +58,59 @@ func NewShopUi() *ShopUi {
 }
 
 func (s *ShopUi) Draw(screen *ebiten.Image) {
-	if s.shop != nil && s.shop.IsActive {
-		op := &ebiten.DrawImageOptions{}
+	if s.shop == nil || !s.shop.IsActive {
+		return
+	}
+
+	// background
+	op := &ebiten.DrawImageOptions{}
+	op.GeoM.Scale(common.Scale, common.Scale)
+	screen.DrawImage(s.bgImage, op)
+
+	// set elements
+	s.playerName.Draw(screen)
+	s.playerMoney.Draw(screen)
+	s.shopName.Draw(screen)
+	s.moneyLabel.Draw(screen)
+
+	for _, item := range s.shopItems {
+		item.Draw(screen)
+	}
+
+	op = &ebiten.DrawImageOptions{}
+	op.GeoM.Translate(informationX, informationY)
+	op.GeoM.Scale(common.Scale, common.Scale)
+	screen.DrawImage(s.shopInformationImage, op)
+
+	s.informationDescription.Draw(screen)
+	s.confirmationBuy.Draw(screen)
+
+	switch s.shop.ActiveElement {
+	case "list":
+		op = &ebiten.DrawImageOptions{}
+		op.GeoM.Translate(listX-14+s.cursorOffset, listY+(float64)(16.0*s.shop.SelectedListIndex))
 		op.GeoM.Scale(common.Scale, common.Scale)
+		screen.DrawImage(s.shopCursorImage, op)
+		s.confirmationBuy.SetColor(greyTextColor)
 
-		screen.DrawImage(s.bgImage, op)
-
-		s.playerName.Draw(screen)
-		s.playerMoney.Draw(screen)
-		s.shopName.Draw(screen)
-		s.moneyLabel.Draw(screen)
-
-		for _, item := range s.shopItems {
-			item.Draw(screen)
-		}
+	case "confirmation":
+		cy := float64(confirmationY) //+ (float64)(16.0*s.shop.SelectedListIndex)
 
 		op = &ebiten.DrawImageOptions{}
-		op.GeoM.Translate(informationX, informationY)
+		op.GeoM.Translate(confirmationX, cy)
 		op.GeoM.Scale(common.Scale, common.Scale)
-		screen.DrawImage(s.shopInformationImage, op)
+		screen.DrawImage(s.shopConfirmationImage, op)
 
-		s.informationDescription.Draw(screen)
+		s.confirmationBuy.SetColor(defaultTextColor)
 		s.confirmationBuy.Draw(screen)
 
-		switch s.shop.ActiveElement {
-		case "list":
-			op = &ebiten.DrawImageOptions{}
-			op.GeoM.Translate(listX-14+s.cursorOffset, listY+(float64)(16.0*s.shop.SelectedListIndex))
-			op.GeoM.Scale(common.Scale, common.Scale)
-			screen.DrawImage(s.shopCursorImage, op)
-			s.confirmationBuy.SetColor(greyTextColor)
-
-		case "confirmation":
-			cy := float64(confirmationY) //+ (float64)(16.0*s.shop.SelectedListIndex)
-
-			op = &ebiten.DrawImageOptions{}
-			op.GeoM.Translate(confirmationX, cy)
-			op.GeoM.Scale(common.Scale, common.Scale)
-			screen.DrawImage(s.shopConfirmationImage, op)
-
-			s.confirmationBuy.SetColor(defaultTextColor)
-			s.confirmationBuy.Draw(screen)
-
-			cx := float64(confirmationX - 12)
-			op = &ebiten.DrawImageOptions{}
-			op.GeoM.Translate(cx+s.cursorOffset, cy+2)
-			op.GeoM.Scale(common.Scale, common.Scale)
-			screen.DrawImage(s.shopCursorImage, op)
-		}
-
+		cx := float64(confirmationX - 12)
+		op = &ebiten.DrawImageOptions{}
+		op.GeoM.Translate(cx+s.cursorOffset, cy+2)
+		op.GeoM.Scale(common.Scale, common.Scale)
+		screen.DrawImage(s.shopCursorImage, op)
 	}
+
 }
 
 func createListItems(items []*core.ShopItem, x int, y int, playerMoney int) []*listItem {

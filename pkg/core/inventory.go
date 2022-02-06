@@ -57,14 +57,14 @@ func (i *Inventory) Update(delta int64, state *State) {
 	if inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
 		switch i.ActiveElement {
 		case "list":
-			if i.hasItems() {
+			if i.HasItems() {
 				i.ActiveElement = "action"
 			}
 		case "action":
 			if i.SelectedActionIndex == 0 {
-				log.Println("selecting use")
 				// use
 				item := i.TeamState.Items[i.SelectedListIndex]
+				log.Printf("selecting use, item: %v", item.Description)
 				if item.CanConsume {
 					// select character
 					state.Player.TeamState.ConsumeItem(i.SelectedListIndex)
@@ -81,6 +81,9 @@ func (i *Inventory) Update(delta int64, state *State) {
 				state.Player.TeamState.RemoveItem(i.SelectedListIndex)
 			}
 			i.ActiveElement = "list"
+			if i.SelectedListIndex == len(i.TeamState.Items) {
+				i.SelectedListIndex = i.SelectedListIndex - 1
+			}
 		}
 		return
 	}
@@ -97,7 +100,7 @@ func (i *Inventory) Update(delta int64, state *State) {
 	if inpututil.IsKeyJustPressed(ebiten.KeyArrowDown) || inpututil.IsKeyJustPressed(ebiten.KeyS) {
 		switch i.ActiveElement {
 		case "list":
-			if i.hasItems() {
+			if i.HasItems() {
 				i.SelectedListIndex = i.SelectedListIndex + 1
 				if i.SelectedListIndex == len(i.TeamState.Items) {
 					i.SelectedListIndex = i.SelectedListIndex - 1
@@ -108,9 +111,29 @@ func (i *Inventory) Update(delta int64, state *State) {
 		}
 		log.Printf("selected index: %v", i.SelectedListIndex)
 	}
+	if inpututil.IsKeyJustPressed(ebiten.KeyArrowLeft) || inpututil.IsKeyJustPressed(ebiten.KeyA) {
+		switch i.ActiveElement {
+		case "action":
+			if i.SelectedActionIndex == 0 {
+				i.ActiveElement = "list"
+			} else {
+				i.SelectedActionIndex = 0
+			}
+		}
+	}
+	if inpututil.IsKeyJustPressed(ebiten.KeyArrowRight) || inpututil.IsKeyJustPressed(ebiten.KeyD) {
+		switch i.ActiveElement {
+		case "list":
+			i.ActiveElement = "action"
+		case "action":
+			if i.SelectedActionIndex == 0 {
+				i.SelectedActionIndex = 1
+			}
+		}
+	}
 
 }
 
-func (i *Inventory) hasItems() bool {
+func (i *Inventory) HasItems() bool {
 	return len(i.TeamState.Items) > 0
 }
