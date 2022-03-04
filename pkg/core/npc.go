@@ -29,7 +29,7 @@ func (n *Npc) SetPosition(x int, y int) {
 	n.character.pos = common.VectorFromInt(x, y)
 }
 
-func (n *Npc) GetPosition() *common.VectorF {
+func (n *Npc) GetPosition() *common.Vector {
 	return n.character.pos
 }
 

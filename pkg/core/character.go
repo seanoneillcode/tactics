@@ -12,14 +12,14 @@ const (
 
 type Character struct {
 	sprite *Sprite
-	pos    *common.VectorF
+	pos    *common.Vector
 	// movement
 	isMoving  bool
-	velocity  *common.VectorF
+	velocity  *common.Vector
 	moveTime  int64
-	goalPos   *common.VectorF
+	goalPos   *common.Vector
 	lastInput string
-	Direction *common.Vector
+	Direction *common.Direction
 	// animation
 	isAFrame bool
 }
@@ -27,7 +27,7 @@ type Character struct {
 func NewCharacter(imageFileName string) *Character {
 	return &Character{
 		sprite: NewSprite(imageFileName),
-		Direction: &common.Vector{
+		Direction: &common.Direction{
 			X: 0,
 			Y: 1,
 		},
@@ -82,7 +82,7 @@ func (c *Character) Update(delta int64) {
 		if c.moveTime < 0 {
 			c.pos = c.goalPos
 			c.isMoving = false
-			c.velocity = &common.VectorF{}
+			c.velocity = &common.Vector{}
 		}
 		c.pos = c.pos.Add(c.velocity.Mul(float64(delta)))
 
@@ -93,7 +93,7 @@ func (c *Character) Update(delta int64) {
 
 func (c *Character) TryToMove(dirX int, dirY int, state *State) {
 	// check can move
-	c.Direction = &common.Vector{
+	c.Direction = &common.Direction{
 		X: dirX,
 		Y: dirY,
 	}
@@ -121,7 +121,7 @@ func (c *Character) TryToMove(dirX int, dirY int, state *State) {
 	c.velocity = common.VectorFromInt(dirX, dirY).Mul(characterMoveAmount)
 }
 
-func (c *Character) SetPosition(pos *common.VectorF) {
+func (c *Character) SetPosition(pos *common.Vector) {
 	offset := c.goalPos.Sub(c.pos)
 	c.goalPos = offset.Add(pos)
 	c.pos = pos

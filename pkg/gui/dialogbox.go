@@ -16,7 +16,7 @@ type DialogueBox struct {
 	y                int
 	width            int
 	height           int
-	currentDirection *common.Vector
+	currentDirection *common.Direction
 }
 
 func NewDialogueBox() *DialogueBox {
@@ -67,22 +67,8 @@ func (b *DialogueBox) Update(delta int64, state *core.State) {
 
 }
 
-func dialogPosition(direction *common.Vector) *common.Vector {
-	newDir := &common.Vector{
-		X: direction.X,
-		Y: direction.Y,
-	}
-	if newDir.X == 0 {
-		newDir.X = -1
-	}
-	if newDir.Y == 0 {
-		newDir.Y = -1
-	}
-	return newDir
-}
-
-func invertDirection(direction *common.Vector) *common.Vector {
-	newDir := &common.Vector{
+func invertDirection(direction *common.Direction) *common.Direction {
+	newDir := &common.Direction{
 		X: direction.X * -1,
 		Y: direction.Y * -1,
 	}
@@ -95,8 +81,8 @@ func invertDirection(direction *common.Vector) *common.Vector {
 	return newDir
 }
 
-func (b *DialogueBox) getOffset() *common.Vector {
-	offset := &common.Vector{
+func (b *DialogueBox) getOffset() *Point {
+	offset := &Point{
 		X: 8,
 		Y: 80 - b.height,
 	}

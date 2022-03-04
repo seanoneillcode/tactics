@@ -118,7 +118,7 @@ func (p *Player) EnterLevel(level *Level) {
 	}
 }
 
-func (p *Player) SetPosition(pos *common.VectorF) {
+func (p *Player) SetPosition(pos *common.Vector) {
 	p.Character.SetPosition(pos)
 }
 

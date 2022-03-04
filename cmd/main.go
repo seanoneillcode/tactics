@@ -10,6 +10,35 @@ import (
 	"time"
 )
 
+func main() {
+	g := &Game{
+		lastUpdateCalled: time.Now(),
+		state: &core.State{
+			Player:    core.NewPlayer(),
+			Map:       core.NewMap(),
+			Shop:      core.NewShop(),
+			Inventory: core.NewInventory(),
+		},
+		dialogBox:   gui.NewDialogueBox(),
+		shopUi:      gui.NewShopUi(),
+		camera:      core.NewCamera(),
+		inventoryUi: gui.NewInventoryUi(),
+	}
+	g.state.Map.LoadLevel("siopa")
+	g.state.Player.EnterLevel(g.state.Map.Level)
+
+	ebiten.SetWindowSize(common.ScreenWidth*common.Scale, common.ScreenHeight*common.Scale)
+	ebiten.SetWindowTitle("Fantasy Game")
+	err := ebiten.RunGame(g)
+	if err != nil {
+		if errors.Is(err, NormalEscapeError) {
+			log.Println("exiting normally")
+		} else {
+			log.Fatal(err)
+		}
+	}
+}
+
 var NormalEscapeError = errors.New("normal escape termination")
 
 type Game struct {
@@ -62,33 +91,4 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 	return common.ScreenWidth * common.Scale, common.ScreenHeight * common.Scale
-}
-
-func main() {
-	g := &Game{
-		lastUpdateCalled: time.Now(),
-		state: &core.State{
-			Player:    core.NewPlayer(),
-			Map:       core.NewMap(),
-			Shop:      core.NewShop(),
-			Inventory: core.NewInventory(),
-		},
-		dialogBox:   gui.NewDialogueBox(),
-		shopUi:      gui.NewShopUi(),
-		camera:      core.NewCamera(),
-		inventoryUi: gui.NewInventoryUi(),
-	}
-	g.state.Map.LoadLevel("siopa")
-	g.state.Player.EnterLevel(g.state.Map.Level)
-
-	ebiten.SetWindowSize(common.ScreenWidth*common.Scale, common.ScreenHeight*common.Scale)
-	ebiten.SetWindowTitle("Fantasy Game")
-	err := ebiten.RunGame(g)
-	if err != nil {
-		if errors.Is(err, NormalEscapeError) {
-			log.Println("exiting normally")
-		} else {
-			log.Fatal(err)
-		}
-	}
 }

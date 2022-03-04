@@ -6,7 +6,7 @@ import (
 )
 
 type Camera struct {
-	pos          *common.VectorF
+	pos          *common.Vector
 	buffer       *ebiten.Image
 	followPlayer bool
 	fadeTimer    int64
@@ -15,7 +15,7 @@ type Camera struct {
 
 func NewCamera() *Camera {
 	return &Camera{
-		pos:          &common.VectorF{},
+		pos:          &common.Vector{},
 		followPlayer: true,
 		buffer:       ebiten.NewImage(common.ScreenWidth*common.Scale, common.ScreenHeight*common.Scale),
 	}

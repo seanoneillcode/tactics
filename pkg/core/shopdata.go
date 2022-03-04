@@ -5,14 +5,14 @@ import "github.com/seanoneillcode/go-tactics/pkg/common"
 type ShopData struct {
 	Name         string
 	MerchantName string
-	pos          *common.VectorF
+	pos          *common.Vector
 	Items        []*ShopItem
 }
 
 func NewShopData(name string, x float64, y float64) *ShopData {
 	return &ShopData{
 		Name: name,
-		pos: &common.VectorF{
+		pos: &common.Vector{
 			X: x,
 			Y: y,
 		},
@@ -20,7 +20,7 @@ func NewShopData(name string, x float64, y float64) *ShopData {
 	}
 }
 
-func (s *ShopData) GetPosition() *common.VectorF {
+func (s *ShopData) GetPosition() *common.Vector {
 	return s.pos
 }
 
