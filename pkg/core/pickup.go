@@ -30,8 +30,8 @@ func (n *Pickup) SetPosition(x int, y int) {
 	}
 }
 
-func (n *Pickup) GetPosition() *common.Vector {
-	return &common.Vector{
+func (n *Pickup) GetPosition() *common.Position {
+	return &common.Position{
 		X: n.sprite.x,
 		Y: n.sprite.y,
 	}

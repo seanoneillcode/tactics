@@ -26,10 +26,10 @@ func (n *Npc) Update(delta int64, state *State) {
 }
 
 func (n *Npc) SetPosition(x int, y int) {
-	n.character.pos = common.VectorFromInt(x, y)
+	n.character.pos = common.PositionFromInt(x, y)
 }
 
-func (n *Npc) GetPosition() *common.Vector {
+func (n *Npc) GetPosition() *common.Position {
 	return n.character.pos
 }
 

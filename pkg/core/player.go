@@ -113,12 +113,12 @@ func (p *Player) Activate() {
 
 func (p *Player) EnterLevel(level *Level) {
 	for _, link := range level.links {
-		p.Character.pos = common.VectorFromInt(link.x, link.y)
+		p.Character.pos = common.PositionFromInt(link.x, link.y)
 		return
 	}
 }
 
-func (p *Player) SetPosition(pos *common.Vector) {
+func (p *Player) SetPosition(pos *common.Position) {
 	p.Character.SetPosition(pos)
 }
 

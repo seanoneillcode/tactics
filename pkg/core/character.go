@@ -12,12 +12,12 @@ const (
 
 type Character struct {
 	sprite *Sprite
-	pos    *common.Vector
+	pos    *common.Position
 	// movement
 	isMoving  bool
-	velocity  *common.Vector
+	velocity  *common.Position
 	moveTime  int64
-	goalPos   *common.Vector
+	goalPos   *common.Position
 	lastInput string
 	Direction *common.Direction
 	// animation
@@ -82,7 +82,7 @@ func (c *Character) Update(delta int64) {
 		if c.moveTime < 0 {
 			c.pos = c.goalPos
 			c.isMoving = false
-			c.velocity = &common.Vector{}
+			c.velocity = &common.Position{}
 		}
 		c.pos = c.pos.Add(c.velocity.Mul(float64(delta)))
 
@@ -117,11 +117,11 @@ func (c *Character) TryToMove(dirX int, dirY int, state *State) {
 	c.isAFrame = !c.isAFrame
 	c.isMoving = true
 	c.moveTime = characterMoveTime
-	c.goalPos = c.pos.Add(common.VectorFromInt(dirX, dirY).Mul(common.TileSizeF))
-	c.velocity = common.VectorFromInt(dirX, dirY).Mul(characterMoveAmount)
+	c.goalPos = c.pos.Add(common.PositionFromDirection(c.Direction).Mul(common.TileSizeF))
+	c.velocity = common.PositionFromDirection(c.Direction).Mul(characterMoveAmount)
 }
 
-func (c *Character) SetPosition(pos *common.Vector) {
+func (c *Character) SetPosition(pos *common.Position) {
 	offset := c.goalPos.Sub(c.pos)
 	c.goalPos = offset.Add(pos)
 	c.pos = pos

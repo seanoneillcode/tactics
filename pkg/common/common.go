@@ -12,7 +12,7 @@ const (
 	HalfTileSize     = TileSize / 2
 )
 
-func WorldToTile(pos *Vector) (int, int) {
+func WorldToTile(pos *Position) (int, int) {
 	return int(pos.X / TileSize), int(pos.Y / TileSize)
 }
 

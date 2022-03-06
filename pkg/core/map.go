@@ -60,7 +60,7 @@ func (m *Map) transitionToLevel(state *State) {
 	}
 	wx, wy := common.WorldToTile(state.Player.Character.pos)
 	// offset of position between tile position while Character is moving
-	offset := state.Player.Character.pos.Sub(common.VectorFromInt(wx*common.TileSize, wy*common.TileSize))
+	offset := state.Player.Character.pos.Sub(common.PositionFromInt(wx*common.TileSize, wy*common.TileSize))
 	if state.Player.Character.velocity.X < 0 {
 		// magic
 		offset.X = offset.X - common.TileSize
@@ -70,6 +70,6 @@ func (m *Map) transitionToLevel(state *State) {
 		offset.Y = offset.Y - common.TileSize
 	}
 
-	state.Player.SetPosition(offset.Add(common.VectorFromInt(toLink.x, toLink.y)))
+	state.Player.SetPosition(offset.Add(common.PositionFromInt(toLink.x, toLink.y)))
 	m.link = nil
 }

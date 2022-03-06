@@ -5,34 +5,41 @@ type Direction struct {
 	Y int
 }
 
-type Vector struct {
+type Position struct {
 	X float64
 	Y float64
 }
 
-func VectorFromInt(x int, y int) *Vector {
-	return &Vector{
+func PositionFromInt(x int, y int) *Position {
+	return &Position{
 		X: float64(x),
 		Y: float64(y),
 	}
 }
 
-func (v *Vector) Mul(val float64) *Vector {
-	return &Vector{
+func PositionFromDirection(direction *Direction) *Position {
+	return &Position{
+		X: float64(direction.X),
+		Y: float64(direction.Y),
+	}
+}
+
+func (v *Position) Mul(val float64) *Position {
+	return &Position{
 		X: v.X * val,
 		Y: v.Y * val,
 	}
 }
 
-func (v *Vector) Add(other *Vector) *Vector {
-	return &Vector{
+func (v *Position) Add(other *Position) *Position {
+	return &Position{
 		X: v.X + other.X,
 		Y: v.Y + other.Y,
 	}
 }
 
-func (v *Vector) Sub(other *Vector) *Vector {
-	return &Vector{
+func (v *Position) Sub(other *Position) *Position {
+	return &Position{
 		X: v.X - other.X,
 		Y: v.Y - other.Y,
 	}

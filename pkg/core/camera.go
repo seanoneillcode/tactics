@@ -6,7 +6,7 @@ import (
 )
 
 type Camera struct {
-	pos          *common.Vector
+	pos          *common.Position
 	buffer       *ebiten.Image
 	followPlayer bool
 	fadeTimer    int64
@@ -15,7 +15,7 @@ type Camera struct {
 
 func NewCamera() *Camera {
 	return &Camera{
-		pos:          &common.Vector{},
+		pos:          &common.Position{},
 		followPlayer: true,
 		buffer:       ebiten.NewImage(common.ScreenWidth*common.Scale, common.ScreenHeight*common.Scale),
 	}
@@ -24,8 +24,8 @@ func NewCamera() *Camera {
 func (c *Camera) Update(delta int64, state *State) {
 	c.buffer.Clear()
 	if c.followPlayer {
-		screenOffset := common.VectorFromInt(common.HalfScreenWidth, common.HalfScreenHeight)
-		tileOffset := common.VectorFromInt(common.HalfTileSize, common.HalfTileSize)
+		screenOffset := common.PositionFromInt(common.HalfScreenWidth, common.HalfScreenHeight)
+		tileOffset := common.PositionFromInt(common.HalfTileSize, common.HalfTileSize)
 		c.pos = (state.Player.Character.pos.Sub(screenOffset).Add(tileOffset)).Mul(common.ScaleF)
 	}
 	if c.isFading {
