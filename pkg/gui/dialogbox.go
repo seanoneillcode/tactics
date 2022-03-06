@@ -45,7 +45,7 @@ func (b *DialogueBox) Update(delta int64, state *core.State) {
 		line := ad.GetCurrentLine()
 		if line.Text != b.currentText {
 			b.currentText = line.Text
-			if b.currentName != line.Name {
+			if b.currentName != line.Name || line.Name == "" {
 				b.width, b.height = GetMaxWidthHeight(ad.GetNextLinesForName())
 				if b.currentName != "" {
 					b.currentDirection = invertDirection(b.currentDirection)

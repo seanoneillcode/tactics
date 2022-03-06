@@ -1,6 +1,7 @@
 package core
 
 import (
+	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/seanoneillcode/go-tactics/pkg/common"
@@ -85,6 +86,7 @@ func (p *Player) Update(delta int64, state *State) {
 			if ti.pickup != nil && !ti.pickup.isUsed {
 				ti.pickup.isUsed = true
 				p.TeamState.Pickup(ti.pickup)
+				state.ActiveDialog = getPickupDialog(ti.pickup.itemName)
 			}
 			if ti.action != nil {
 				if ti.action.name == "bed" {
@@ -124,4 +126,16 @@ func (p *Player) SetPosition(pos *common.Position) {
 
 func (p *Player) SetSleep(b bool) {
 	p.isSleeping = b
+}
+
+func getPickupDialog(name string) *Dialog {
+	d := &Dialog{
+		lines: []*Line{
+			{
+				Text: fmt.Sprintf("picked up a '%v'", name),
+			},
+		},
+	}
+	d.Reset()
+	return d
 }

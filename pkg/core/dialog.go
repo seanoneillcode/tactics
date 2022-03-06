@@ -27,6 +27,9 @@ type Line struct {
 }
 
 func (l *Line) FullText() string {
+	if l.Name == "" {
+		return l.Text
+	}
 	return l.Name + "\n" + l.Text
 }
 
