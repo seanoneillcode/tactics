@@ -1,16 +1,27 @@
 package core
 
+import (
+	"log"
+	"sort"
+)
+
 type TeamState struct {
 	Characters []*CharacterState
 	Money      int
-	Items      []*Item
+	Items      map[string]*TeamItem
+	NumItems   int
+}
+
+type TeamItem struct {
+	Item   *Item
+	Amount int
 }
 
 func NewTeamState() *TeamState {
 	return &TeamState{
 		Characters: []*CharacterState{},
 		Money:      200,
-		Items:      []*Item{},
+		Items:      map[string]*TeamItem{},
 	}
 }
 
@@ -21,46 +32,88 @@ func (t *TeamState) RestoreHealth() {
 }
 
 func (t *TeamState) BuyItem(item *Item, cost int) {
-	t.Items = append(t.Items, item)
+	ti, has := t.Items[item.Name]
+	if !has {
+		t.Items[item.Name] = &TeamItem{
+			Item:   item,
+			Amount: 1,
+		}
+	} else {
+		ti.Amount = ti.Amount + 1
+	}
 	t.Money = t.Money - cost
+	t.recountNumItems()
 }
 
 func (t *TeamState) Pickup(pickup *Pickup) {
-	t.Items = append(t.Items, NewItem(pickup.itemName))
-}
-
-func (t *TeamState) RemoveItem(index int) {
-	var j int
-	for i, n := range t.Items {
-		if i != index {
-			t.Items[j] = n
-			j++
+	ni := NewItem(pickup.itemName)
+	ti, has := t.Items[ni.Name]
+	if !has {
+		t.Items[ni.Name] = &TeamItem{
+			Item:   ni,
+			Amount: 1,
 		}
+	} else {
+		ti.Amount = ti.Amount + 1
 	}
-	t.Items = t.Items[:j]
+	t.recountNumItems()
 }
 
-func (t *TeamState) ConsumeItem(index int) {
+func (t *TeamState) RemoveItem(name string) {
+	ti, has := t.Items[name]
+	if !has {
+		log.Fatal("tried to remove an item that doesn't exist in the inventory " + name)
+	}
+	ti.Amount = ti.Amount - 1
+	if ti.Amount == 0 {
+		delete(t.Items, name)
+	}
+	t.recountNumItems()
+}
+
+func (t *TeamState) ConsumeItem(name string) {
 	// todo select character
 	selectedCharacter := t.Characters[0]
 
-	item := t.Items[index]
-	for _, e := range item.Effects {
+	ti := t.Items[name]
+	for _, e := range ti.Item.Effects {
 		e.Apply(selectedCharacter)
 	}
-	t.RemoveItem(index)
+	t.RemoveItem(name)
+	t.recountNumItems()
 }
 
-func (t *TeamState) EquipItem(index int) {
+func (t *TeamState) EquipItem(name string) {
 	// todo select character
 	selectedCharacter := t.Characters[0]
 
-	item := t.Items[index]
-	existingItem, ok := selectedCharacter.EquippedItems[item.EquipSlot]
-	if ok {
-		// slot already has item, remove it and put it back into the inventory
-		t.Items = append(t.Items, existingItem)
+	ti := t.Items[name]
+	selectedCharacter.EquippedItems[ti.Item.EquipSlot] = ti.Item
+	t.recountNumItems()
+}
+
+func (t *TeamState) GetItemList() []string {
+	var list []string
+	for k := range t.Items {
+		list = append(list, k)
 	}
-	selectedCharacter.EquippedItems[item.EquipSlot] = item
-	t.RemoveItem(index)
+	sort.Strings(list)
+	return list
+}
+
+func (t *TeamState) GetItem(name string) *Item {
+	ti, has := t.Items[name]
+	if !has {
+		log.Fatal("tried to get a non existent item")
+		return nil
+	}
+	return ti.Item
+}
+
+func (t *TeamState) recountNumItems() {
+	count := 0
+	for _, ti := range t.Items {
+		count += ti.Amount
+	}
+	t.NumItems = count
 }

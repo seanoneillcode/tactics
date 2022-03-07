@@ -13,6 +13,7 @@ type Inventory struct {
 	justOpened          bool
 	ActiveElement       string // list, action
 	SelectedListIndex   int
+	ItemList            []string
 	SelectedActionIndex int
 }
 
@@ -20,6 +21,7 @@ func NewInventory() *Inventory {
 	return &Inventory{
 		ActiveElement:     "list",
 		SelectedListIndex: 0,
+		ItemList:          []string{},
 	}
 }
 
@@ -27,6 +29,7 @@ func (i *Inventory) Open(state *TeamState) {
 	log.Println("opening inventory")
 	i.IsActive = true
 	i.TeamState = state
+	i.ItemList = i.TeamState.GetItemList()
 }
 
 func (i *Inventory) Update(delta int64, state *State) {
@@ -61,29 +64,30 @@ func (i *Inventory) Update(delta int64, state *State) {
 				i.ActiveElement = "action"
 			}
 		case "action":
+			item := i.TeamState.GetItem(i.ItemList[i.SelectedListIndex])
 			if i.SelectedActionIndex == 0 {
 				// use
-				item := i.TeamState.Items[i.SelectedListIndex]
 				log.Printf("selecting use, item: %v", item.Description)
 				if item.CanConsume {
 					// select character
-					state.Player.TeamState.ConsumeItem(i.SelectedListIndex)
+					state.Player.TeamState.ConsumeItem(item.Name)
 				} else {
 					if item.CanEquip {
 						// select character
-						state.Player.TeamState.EquipItem(i.SelectedListIndex)
+						state.Player.TeamState.EquipItem(item.Name)
 					}
 					// ??
 				}
 			} else {
 				log.Println("selecting drop")
 				// drop
-				state.Player.TeamState.RemoveItem(i.SelectedListIndex)
+				state.Player.TeamState.RemoveItem(item.Name)
 			}
 			i.ActiveElement = "list"
 			if i.SelectedListIndex == len(i.TeamState.Items) {
 				i.SelectedListIndex = i.SelectedListIndex - 1
 			}
+			i.ItemList = i.TeamState.GetItemList()
 		}
 		return
 	}

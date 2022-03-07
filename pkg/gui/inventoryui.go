@@ -1,7 +1,9 @@
 package gui
 
 import (
+	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/text"
 	"github.com/seanoneillcode/go-tactics/pkg/common"
 	"github.com/seanoneillcode/go-tactics/pkg/core"
 )
@@ -110,9 +112,9 @@ func (i *InventoryUi) Update(delta int64, state *core.State) {
 		return
 	}
 	i.inventory = state.Inventory
-	if i.oldNumItems != len(i.inventory.TeamState.Items) {
+	if i.oldNumItems != i.inventory.TeamState.NumItems {
 		i.isDirty = true
-		i.oldNumItems = len(i.inventory.TeamState.Items)
+		i.oldNumItems = i.inventory.TeamState.NumItems
 	}
 	if i.inventory.IsActive && i.isDirty {
 		i.isDirty = false
@@ -121,7 +123,7 @@ func (i *InventoryUi) Update(delta int64, state *core.State) {
 	}
 
 	if i.inventory.HasItems() {
-		i.currentItem = i.inventory.TeamState.Items[i.inventory.SelectedListIndex]
+		i.currentItem = i.inventory.TeamState.GetItem(i.inventory.ItemList[i.inventory.SelectedListIndex])
 	} else {
 		i.currentItem = nil
 	}
@@ -142,22 +144,24 @@ func (i *InventoryUi) createItemList(x int, y int) []*invListItem {
 	y = y + offsetY
 	var invItems []*invListItem
 	var offset = 0
-	for _, item := range i.inventory.TeamState.Items {
-		//costWidth := text.BoundString(standardFont, quantity).Size().X / common.ScaleF
+	for _, name := range i.inventory.ItemList {
+		teamItem := i.inventory.TeamState.Items[name]
+		quantity := fmt.Sprintf("%v", teamItem.Amount)
+		costWidth := text.BoundString(standardFont, quantity).Size().X / common.ScaleF
 		invItems = append(invItems, &invListItem{
-			itemRef: item,
+			itemRef: teamItem.Item,
 			name: &Text{
-				value: item.Name,
+				value: teamItem.Item.Name,
 				x:     x,
 				y:     y + offset,
 				color: defaultTextColor,
 			},
-			//quantity: &Text{
-			//	value: quantity,
-			//	x:     x + 96 + 32 + offsetX + offsetX - costWidth,
-			//	y:     y + offset,
-			//	color: defaultTextColor,
-			//},
+			quantity: &Text{
+				value: quantity,
+				x:     x + 96 + 32 + offsetX + offsetX - costWidth,
+				y:     y + offset,
+				color: defaultTextColor,
+			},
 		})
 		offset = offset + 16
 
@@ -166,12 +170,12 @@ func (i *InventoryUi) createItemList(x int, y int) []*invListItem {
 }
 
 type invListItem struct {
-	itemRef *core.Item
-	name    *Text
-	//quantity *Text
+	itemRef  *core.Item
+	name     *Text
+	quantity *Text
 }
 
 func (l *invListItem) Draw(screen *ebiten.Image) {
 	l.name.Draw(screen)
-	//l.quantity.Draw(screen)
+	l.quantity.Draw(screen)
 }
