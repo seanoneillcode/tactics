@@ -136,6 +136,5 @@ func getPickupDialog(name string) *Dialog {
 			},
 		},
 	}
-	d.Reset()
 	return d
 }

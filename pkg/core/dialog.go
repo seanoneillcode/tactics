@@ -19,6 +19,9 @@ type Dialog struct {
 	currentName      string
 	order            int
 	names            []string
+
+	// ugh
+	initialized bool
 }
 
 type Line struct {
@@ -109,6 +112,10 @@ func (d *Dialog) GetCurrentLine() *Line {
 }
 
 func (d *Dialog) Update(delta int64, state *State) {
+	if !d.initialized {
+		d.initialized = true
+		d.Reset()
+	}
 	if inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
 		if d.IsBuffering() {
 			d.SkipBuffer()

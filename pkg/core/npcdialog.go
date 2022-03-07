@@ -18,6 +18,5 @@ func GetNpcDialog(name string) *NpcDialog {
 		log.Fatalf("missing dialog for npc: %s", name)
 	}
 	nd.currentDialog = nd.dialogs[nd.currentDialogName] // todo move this
-	nd.currentDialog.Reset()
 	return nd
 }
