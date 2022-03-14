@@ -1,6 +1,6 @@
 package gui
 
-type Point struct {
+type Pos struct {
 	X int
 	Y int
 }

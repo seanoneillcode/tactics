@@ -59,8 +59,9 @@ type Text struct {
 	color color.RGBA
 }
 
-func NewText(x int, y int) *Text {
+func NewText(x int, y int, value string) *Text {
 	return &Text{
+		value: value,
 		x:     x,
 		y:     y,
 		color: defaultTextColor,
@@ -73,6 +74,11 @@ func (t *Text) SetValue(value string) {
 
 func (t *Text) SetColor(color color.RGBA) {
 	t.color = color
+}
+
+func (t *Text) SetPosition(pos Pos) {
+	t.x = pos.X
+	t.y = pos.Y
 }
 
 var defaultTextColor = color.RGBA{

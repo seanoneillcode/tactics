@@ -39,21 +39,17 @@ const informationY = 80
 
 func NewShopUi() *ShopUi {
 	s := &ShopUi{
-		bgImage:               core.LoadImage("shop-bg.png"),
-		shopCursorImage:       core.LoadImage("shop-cursor.png"),
-		shopConfirmationImage: core.LoadImage("shop-confirmation-bg.png"),
-		shopInformationImage:  core.LoadImage("shop-information-bg.png"),
-		playerName:            NewText(240+offsetX, 16+offsetY),
-		moneyLabel:            NewText(240+offsetX, 32+offsetY),
-		playerMoney:           NewText(240+64+offsetX, 32+offsetY),
-		//shopName:               NewText(240+offsetX, 16+offsetY),
-		shopName:               NewText(48+offsetX, 32+offsetY),
-		informationDescription: NewText(informationX+2+offsetX, informationY+offsetY),
-		confirmationBuy:        NewText(confirmationX+2+offsetX, confirmationY+offsetY),
+		bgImage:                core.LoadImage("shop-bg.png"),
+		shopCursorImage:        core.LoadImage("shop-cursor.png"),
+		shopConfirmationImage:  core.LoadImage("shop-confirmation-bg.png"),
+		shopInformationImage:   core.LoadImage("shop-information-bg.png"),
+		playerName:             NewText(240+offsetX, 16+offsetY, "Player"),
+		moneyLabel:             NewText(240+offsetX, 32+offsetY, "Money"),
+		confirmationBuy:        NewText(confirmationX+2+offsetX, confirmationY+offsetY, "Buy"),
+		playerMoney:            NewText(240+64+offsetX, 32+offsetY, ""),
+		shopName:               NewText(48+offsetX, 32+offsetY, ""),
+		informationDescription: NewText(informationX+2+offsetX, informationY+offsetY, ""),
 	}
-	s.playerName.SetValue("Player")
-	s.moneyLabel.SetValue("Money")
-	s.confirmationBuy.SetValue("Buy")
 	return s
 }
 

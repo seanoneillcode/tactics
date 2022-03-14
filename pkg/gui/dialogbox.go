@@ -81,8 +81,8 @@ func invertDirection(direction *common.Direction) *common.Direction {
 	return newDir
 }
 
-func (b *DialogueBox) getOffset() *Point {
-	offset := &Point{
+func (b *DialogueBox) getOffset() *Pos {
+	offset := &Pos{
 		X: 8,
 		Y: 80 - b.height,
 	}

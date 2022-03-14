@@ -36,7 +36,7 @@ func NewTextBox(x int, y int, width int, height int) *TextBox {
 	partial4 := borderImage4.SubImage(image.Rect(0, 0, width, height+marginY))
 
 	return &TextBox{
-		text:     NewText(x+marginX, y+marginY),
+		text:     NewText(x+marginX, y+marginY, ""),
 		x:        x,
 		y:        y,
 		width:    width,
