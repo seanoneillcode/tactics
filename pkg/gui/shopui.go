@@ -2,28 +2,27 @@ package gui
 
 import (
 	"fmt"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text"
 	"github.com/seanoneillcode/go-tactics/pkg/common"
 	"github.com/seanoneillcode/go-tactics/pkg/core"
+	"github.com/seanoneillcode/go-tactics/pkg/gui/elem"
 )
 
 type ShopUi struct {
 	shop                   *core.Shop
-	bgImage                *ebiten.Image
-	shopCursorImage        *ebiten.Image
-	shopConfirmationImage  *ebiten.Image
+	bg                     *elem.StaticImage
+	cursor                 *elem.Cursor
+	confirmation           *elem.Button
 	shopInformationImage   *ebiten.Image
-	playerName             *Text
-	playerMoney            *Text
-	shopName               *Text
-	moneyLabel             *Text
-	confirmationBuy        *Text
-	informationDescription *Text
+	playerName             *elem.Text
+	playerMoney            *elem.Text
+	shopName               *elem.Text
+	moneyLabel             *elem.Text
+	informationDescription *elem.Text
 	isLoaded               bool
 	shopItems              []*listItem
-	cursorOffset           float64
-	cursorTimer            int64
 	oldPlayerMoney         int
 }
 
@@ -32,6 +31,7 @@ const offsetY = 4
 
 const listX = 48
 const listY = 64
+
 const confirmationX = 208
 const confirmationY = 64
 const informationX = 208
@@ -39,16 +39,15 @@ const informationY = 80
 
 func NewShopUi() *ShopUi {
 	s := &ShopUi{
-		bgImage:                core.LoadImage("shop-bg.png"),
-		shopCursorImage:        core.LoadImage("shop-cursor.png"),
-		shopConfirmationImage:  core.LoadImage("shop-confirmation-bg.png"),
-		shopInformationImage:   core.LoadImage("shop-information-bg.png"),
-		playerName:             NewText(240+offsetX, 16+offsetY, "Player"),
-		moneyLabel:             NewText(240+offsetX, 32+offsetY, "Money"),
-		confirmationBuy:        NewText(confirmationX+2+offsetX, confirmationY+offsetY, "Buy"),
-		playerMoney:            NewText(240+64+offsetX, 32+offsetY, ""),
-		shopName:               NewText(48+offsetX, 32+offsetY, ""),
-		informationDescription: NewText(informationX+2+offsetX, informationY+offsetY, ""),
+		bg:                     elem.NewStaticImage("shop-bg.png", 0, 0),
+		cursor:                 elem.NewCursor(),
+		confirmation:           elem.NewButton("Buy", "shop-confirmation-bg.png"),
+		shopInformationImage:   common.LoadImage("shop-information-bg.png"),
+		playerName:             elem.NewText(240+offsetX, 16+offsetY, "Player"),
+		moneyLabel:             elem.NewText(240+offsetX, 32+offsetY, "Money"),
+		playerMoney:            elem.NewText(240+64+offsetX, 32+offsetY, ""),
+		shopName:               elem.NewText(48+offsetX, 32+offsetY, ""),
+		informationDescription: elem.NewText(informationX+2+offsetX, informationY+offsetY, ""),
 	}
 	return s
 }
@@ -58,12 +57,7 @@ func (s *ShopUi) Draw(screen *ebiten.Image) {
 		return
 	}
 
-	// background
-	op := &ebiten.DrawImageOptions{}
-	op.GeoM.Scale(common.Scale, common.Scale)
-	screen.DrawImage(s.bgImage, op)
-
-	// set elements
+	s.bg.Draw(screen)
 	s.playerName.Draw(screen)
 	s.playerMoney.Draw(screen)
 	s.shopName.Draw(screen)
@@ -73,70 +67,14 @@ func (s *ShopUi) Draw(screen *ebiten.Image) {
 		item.Draw(screen)
 	}
 
-	op = &ebiten.DrawImageOptions{}
+	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Translate(informationX, informationY)
 	op.GeoM.Scale(common.Scale, common.Scale)
 	screen.DrawImage(s.shopInformationImage, op)
 
 	s.informationDescription.Draw(screen)
-	s.confirmationBuy.Draw(screen)
-
-	switch s.shop.ActiveElement {
-	case "list":
-		op = &ebiten.DrawImageOptions{}
-		op.GeoM.Translate(listX-14+s.cursorOffset, listY+(float64)(16.0*s.shop.SelectedListIndex))
-		op.GeoM.Scale(common.Scale, common.Scale)
-		screen.DrawImage(s.shopCursorImage, op)
-		s.confirmationBuy.SetColor(greyTextColor)
-
-	case "confirmation":
-		cy := float64(confirmationY) //+ (float64)(16.0*s.shop.SelectedListIndex)
-
-		op = &ebiten.DrawImageOptions{}
-		op.GeoM.Translate(confirmationX, cy)
-		op.GeoM.Scale(common.Scale, common.Scale)
-		screen.DrawImage(s.shopConfirmationImage, op)
-
-		s.confirmationBuy.SetColor(defaultTextColor)
-		s.confirmationBuy.Draw(screen)
-
-		cx := float64(confirmationX - 12)
-		op = &ebiten.DrawImageOptions{}
-		op.GeoM.Translate(cx+s.cursorOffset, cy+2)
-		op.GeoM.Scale(common.Scale, common.Scale)
-		screen.DrawImage(s.shopCursorImage, op)
-	}
-
-}
-
-func createListItems(items []*core.ShopItem, x int, y int, playerMoney int) []*listItem {
-	var listItems []*listItem
-	var offset = 0
-	for _, item := range items {
-		cost := fmt.Sprintf("%dg", item.Cost)
-		costWidth := text.BoundString(standardFont, cost).Size().X / common.ScaleF
-		color := defaultTextColor
-		if item.Cost > playerMoney {
-			color = greyTextColor
-		}
-		listItems = append(listItems, &listItem{
-			item: item,
-			name: &Text{
-				value: item.Item.Name,
-				x:     x,
-				y:     y + offset,
-				color: color,
-			},
-			cost: &Text{
-				value: cost,
-				x:     x + 96 + 32 + offsetX + offsetX - costWidth,
-				y:     y + offset,
-				color: color,
-			},
-		})
-		offset = offset + 16
-	}
-	return listItems
+	s.confirmation.Draw(screen)
+	s.cursor.Draw(screen)
 }
 
 func (s *ShopUi) Update(delta int64, state *core.State) {
@@ -158,32 +96,61 @@ func (s *ShopUi) Update(delta int64, state *core.State) {
 			s.shopItems = createListItems(s.shop.Data.Items, listX+offsetX, listY+offsetY, state.Player.TeamState.Money)
 		}
 	}
-	s.cursorTimer = s.cursorTimer + delta
-	if s.cursorTimer > 400 {
-		s.cursorTimer = s.cursorTimer - 400
-		if s.cursorOffset == 0 {
-			s.cursorOffset = 2
-		} else {
-			s.cursorOffset = 0
+	var cursorPos *elem.Pos
+	switch s.shop.ActiveElement {
+	case "list":
+		cursorPos = &elem.Pos{
+			X: listX - 14,
+			Y: listY + (16.0 * s.shop.SelectedListIndex),
+		}
+	case "confirmation":
+		cursorPos = &elem.Pos{
+			X: confirmationX - 12,
+			Y: confirmationY + 2,
 		}
 	}
+	s.cursor.Update(delta, cursorPos)
+	s.confirmation.Update(delta, &elem.Pos{X: confirmationX, Y: confirmationY}, s.shop.ActiveElement == "confirmation")
 }
 
 func (s *ShopUi) updatePlayerMoney(money int) {
 	playerMoneyString := fmt.Sprintf("%dg", money)
-	playerMoneyWidth := text.BoundString(standardFont, playerMoneyString).Size().X / common.ScaleF
+	playerMoneyWidth := text.BoundString(elem.StandardFont, playerMoneyString).Size().X / common.ScaleF
 	s.playerMoney.SetValue(playerMoneyString)
-	s.playerMoney.x = 240 + 64 + offsetX + 8 + 32 - playerMoneyWidth
+	pos := elem.Pos{X: 240 + 64 + offsetX + 8 + 32 - playerMoneyWidth, Y: 32 + offsetY}
+	s.playerMoney.SetPosition(pos)
 	s.oldPlayerMoney = money
 }
 
 type listItem struct {
 	item *core.ShopItem
-	name *Text
-	cost *Text
+	name *elem.Text
+	cost *elem.Text
 }
 
 func (l *listItem) Draw(screen *ebiten.Image) {
 	l.name.Draw(screen)
 	l.cost.Draw(screen)
+}
+
+func createListItems(items []*core.ShopItem, x int, y int, playerMoney int) []*listItem {
+	var listItems []*listItem
+	var offset = 0
+	for _, item := range items {
+		cost := fmt.Sprintf("%dg", item.Cost)
+		costWidth := text.BoundString(elem.StandardFont, cost).Size().X / common.ScaleF
+
+		li := &listItem{
+			item: item,
+			name: elem.NewText(x, y+offset, item.Item.Name),
+			cost: elem.NewText(x+96+32+offsetX+offsetX-costWidth, y+offset, cost),
+		}
+		if item.Cost > playerMoney {
+			li.name.SetColor(elem.GreyTextColor)
+			li.cost.SetColor(elem.GreyTextColor)
+		}
+		listItems = append(listItems, li)
+		offset = offset + 16
+	}
+	return listItems
 }

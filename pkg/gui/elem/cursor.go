@@ -1,9 +1,8 @@
-package gui
+package elem
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/seanoneillcode/go-tactics/pkg/common"
-	"github.com/seanoneillcode/go-tactics/pkg/core"
 )
 
 type Cursor struct {
@@ -16,7 +15,7 @@ type Cursor struct {
 
 func NewCursor() *Cursor {
 	return &Cursor{
-		image: core.LoadImage("shop-cursor.png"),
+		image: common.LoadImage("shop-cursor.png"),
 		pos:   Pos{},
 	}
 }

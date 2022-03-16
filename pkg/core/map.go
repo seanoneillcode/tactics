@@ -1,8 +1,9 @@
 package core
 
 import (
-	"github.com/seanoneillcode/go-tactics/pkg/common"
 	"log"
+
+	"github.com/seanoneillcode/go-tactics/pkg/common"
 )
 
 type Map struct {

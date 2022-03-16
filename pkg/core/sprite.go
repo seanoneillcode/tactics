@@ -1,12 +1,10 @@
 package core
 
 import (
-	"bytes"
+	"image"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/seanoneillcode/go-tactics/pkg/common"
-	"image"
-	"io/ioutil"
-	"log"
 )
 
 type Sprite struct {
@@ -19,20 +17,8 @@ type Sprite struct {
 
 func NewSprite(imageFileName string) *Sprite {
 	return &Sprite{
-		image: LoadImage(imageFileName),
+		image: common.LoadImage(imageFileName),
 	}
-}
-
-func LoadImage(imageFileName string) *ebiten.Image {
-	b, err := ioutil.ReadFile("res/" + imageFileName)
-	if err != nil {
-		log.Fatalf("failed to open file: %v", err)
-	}
-	img, _, err := image.Decode(bytes.NewReader(b))
-	if err != nil {
-		log.Fatal(err)
-	}
-	return ebiten.NewImageFromImage(img)
 }
 
 func (s *Sprite) Draw(screen *ebiten.Image) {

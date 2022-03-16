@@ -1,4 +1,4 @@
-package gui
+package elem
 
 import (
 	"image/color"
@@ -12,7 +12,7 @@ import (
 	"golang.org/x/image/font/opentype"
 )
 
-var standardFont font.Face
+var StandardFont font.Face
 
 func init() {
 	// credit to pentacom for the font
@@ -26,7 +26,7 @@ func init() {
 		log.Fatal(err)
 	}
 
-	standardFont, err = opentype.NewFace(tt, &opentype.FaceOptions{
+	StandardFont, err = opentype.NewFace(tt, &opentype.FaceOptions{
 		Size:    64,
 		DPI:     72,
 		Hinting: font.HintingFull,
@@ -40,7 +40,7 @@ func GetMaxWidthHeight(lines []string) (int, int) {
 	maxHeight := 1
 	maxWidth := 1
 	for _, line := range lines {
-		rect := text.BoundString(standardFont, line)
+		rect := text.BoundString(StandardFont, line)
 		height := rect.Max.Y - rect.Min.Y
 		if height > maxHeight {
 			maxHeight = height
@@ -65,7 +65,7 @@ func NewText(x int, y int, value string) *Text {
 		value: value,
 		x:     x,
 		y:     y,
-		color: defaultTextColor,
+		color: DefaultTextColor,
 	}
 }
 
@@ -82,21 +82,25 @@ func (t *Text) SetPosition(pos Pos) {
 	t.y = pos.Y
 }
 
-var defaultTextColor = color.RGBA{
+func (t *Text) GetValue() string {
+	return t.value
+}
+
+var DefaultTextColor = color.RGBA{
 	R: 223,
 	G: 246,
 	B: 245,
 	A: 255,
 }
 
-var greyTextColor = color.RGBA{
+var GreyTextColor = color.RGBA{
 	R: 160,
 	G: 147,
 	B: 142,
 	A: 255,
 }
 
-var activeColor = color.RGBA{
+var ActiveColor = color.RGBA{
 	R: 200,
 	G: 100,
 	B: 150,
@@ -104,5 +108,5 @@ var activeColor = color.RGBA{
 }
 
 func (t *Text) Draw(screen *ebiten.Image) {
-	text.Draw(screen, t.value, standardFont, (t.x)*common.Scale, (t.y+8)*common.Scale, t.color)
+	text.Draw(screen, t.value, StandardFont, (t.x)*common.Scale, (t.y+8)*common.Scale, t.color)
 }

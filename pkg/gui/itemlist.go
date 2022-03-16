@@ -7,17 +7,18 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/text"
 	"github.com/seanoneillcode/go-tactics/pkg/common"
 	"github.com/seanoneillcode/go-tactics/pkg/core"
+	"github.com/seanoneillcode/go-tactics/pkg/gui/elem"
 )
 
 type InvItemList struct {
-	pos              *Pos
+	pos              *elem.Pos
 	itemList         []*itemEntry
 	currentIteration int
 }
 
 func NewInvItemList() *InvItemList {
 	return &InvItemList{
-		pos: &Pos{32, 32},
+		pos: &elem.Pos{X: 32, Y: 32},
 	}
 }
 
@@ -33,21 +34,11 @@ func (i *InvItemList) createItemList(inventory *core.Inventory) []*itemEntry {
 	for _, name := range itemNames {
 		teamItem := itemMap[name]
 		quantity := fmt.Sprintf("%v", teamItem.Amount)
-		costWidth := text.BoundString(standardFont, quantity).Size().X / common.ScaleF
+		costWidth := text.BoundString(elem.StandardFont, quantity).Size().X / common.ScaleF
 		invItems = append(invItems, &itemEntry{
-			itemRef: teamItem.Item,
-			name: &Text{
-				value: teamItem.Item.Name,
-				x:     x,
-				y:     y + offset,
-				color: defaultTextColor,
-			},
-			quantity: &Text{
-				value: quantity,
-				x:     x + 96 + 32 + offsetX + offsetX - costWidth,
-				y:     y + offset,
-				color: defaultTextColor,
-			},
+			itemRef:  teamItem.Item,
+			name:     elem.NewText(x, y+offset, teamItem.Item.Name),
+			quantity: elem.NewText(x+96+32+offsetX+offsetX-costWidth, y+offset, quantity),
 		})
 		offset = offset + 16
 
@@ -70,8 +61,8 @@ func (i *InvItemList) Update(delta int64, inventory *core.Inventory) {
 
 type itemEntry struct {
 	itemRef  *core.Item
-	name     *Text
-	quantity *Text
+	name     *elem.Text
+	quantity *elem.Text
 }
 
 func (l *itemEntry) Draw(screen *ebiten.Image) {

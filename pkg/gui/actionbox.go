@@ -3,22 +3,23 @@ package gui
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/seanoneillcode/go-tactics/pkg/core"
+	"github.com/seanoneillcode/go-tactics/pkg/gui/elem"
 )
 
 type ActionBox struct {
-	useAction   *button
-	equipAction *button
-	dropAction  *button
-	pos         *Pos
+	useAction   *elem.Button
+	equipAction *elem.Button
+	dropAction  *elem.Button
+	pos         *elem.Pos
 	currentItem *core.Item
 }
 
 func NewActionBox() *ActionBox {
 	return &ActionBox{
-		useAction:   NewButton("use", "button-bg.png", activeColor),
-		equipAction: NewButton("equip", "button-bg.png", activeColor),
-		dropAction:  NewButton("drop", "button-bg.png", activeColor),
-		pos:         &Pos{},
+		useAction:   elem.NewButton("use", "button-bg.png"),
+		equipAction: elem.NewButton("equip", "button-bg.png"),
+		dropAction:  elem.NewButton("drop", "button-bg.png"),
+		pos:         &elem.Pos{},
 	}
 }
 
@@ -33,11 +34,11 @@ func (a *ActionBox) Draw(screen *ebiten.Image) {
 	}
 }
 
-func (a *ActionBox) Update(delta int64, pos *Pos, currentItem *core.Item) {
+func (a *ActionBox) Update(delta int64, pos *elem.Pos, currentItem *core.Item) {
 	a.currentItem = currentItem
 	a.pos.X = pos.X
 	a.pos.Y = pos.Y
-	a.useAction.Update(delta, &Pos{X: pos.X + offsetX, Y: pos.Y + offsetY})
-	a.equipAction.Update(delta, &Pos{X: pos.X + offsetX, Y: pos.Y + offsetY})
-	a.dropAction.Update(delta, &Pos{X: pos.X + offsetX, Y: pos.Y + 16 + offsetY})
+	a.useAction.Update(delta, &elem.Pos{X: pos.X + offsetX, Y: pos.Y + offsetY}, true)
+	a.equipAction.Update(delta, &elem.Pos{X: pos.X + offsetX, Y: pos.Y + offsetY}, true)
+	a.dropAction.Update(delta, &elem.Pos{X: pos.X + offsetX, Y: pos.Y + 16 + offsetY}, true)
 }

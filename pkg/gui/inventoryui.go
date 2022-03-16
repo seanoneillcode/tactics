@@ -3,31 +3,32 @@ package gui
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/seanoneillcode/go-tactics/pkg/core"
+	"github.com/seanoneillcode/go-tactics/pkg/gui/elem"
 )
 
 type InventoryUi struct {
-	cursor           *Cursor
+	cursor           *elem.Cursor
 	actionBox        *ActionBox
-	bg               *bg
+	bg               *elem.StaticImage
 	invItemList      *InvItemList
 	inventory        *core.Inventory
 	currentIteration int
 	currentItem      *core.Item
 	IsActive         bool
-	actionPos        *Pos
-	listPos          *Pos
-	cursorPos        *Pos
+	actionPos        *elem.Pos
+	listPos          *elem.Pos
+	cursorPos        *elem.Pos
 }
 
 func NewInventoryUi() *InventoryUi {
 	i := &InventoryUi{
-		bg:          NewBg("inventory-bg.png"),
+		bg:          elem.NewStaticImage("inventory-bg.png", 0, 0),
 		actionBox:   NewActionBox(),
-		cursor:      NewCursor(),
+		cursor:      elem.NewCursor(),
 		invItemList: NewInvItemList(),
-		actionPos:   &Pos{X: 234, Y: 32},
-		listPos:     &Pos{X: 32, Y: 32},
-		cursorPos:   &Pos{X: 0, Y: 0},
+		actionPos:   &elem.Pos{X: 234, Y: 32},
+		listPos:     &elem.Pos{X: 32, Y: 32},
+		cursorPos:   &elem.Pos{X: 0, Y: 0},
 	}
 	return i
 }

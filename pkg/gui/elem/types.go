@@ -1,4 +1,4 @@
-package gui
+package elem
 
 type Pos struct {
 	X int

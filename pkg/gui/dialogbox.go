@@ -4,6 +4,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/seanoneillcode/go-tactics/pkg/common"
 	"github.com/seanoneillcode/go-tactics/pkg/core"
+	"github.com/seanoneillcode/go-tactics/pkg/gui/elem"
 )
 
 type DialogueBox struct {
@@ -46,7 +47,7 @@ func (b *DialogueBox) Update(delta int64, state *core.State) {
 		if line.Text != b.currentText {
 			b.currentText = line.Text
 			if b.currentName != line.Name || line.Name == "" {
-				b.width, b.height = GetMaxWidthHeight(ad.GetNextLinesForName())
+				b.width, b.height = elem.GetMaxWidthHeight(ad.GetNextLinesForName())
 				if b.currentName != "" {
 					b.currentDirection = invertDirection(b.currentDirection)
 				}
@@ -81,8 +82,8 @@ func invertDirection(direction *common.Direction) *common.Direction {
 	return newDir
 }
 
-func (b *DialogueBox) getOffset() *Pos {
-	offset := &Pos{
+func (b *DialogueBox) getOffset() *elem.Pos {
+	offset := &elem.Pos{
 		X: 8,
 		Y: 80 - b.height,
 	}
