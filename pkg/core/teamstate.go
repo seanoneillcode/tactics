@@ -9,7 +9,7 @@ type TeamState struct {
 	Characters []*CharacterState
 	Money      int
 	Items      map[string]*TeamItem
-	NumItems   int
+	Iteration  int
 }
 
 type TeamItem struct {
@@ -18,11 +18,17 @@ type TeamItem struct {
 }
 
 func NewTeamState() *TeamState {
-	return &TeamState{
+	ts := &TeamState{
 		Characters: []*CharacterState{},
 		Money:      200,
 		Items:      map[string]*TeamItem{},
 	}
+	ts.Pickup(&Pickup{itemName: BreadItemName})
+	ts.Pickup(&Pickup{itemName: BreadItemName})
+	ts.Pickup(&Pickup{itemName: BreadItemName})
+	ts.Pickup(&Pickup{itemName: PotionItemName})
+	ts.Pickup(&Pickup{itemName: PaddedArmorItemName})
+	return ts
 }
 
 func (t *TeamState) RestoreHealth() {
@@ -42,7 +48,7 @@ func (t *TeamState) BuyItem(item *Item, cost int) {
 		ti.Amount = ti.Amount + 1
 	}
 	t.Money = t.Money - cost
-	t.recountNumItems()
+	t.Iteration = t.Iteration + 1
 }
 
 func (t *TeamState) Pickup(pickup *Pickup) {
@@ -56,7 +62,7 @@ func (t *TeamState) Pickup(pickup *Pickup) {
 	} else {
 		ti.Amount = ti.Amount + 1
 	}
-	t.recountNumItems()
+	t.Iteration = t.Iteration + 1
 }
 
 func (t *TeamState) RemoveItem(name string) {
@@ -68,7 +74,7 @@ func (t *TeamState) RemoveItem(name string) {
 	if ti.Amount == 0 {
 		delete(t.Items, name)
 	}
-	t.recountNumItems()
+	t.Iteration = t.Iteration + 1
 }
 
 func (t *TeamState) ConsumeItem(name string) {
@@ -80,7 +86,7 @@ func (t *TeamState) ConsumeItem(name string) {
 		e.Apply(selectedCharacter)
 	}
 	t.RemoveItem(name)
-	t.recountNumItems()
+	t.Iteration = t.Iteration + 1
 }
 
 func (t *TeamState) EquipItem(name string) {
@@ -89,7 +95,7 @@ func (t *TeamState) EquipItem(name string) {
 
 	ti := t.Items[name]
 	selectedCharacter.EquippedItems[ti.Item.EquipSlot] = ti.Item
-	t.recountNumItems()
+	t.Iteration = t.Iteration + 1
 }
 
 func (t *TeamState) GetItemList() []string {
@@ -108,12 +114,4 @@ func (t *TeamState) GetItem(name string) *Item {
 		return nil
 	}
 	return ti.Item
-}
-
-func (t *TeamState) recountNumItems() {
-	count := 0
-	for _, ti := range t.Items {
-		count += ti.Amount
-	}
-	t.NumItems = count
 }

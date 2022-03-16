@@ -1,9 +1,10 @@
 package core
 
 import (
+	"log"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
-	"log"
 )
 
 // Inventory manages team state, items money characters etc
@@ -26,7 +27,6 @@ func NewInventory() *Inventory {
 }
 
 func (i *Inventory) Open(state *TeamState) {
-	log.Println("opening inventory")
 	i.IsActive = true
 	i.TeamState = state
 	i.ItemList = i.TeamState.GetItemList()
@@ -50,10 +50,8 @@ func (i *Inventory) Update(delta int64, state *State) {
 		case "list":
 			i.IsActive = false // close
 			state.Player.Activate()
-			log.Println("closing inventory")
 		case "action":
 			i.ActiveElement = "list"
-			log.Println("selecting list")
 		}
 		return
 	}
@@ -62,6 +60,7 @@ func (i *Inventory) Update(delta int64, state *State) {
 		case "list":
 			if i.HasItems() {
 				i.ActiveElement = "action"
+				i.SelectedActionIndex = 0
 			}
 		case "action":
 			item := i.TeamState.GetItem(i.ItemList[i.SelectedListIndex])
@@ -79,7 +78,6 @@ func (i *Inventory) Update(delta int64, state *State) {
 					// ??
 				}
 			} else {
-				log.Println("selecting drop")
 				// drop
 				state.Player.TeamState.RemoveItem(item.Name)
 			}
@@ -98,8 +96,12 @@ func (i *Inventory) Update(delta int64, state *State) {
 			if i.SelectedListIndex < 0 {
 				i.SelectedListIndex = 0
 			}
+		case "action":
+			i.SelectedActionIndex = i.SelectedActionIndex - 1
+			if i.SelectedActionIndex < 0 {
+				i.SelectedActionIndex = 0
+			}
 		}
-		log.Printf("selected index: %v", i.SelectedListIndex)
 	}
 	if inpututil.IsKeyJustPressed(ebiten.KeyArrowDown) || inpututil.IsKeyJustPressed(ebiten.KeyS) {
 		switch i.ActiveElement {
@@ -112,28 +114,18 @@ func (i *Inventory) Update(delta int64, state *State) {
 			} else {
 				i.SelectedListIndex = 0
 			}
+		case "action":
+			i.SelectedActionIndex = i.SelectedActionIndex + 1
+			if i.SelectedActionIndex == 2 {
+				i.SelectedActionIndex = i.SelectedActionIndex - 1
+			}
 		}
-		log.Printf("selected index: %v", i.SelectedListIndex)
 	}
 	if inpututil.IsKeyJustPressed(ebiten.KeyArrowLeft) || inpututil.IsKeyJustPressed(ebiten.KeyA) {
-		switch i.ActiveElement {
-		case "action":
-			if i.SelectedActionIndex == 0 {
-				i.ActiveElement = "list"
-			} else {
-				i.SelectedActionIndex = 0
-			}
-		}
+		// change to other item list
 	}
 	if inpututil.IsKeyJustPressed(ebiten.KeyArrowRight) || inpututil.IsKeyJustPressed(ebiten.KeyD) {
-		switch i.ActiveElement {
-		case "list":
-			i.ActiveElement = "action"
-		case "action":
-			if i.SelectedActionIndex == 0 {
-				i.SelectedActionIndex = 1
-			}
-		}
+		// change to other item list
 	}
 
 }

@@ -2,12 +2,13 @@ package main
 
 import (
 	"errors"
+	"log"
+	"time"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/seanoneillcode/go-tactics/pkg/common"
 	"github.com/seanoneillcode/go-tactics/pkg/core"
 	"github.com/seanoneillcode/go-tactics/pkg/gui"
-	"log"
-	"time"
 )
 
 func main() {
@@ -24,7 +25,7 @@ func main() {
 		camera:      core.NewCamera(),
 		inventoryUi: gui.NewInventoryUi(),
 	}
-	g.state.Map.LoadLevel("siopa")
+	g.state.Map.LoadLevel("home")
 	g.state.Player.EnterLevel(g.state.Map.Level)
 
 	ebiten.SetWindowSize(common.ScreenWidth*common.Scale, common.ScreenHeight*common.Scale)

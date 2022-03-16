@@ -1,14 +1,15 @@
 package gui
 
 import (
+	"image/color"
+	"io/ioutil"
+	"log"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text"
 	"github.com/seanoneillcode/go-tactics/pkg/common"
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/opentype"
-	"image/color"
-	"io/ioutil"
-	"log"
 )
 
 var standardFont font.Face
@@ -92,6 +93,13 @@ var greyTextColor = color.RGBA{
 	R: 160,
 	G: 147,
 	B: 142,
+	A: 255,
+}
+
+var activeColor = color.RGBA{
+	R: 200,
+	G: 100,
+	B: 150,
 	A: 255,
 }
 
