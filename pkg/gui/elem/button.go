@@ -16,9 +16,10 @@ type Button struct {
 	label      *Text
 	imageColor *color.RGBA
 	textColor  *color.RGBA
+	isDraw     bool
 }
 
-var highlightColor = &color.RGBA{
+var normalColor = &color.RGBA{
 	R: 223,
 	G: 246,
 	B: 245,
@@ -35,8 +36,8 @@ var greyColor = &color.RGBA{
 func NewButton(label string, imageFileName string) *Button {
 	b := &Button{
 		pos:        &Pos{},
-		imageColor: highlightColor,
-		textColor:  highlightColor,
+		imageColor: normalColor,
+		textColor:  normalColor,
 	}
 	if imageFileName != "" {
 		b.image = common.LoadImage(imageFileName)
@@ -48,6 +49,9 @@ func NewButton(label string, imageFileName string) *Button {
 }
 
 func (b *Button) Draw(screen *ebiten.Image) {
+	if !b.isDraw {
+		return
+	}
 	if b.image != nil {
 		op := &ebiten.DrawImageOptions{}
 		op.GeoM.Translate(float64(b.pos.X), float64(b.pos.Y))
@@ -66,14 +70,14 @@ func (b *Button) Draw(screen *ebiten.Image) {
 	}
 }
 
-func (b *Button) Update(delta int64, pos *Pos, isHighlighted bool) {
+func (b *Button) Update(delta int64, pos *Pos, isDisabled bool, isDraw bool) {
 	b.pos.X = pos.X
 	b.pos.Y = pos.Y
-	if isHighlighted {
-		b.textColor = highlightColor
-		b.imageColor = highlightColor
-	} else {
+	b.textColor = normalColor
+	b.imageColor = normalColor
+	if isDisabled {
 		b.textColor = greyColor
 		b.imageColor = greyColor
 	}
+	b.isDraw = isDraw
 }

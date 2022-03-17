@@ -25,7 +25,7 @@ func main() {
 		camera:      core.NewCamera(),
 		inventoryUi: gui.NewInventoryUi(),
 	}
-	g.state.Map.LoadLevel("home")
+	g.state.Map.LoadLevel("siopa")
 	g.state.Player.EnterLevel(g.state.Map.Level)
 
 	ebiten.SetWindowSize(common.ScreenWidth*common.Scale, common.ScreenHeight*common.Scale)

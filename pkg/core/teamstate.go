@@ -10,6 +10,7 @@ type TeamState struct {
 	Money      int
 	Items      map[string]*TeamItem
 	Iteration  int
+	ItemList   []string
 }
 
 type TeamItem struct {
@@ -22,6 +23,7 @@ func NewTeamState() *TeamState {
 		Characters: []*CharacterState{},
 		Money:      200,
 		Items:      map[string]*TeamItem{},
+		ItemList:   []string{},
 	}
 	ts.Pickup(&Pickup{itemName: BreadItemName})
 	ts.Pickup(&Pickup{itemName: BreadItemName})
@@ -48,7 +50,7 @@ func (t *TeamState) BuyItem(item *Item, cost int) {
 		ti.Amount = ti.Amount + 1
 	}
 	t.Money = t.Money - cost
-	t.Iteration = t.Iteration + 1
+	t.refreshItemList()
 }
 
 func (t *TeamState) Pickup(pickup *Pickup) {
@@ -62,7 +64,7 @@ func (t *TeamState) Pickup(pickup *Pickup) {
 	} else {
 		ti.Amount = ti.Amount + 1
 	}
-	t.Iteration = t.Iteration + 1
+	t.refreshItemList()
 }
 
 func (t *TeamState) RemoveItem(name string) {
@@ -74,7 +76,7 @@ func (t *TeamState) RemoveItem(name string) {
 	if ti.Amount == 0 {
 		delete(t.Items, name)
 	}
-	t.Iteration = t.Iteration + 1
+	t.refreshItemList()
 }
 
 func (t *TeamState) ConsumeItem(name string) {
@@ -86,7 +88,7 @@ func (t *TeamState) ConsumeItem(name string) {
 		e.Apply(selectedCharacter)
 	}
 	t.RemoveItem(name)
-	t.Iteration = t.Iteration + 1
+	t.refreshItemList()
 }
 
 func (t *TeamState) EquipItem(name string) {
@@ -95,7 +97,7 @@ func (t *TeamState) EquipItem(name string) {
 
 	ti := t.Items[name]
 	selectedCharacter.EquippedItems[ti.Item.EquipSlot] = ti.Item
-	t.Iteration = t.Iteration + 1
+	t.refreshItemList()
 }
 
 func (t *TeamState) GetItemList() []string {
@@ -114,4 +116,13 @@ func (t *TeamState) GetItem(name string) *Item {
 		return nil
 	}
 	return ti.Item
+}
+
+func (t *TeamState) GetItemWithIndex(index int) *Item {
+	return t.GetItem(t.ItemList[index])
+}
+
+func (t *TeamState) refreshItemList() {
+	t.Iteration = t.Iteration + 1
+	t.ItemList = t.GetItemList()
 }

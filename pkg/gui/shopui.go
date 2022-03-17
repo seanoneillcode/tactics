@@ -110,7 +110,9 @@ func (s *ShopUi) Update(delta int64, state *core.State) {
 		}
 	}
 	s.cursor.Update(delta, cursorPos)
-	s.confirmation.Update(delta, &elem.Pos{X: confirmationX, Y: confirmationY}, s.shop.ActiveElement == "confirmation")
+	confirmationDisable := s.shop.ActiveElement != "confirmation"
+
+	s.confirmation.Update(delta, &elem.Pos{X: confirmationX, Y: confirmationY}, confirmationDisable, true)
 }
 
 func (s *ShopUi) updatePlayerMoney(money int) {

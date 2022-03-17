@@ -14,7 +14,6 @@ type Inventory struct {
 	justOpened          bool
 	ActiveElement       string // list, action
 	SelectedListIndex   int
-	ItemList            []string
 	SelectedActionIndex int
 }
 
@@ -22,14 +21,12 @@ func NewInventory() *Inventory {
 	return &Inventory{
 		ActiveElement:     "list",
 		SelectedListIndex: 0,
-		ItemList:          []string{},
 	}
 }
 
 func (i *Inventory) Open(state *TeamState) {
 	i.IsActive = true
 	i.TeamState = state
-	i.ItemList = i.TeamState.GetItemList()
 }
 
 func (i *Inventory) Update(delta int64, state *State) {
@@ -63,7 +60,7 @@ func (i *Inventory) Update(delta int64, state *State) {
 				i.SelectedActionIndex = 0
 			}
 		case "action":
-			item := i.TeamState.GetItem(i.ItemList[i.SelectedListIndex])
+			item := i.TeamState.GetItemWithIndex(i.SelectedListIndex)
 			if i.SelectedActionIndex == 0 {
 				// use
 				log.Printf("selecting use, item: %v", item.Description)
@@ -85,7 +82,7 @@ func (i *Inventory) Update(delta int64, state *State) {
 			if i.SelectedListIndex == len(i.TeamState.Items) {
 				i.SelectedListIndex = i.SelectedListIndex - 1
 			}
-			i.ItemList = i.TeamState.GetItemList()
+			//i.ItemList = i.TeamState.GetItemList()
 		}
 		return
 	}
