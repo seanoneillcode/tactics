@@ -34,8 +34,13 @@ func (a *ActionBox) Draw(screen *ebiten.Image) {
 	}
 }
 
-func (a *ActionBox) Update(delta int64, pos *elem.Pos, currentItem *core.Item) {
-	a.currentItem = currentItem
+func (a *ActionBox) Update(delta int64, pos *elem.Pos, inventory *core.Inventory) {
+	// set current item
+	if inventory.HasItems() {
+		a.currentItem = inventory.TeamState.GetItem(inventory.ItemList[inventory.SelectedListIndex])
+	} else {
+		a.currentItem = nil
+	}
 	a.pos.X = pos.X
 	a.pos.Y = pos.Y
 	a.useAction.Update(delta, &elem.Pos{X: pos.X + offsetX, Y: pos.Y + offsetY}, true)

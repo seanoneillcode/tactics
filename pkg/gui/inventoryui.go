@@ -52,13 +52,6 @@ func (i *InventoryUi) Update(delta int64, state *core.State) {
 	}
 	i.inventory = state.Inventory
 
-	// set current item
-	if i.inventory.HasItems() {
-		i.currentItem = i.inventory.TeamState.GetItem(i.inventory.ItemList[i.inventory.SelectedListIndex])
-	} else {
-		i.currentItem = nil
-	}
-
 	// figure out cursor position
 	switch i.inventory.ActiveElement {
 	case "list":
@@ -72,6 +65,6 @@ func (i *InventoryUi) Update(delta int64, state *core.State) {
 	}
 
 	i.cursor.Update(delta, i.cursorPos)
-	i.actionBox.Update(delta, i.actionPos, i.currentItem)
+	i.actionBox.Update(delta, i.actionPos, i.inventory)
 	i.invItemList.Update(delta, i.inventory)
 }

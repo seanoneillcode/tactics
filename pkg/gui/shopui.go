@@ -46,7 +46,7 @@ func NewShopUi() *ShopUi {
 		playerName:             elem.NewText(240+offsetX, 16+offsetY, "Player"),
 		moneyLabel:             elem.NewText(240+offsetX, 32+offsetY, "Money"),
 		playerMoney:            elem.NewText(240+64+offsetX, 32+offsetY, ""),
-		shopName:               elem.NewText(48+offsetX, 32+offsetY, ""),
+		shopName:               elem.NewText(48+offsetX, 32+offsetY, "Shop"),
 		informationDescription: elem.NewText(informationX+2+offsetX, informationY+offsetY, ""),
 	}
 	return s
