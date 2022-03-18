@@ -23,10 +23,8 @@ func NewInvItemList() *InvItemList {
 }
 
 func (i *InvItemList) createItemList(inventory *core.Inventory) []*itemEntry {
-
 	itemNames := inventory.TeamState.GetItemList()
 	itemMap := inventory.TeamState.Items
-
 	x := i.pos.X + offsetX
 	y := i.pos.Y + offsetY
 	var invItems []*itemEntry

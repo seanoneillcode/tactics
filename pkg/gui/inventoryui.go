@@ -52,16 +52,16 @@ func (i *InventoryUi) Update(delta int64, state *core.State) {
 	}
 	i.inventory = state.Inventory
 
-	// figure out cursor position
+	// figure out cursor, actionBox positions
 	switch i.inventory.ActiveElement {
 	case "list":
 		i.cursorPos.X = i.listPos.X - 14
 		i.cursorPos.Y = i.listPos.Y + (16.0 * i.inventory.SelectedListIndex)
 	case "action":
-		i.actionPos.X = i.listPos.X + 8
-		i.actionPos.Y = i.listPos.Y + 8 + (16.0 * i.inventory.SelectedListIndex)
-		i.cursorPos.X = i.actionPos.X - 14
-		i.cursorPos.Y = i.actionPos.Y + 4 + (16.0 * i.inventory.SelectedActionIndex)
+		i.actionPos.X = i.listPos.X + 2
+		i.actionPos.Y = i.listPos.Y + 11 + (16.0 * i.inventory.SelectedListIndex)
+		i.cursorPos.X = i.actionPos.X - 9
+		i.cursorPos.Y = i.actionPos.Y + 5 + (16.0 * i.inventory.SelectedActionIndex)
 	}
 
 	i.cursor.Update(delta, i.cursorPos)

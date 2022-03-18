@@ -100,15 +100,6 @@ func (t *TeamState) EquipItem(name string) {
 	t.refreshItemList()
 }
 
-func (t *TeamState) GetItemList() []string {
-	var list []string
-	for k := range t.Items {
-		list = append(list, k)
-	}
-	sort.Strings(list)
-	return list
-}
-
 func (t *TeamState) GetItem(name string) *Item {
 	ti, has := t.Items[name]
 	if !has {
@@ -116,6 +107,15 @@ func (t *TeamState) GetItem(name string) *Item {
 		return nil
 	}
 	return ti.Item
+}
+
+func (t *TeamState) GetItemList() []string {
+	var list []string
+	for k := range t.Items {
+		list = append(list, k)
+	}
+	sort.Strings(list)
+	return list
 }
 
 func (t *TeamState) GetItemWithIndex(index int) *Item {

@@ -82,7 +82,6 @@ func (i *Inventory) Update(delta int64, state *State) {
 			if i.SelectedListIndex == len(i.TeamState.Items) {
 				i.SelectedListIndex = i.SelectedListIndex - 1
 			}
-			//i.ItemList = i.TeamState.GetItemList()
 		}
 		return
 	}
