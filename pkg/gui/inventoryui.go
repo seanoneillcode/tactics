@@ -6,6 +6,11 @@ import (
 	"github.com/seanoneillcode/go-tactics/pkg/gui/elem"
 )
 
+var invInfoPos = &elem.Pos{
+	X: 208,
+	Y: 80,
+}
+
 type InventoryUi struct {
 	cursor           *elem.Cursor
 	actionBox        *ActionBox
@@ -18,13 +23,15 @@ type InventoryUi struct {
 	actionPos        *elem.Pos
 	listPos          *elem.Pos
 	cursorPos        *elem.Pos
+	infoBox          *elem.InfoBox
 }
 
 func NewInventoryUi() *InventoryUi {
 	i := &InventoryUi{
 		bg:          elem.NewStaticImage("inventory-bg.png", 0, 0),
-		actionBox:   NewActionBox(),
 		cursor:      elem.NewCursor(),
+		infoBox:     elem.NewInfoBox("", "shop-information-bg.png"),
+		actionBox:   NewActionBox(),
 		invItemList: NewInvItemList(),
 		actionPos:   &elem.Pos{X: 234, Y: 32},
 		listPos:     &elem.Pos{X: 32, Y: 32},
@@ -43,6 +50,7 @@ func (i *InventoryUi) Draw(screen *ebiten.Image) {
 	if i.inventory.ActiveElement == "action" {
 		i.actionBox.Draw(screen)
 	}
+	i.infoBox.Draw(screen)
 	i.cursor.Draw(screen)
 }
 
@@ -52,6 +60,8 @@ func (i *InventoryUi) Update(delta int64, state *core.State) {
 	}
 	i.inventory = state.Inventory
 
+	var drawInfoBox bool
+	var formattedItemDescription string
 	// figure out cursor, actionBox positions
 	switch i.inventory.ActiveElement {
 	case "list":
@@ -62,9 +72,15 @@ func (i *InventoryUi) Update(delta int64, state *core.State) {
 		i.actionPos.Y = i.listPos.Y + 11 + (16.0 * i.inventory.SelectedListIndex)
 		i.cursorPos.X = i.actionPos.X - 9
 		i.cursorPos.Y = i.actionPos.Y + 5 + (16.0 * i.inventory.SelectedActionIndex)
+		if i.inventory.HasItems() {
+			item := i.inventory.TeamState.GetItemWithIndex(i.inventory.SelectedListIndex)
+			drawInfoBox = true
+			formattedItemDescription = core.GetFormattedValueMax(item.Description, 22)
+		}
 	}
 
 	i.cursor.Update(delta, i.cursorPos)
 	i.actionBox.Update(delta, i.actionPos, i.inventory)
 	i.invItemList.Update(delta, i.inventory)
+	i.infoBox.Update(invInfoPos, drawInfoBox, formattedItemDescription)
 }

@@ -11,43 +11,46 @@ import (
 )
 
 type ShopUi struct {
-	shop                   *core.Shop
-	bg                     *elem.StaticImage
-	cursor                 *elem.Cursor
-	confirmation           *elem.Button
-	shopInformationImage   *ebiten.Image
-	playerName             *elem.Text
-	playerMoney            *elem.Text
-	shopName               *elem.Text
-	moneyLabel             *elem.Text
-	informationDescription *elem.Text
-	isLoaded               bool
-	shopItems              []*listItem
-	oldPlayerMoney         int
+	shop           *core.Shop
+	bg             *elem.StaticImage
+	cursor         *elem.Cursor
+	confirmation   *elem.Button
+	playerName     *elem.Text
+	playerMoney    *elem.Text
+	shopName       *elem.Text
+	moneyLabel     *elem.Text
+	isLoaded       bool
+	shopItems      []*listItem
+	oldPlayerMoney int
+	infoBox        *elem.InfoBox
 }
 
 const offsetX = 4
 const offsetY = 4
 
-const listX = 48
-const listY = 64
-
-const confirmationX = 208
-const confirmationY = 64
-const informationX = 208
-const informationY = 80
+var listPos = &elem.Pos{
+	X: 48,
+	Y: 64,
+}
+var infoPos = &elem.Pos{
+	X: 208,
+	Y: 80,
+}
+var confirmationPos = &elem.Pos{
+	X: 208,
+	Y: 64,
+}
 
 func NewShopUi() *ShopUi {
 	s := &ShopUi{
-		bg:                     elem.NewStaticImage("shop-bg.png", 0, 0),
-		cursor:                 elem.NewCursor(),
-		confirmation:           elem.NewButton("Buy", "shop-confirmation-bg.png"),
-		shopInformationImage:   common.LoadImage("shop-information-bg.png"),
-		playerName:             elem.NewText(240+offsetX, 16+offsetY, "Player"),
-		moneyLabel:             elem.NewText(240+offsetX, 32+offsetY, "Money"),
-		playerMoney:            elem.NewText(240+64+offsetX, 32+offsetY, ""),
-		shopName:               elem.NewText(48+offsetX, 32+offsetY, "Shop"),
-		informationDescription: elem.NewText(informationX+2+offsetX, informationY+offsetY, ""),
+		bg:           elem.NewStaticImage("shop-bg.png", 0, 0),
+		cursor:       elem.NewCursor(),
+		confirmation: elem.NewButton("Buy", "shop-confirmation-bg.png"),
+		playerName:   elem.NewText(240+offsetX, 16+offsetY, "Player"),
+		moneyLabel:   elem.NewText(240+offsetX, 32+offsetY, "Money"),
+		playerMoney:  elem.NewText(240+64+offsetX, 32+offsetY, ""),
+		shopName:     elem.NewText(48+offsetX, 32+offsetY, "Shop"),
+		infoBox:      elem.NewInfoBox("", "shop-information-bg.png"),
 	}
 	return s
 }
@@ -67,12 +70,7 @@ func (s *ShopUi) Draw(screen *ebiten.Image) {
 		item.Draw(screen)
 	}
 
-	op := &ebiten.DrawImageOptions{}
-	op.GeoM.Translate(informationX, informationY)
-	op.GeoM.Scale(common.Scale, common.Scale)
-	screen.DrawImage(s.shopInformationImage, op)
-
-	s.informationDescription.Draw(screen)
+	s.infoBox.Draw(screen)
 	s.confirmation.Draw(screen)
 	s.cursor.Draw(screen)
 }
@@ -83,36 +81,36 @@ func (s *ShopUi) Update(delta int64, state *core.State) {
 		s.isLoaded = true
 		s.shopName.SetValue(s.shop.Data.MerchantName)
 		s.updatePlayerMoney(state.Player.TeamState.Money)
-		s.shopItems = createListItems(s.shop.Data.Items, listX+offsetX, listY+offsetY, state.Player.TeamState.Money)
+		s.shopItems = createListItems(s.shop.Data.Items, listPos.X+offsetX, listPos.Y+offsetY, state.Player.TeamState.Money)
 	}
 	if !s.shop.IsActive && s.isLoaded {
 		s.isLoaded = false
 	}
 	if s.shop.IsActive {
 		desc := s.shop.Data.Items[s.shop.SelectedListIndex].Item.Description
-		s.informationDescription.SetValue(core.GetFormattedValueMax(desc, 22))
+		s.infoBox.Update(infoPos, true, core.GetFormattedValueMax(desc, 22))
 		if s.oldPlayerMoney != state.Player.TeamState.Money {
 			s.updatePlayerMoney(state.Player.TeamState.Money)
-			s.shopItems = createListItems(s.shop.Data.Items, listX+offsetX, listY+offsetY, state.Player.TeamState.Money)
+			s.shopItems = createListItems(s.shop.Data.Items, listPos.X+offsetX, listPos.Y+offsetY, state.Player.TeamState.Money)
 		}
 	}
 	var cursorPos *elem.Pos
 	switch s.shop.ActiveElement {
 	case "list":
 		cursorPos = &elem.Pos{
-			X: listX - 14,
-			Y: listY + (16.0 * s.shop.SelectedListIndex),
+			X: listPos.X - 14,
+			Y: listPos.Y + (16.0 * s.shop.SelectedListIndex),
 		}
 	case "confirmation":
 		cursorPos = &elem.Pos{
-			X: confirmationX - 12,
-			Y: confirmationY + 2,
+			X: confirmationPos.X - 12,
+			Y: confirmationPos.Y + 2,
 		}
 	}
 	s.cursor.Update(delta, cursorPos)
 	confirmationDisable := s.shop.ActiveElement != "confirmation"
 
-	s.confirmation.Update(delta, &elem.Pos{X: confirmationX, Y: confirmationY}, confirmationDisable, true)
+	s.confirmation.Update(delta, confirmationPos, confirmationDisable, true)
 }
 
 func (s *ShopUi) updatePlayerMoney(money int) {
