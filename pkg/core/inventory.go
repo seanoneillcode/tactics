@@ -12,15 +12,17 @@ type Inventory struct {
 	IsActive            bool
 	TeamState           *TeamState
 	justOpened          bool
-	ActiveElement       string // list, action
+	ActiveElement       string // list, action, character
 	SelectedListIndex   int
 	SelectedActionIndex int
+	SelectedCharacter   string
 }
 
 func NewInventory() *Inventory {
 	return &Inventory{
 		ActiveElement:     "list",
 		SelectedListIndex: 0,
+		SelectedCharacter: "default",
 	}
 }
 
@@ -49,6 +51,8 @@ func (i *Inventory) Update(delta int64, state *State) {
 			state.Player.Activate()
 		case "action":
 			i.ActiveElement = "list"
+		case "character":
+			i.ActiveElement = "action"
 		}
 		return
 	}
@@ -62,21 +66,28 @@ func (i *Inventory) Update(delta int64, state *State) {
 		case "action":
 			item := i.TeamState.GetItemWithIndex(i.SelectedListIndex)
 			if i.SelectedActionIndex == 0 {
-				// use
-				log.Printf("selecting use, item: %v", item.Description)
-				if item.CanConsume {
-					// select character
-					state.Player.TeamState.ConsumeItem(item.Name)
-				} else {
-					if item.CanEquip {
-						// select character
-						state.Player.TeamState.EquipItem(item.Name)
-					}
-					// ??
-				}
+				i.ActiveElement = "character"
 			} else {
 				// drop
 				state.Player.TeamState.RemoveItem(item.Name)
+				i.ActiveElement = "list"
+				if i.SelectedListIndex == len(i.TeamState.Items) {
+					i.SelectedListIndex = i.SelectedListIndex - 1
+				}
+			}
+		case "character":
+			item := i.TeamState.GetItemWithIndex(i.SelectedListIndex)
+			// use
+			log.Printf("selecting use, item: %v", item.Description)
+			if item.CanConsume {
+				// select character
+				state.Player.TeamState.ConsumeItem(item.Name)
+			} else {
+				if item.CanEquip {
+					// select character
+					state.Player.TeamState.EquipItem(item.Name)
+				}
+				// ??
 			}
 			i.ActiveElement = "list"
 			if i.SelectedListIndex == len(i.TeamState.Items) {
@@ -97,6 +108,8 @@ func (i *Inventory) Update(delta int64, state *State) {
 			if i.SelectedActionIndex < 0 {
 				i.SelectedActionIndex = 0
 			}
+		case "character":
+			// todo select up down character
 		}
 	}
 	if inpututil.IsKeyJustPressed(ebiten.KeyArrowDown) || inpututil.IsKeyJustPressed(ebiten.KeyS) {
@@ -115,6 +128,8 @@ func (i *Inventory) Update(delta int64, state *State) {
 			if i.SelectedActionIndex == 2 {
 				i.SelectedActionIndex = i.SelectedActionIndex - 1
 			}
+		case "character":
+			// todo select up down character
 		}
 	}
 	if inpututil.IsKeyJustPressed(ebiten.KeyArrowLeft) || inpututil.IsKeyJustPressed(ebiten.KeyA) {

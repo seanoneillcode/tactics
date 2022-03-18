@@ -2,13 +2,19 @@ package gui
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/seanoneillcode/go-tactics/pkg/common"
 	"github.com/seanoneillcode/go-tactics/pkg/core"
 	"github.com/seanoneillcode/go-tactics/pkg/gui/elem"
 )
 
 var invInfoPos = &elem.Pos{
-	X: 208,
-	Y: 80,
+	X: 200,
+	Y: 100,
+}
+
+var effectPos = &elem.Pos{
+	X: 200,
+	Y: 32,
 }
 
 type InventoryUi struct {
@@ -24,6 +30,8 @@ type InventoryUi struct {
 	listPos          *elem.Pos
 	cursorPos        *elem.Pos
 	infoBox          *elem.InfoBox
+	characterEffect  *elem.EffectCard
+	charImages       map[string]*ebiten.Image
 }
 
 func NewInventoryUi() *InventoryUi {
@@ -36,6 +44,10 @@ func NewInventoryUi() *InventoryUi {
 		actionPos:   &elem.Pos{X: 234, Y: 32},
 		listPos:     &elem.Pos{X: 32, Y: 32},
 		cursorPos:   &elem.Pos{X: 0, Y: 0},
+		charImages: map[string]*ebiten.Image{
+			"default": common.LoadImage("default-avatar.png"),
+		},
+		characterEffect: elem.NewEffectCard("effect-card-bg.png"),
 	}
 	return i
 }
@@ -50,6 +62,10 @@ func (i *InventoryUi) Draw(screen *ebiten.Image) {
 	if i.inventory.ActiveElement == "action" {
 		i.actionBox.Draw(screen)
 	}
+	if i.inventory.ActiveElement == "character" {
+		i.actionBox.Draw(screen)
+		i.characterEffect.Draw(screen)
+	}
 	i.infoBox.Draw(screen)
 	i.cursor.Draw(screen)
 }
@@ -62,6 +78,7 @@ func (i *InventoryUi) Update(delta int64, state *core.State) {
 
 	var drawInfoBox bool
 	var formattedItemDescription string
+	var item *core.Item
 	// figure out cursor, actionBox positions
 	switch i.inventory.ActiveElement {
 	case "list":
@@ -73,7 +90,15 @@ func (i *InventoryUi) Update(delta int64, state *core.State) {
 		i.cursorPos.X = i.actionPos.X - 9
 		i.cursorPos.Y = i.actionPos.Y + 5 + (16.0 * i.inventory.SelectedActionIndex)
 		if i.inventory.HasItems() {
-			item := i.inventory.TeamState.GetItemWithIndex(i.inventory.SelectedListIndex)
+			item = i.inventory.TeamState.GetItemWithIndex(i.inventory.SelectedListIndex)
+			drawInfoBox = true
+			formattedItemDescription = core.GetFormattedValueMax(item.Description, 22)
+		}
+	case "character":
+		i.cursorPos.X = effectPos.X - 12
+		i.cursorPos.Y = effectPos.Y + 16
+		if i.inventory.HasItems() {
+			item = i.inventory.TeamState.GetItemWithIndex(i.inventory.SelectedListIndex)
 			drawInfoBox = true
 			formattedItemDescription = core.GetFormattedValueMax(item.Description, 22)
 		}
@@ -83,4 +108,5 @@ func (i *InventoryUi) Update(delta int64, state *core.State) {
 	i.actionBox.Update(delta, i.actionPos, i.inventory)
 	i.invItemList.Update(delta, i.inventory)
 	i.infoBox.Update(invInfoPos, drawInfoBox, formattedItemDescription)
+	i.characterEffect.Update(effectPos, true, i.inventory.SelectedCharacter, i.charImages[i.inventory.SelectedCharacter], item, i.inventory.TeamState.Characters[0])
 }
