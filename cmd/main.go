@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"github.com/seanoneillcode/go-tactics/pkg/gui/inv"
 	"log"
 	"time"
 
@@ -15,16 +16,16 @@ func main() {
 	g := &Game{
 		lastUpdateCalled: time.Now(),
 		state: &core.State{
-			Player:    core.NewPlayer(),
-			Map:       core.NewMap(),
-			Shop:      core.NewShop(),
-			Inventory: core.NewInventory(),
+			Player: core.NewPlayer(),
+			Map:    core.NewMap(),
+			Shop:   core.NewShop(),
+			UI:     core.NewUI(),
 		},
-		dialogBox: gui.NewDialogueBox(),
-		shopUi:    gui.NewShopUi(),
-		camera:    core.NewCamera(),
+		dialogBox:   gui.NewDialogueBox(),
+		shopUi:      gui.NewShopUi(),
+		camera:      core.NewCamera(),
+		inventoryUi: inv.NewInventoryUi(),
 	}
-	g.inventoryUi = gui.NewInventoryUi(g.state.Inventory)
 	g.state.Map.LoadLevel("siopa")
 	g.state.Player.EnterLevel(g.state.Map.Level)
 
@@ -49,7 +50,7 @@ type Game struct {
 	camera           *core.Camera
 	dialogBox        *gui.DialogueBox
 	shopUi           *gui.ShopUi
-	inventoryUi      *gui.InventoryUi
+	inventoryUi      *inv.InventoryUi
 }
 
 func (g *Game) Update() error {

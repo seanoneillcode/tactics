@@ -105,7 +105,7 @@ func (p *Player) Update(delta int64, state *State) {
 
 	// consider this key more carefully
 	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
-		state.Inventory.Open(p.TeamState)
+		state.UI.Open("inventory")
 		p.isActive = false
 	}
 }

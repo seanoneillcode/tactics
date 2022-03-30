@@ -1,4 +1,4 @@
-package gui
+package inv
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
@@ -8,6 +8,9 @@ import (
 	"github.com/seanoneillcode/go-tactics/pkg/gui/elem"
 	"log"
 )
+
+const offsetX = 4
+const offsetY = 4
 
 var invInfoPos = &elem.Pos{
 	X: 200,
@@ -25,7 +28,6 @@ type InventoryUi struct {
 	bg                  *elem.StaticImage
 	invItemList         *InvItemList
 	teamState           *core.TeamState
-	inventory           *core.Inventory
 	justOpened          bool
 	ActiveElement       string // list, action, character
 	SelectedListIndex   int
@@ -42,7 +44,7 @@ type InventoryUi struct {
 	charImages          map[string]*ebiten.Image
 }
 
-func NewInventoryUi(inventory *core.Inventory) *InventoryUi {
+func NewInventoryUi() *InventoryUi {
 	i := &InventoryUi{
 		bg:          elem.NewStaticImage("inventory-bg.png", 0, 0),
 		cursor:      elem.NewCursor(),
@@ -56,7 +58,6 @@ func NewInventoryUi(inventory *core.Inventory) *InventoryUi {
 			"default": common.LoadImage("default-avatar.png"),
 		},
 		characterEffect:   elem.NewEffectCard("effect-card-bg.png"),
-		inventory:         inventory,
 		ActiveElement:     "list",
 		SelectedListIndex: 0,
 		SelectedCharacter: "default",
@@ -65,7 +66,7 @@ func NewInventoryUi(inventory *core.Inventory) *InventoryUi {
 }
 
 func (i *InventoryUi) Draw(screen *ebiten.Image) {
-	if !i.inventory.IsActive {
+	if !i.IsActive {
 		return
 	}
 
@@ -83,11 +84,17 @@ func (i *InventoryUi) Draw(screen *ebiten.Image) {
 }
 
 func (i *InventoryUi) Update(delta int64, state *core.State) {
-	if !state.Inventory.IsActive {
+	if !state.UI.IsInventoryActive() {
+		i.IsActive = false
+		i.justOpened = true
 		return
 	}
-	i.inventory = state.Inventory
-	i.UpdateState(delta, state)
+	i.IsActive = true
+	if i.justOpened {
+		i.justOpened = false
+		return
+	}
+	i.handleInput(delta, state)
 
 	var drawInfoBox bool
 	var formattedItemDescription string
@@ -102,7 +109,7 @@ func (i *InventoryUi) Update(delta int64, state *core.State) {
 		i.actionPos.Y = i.listPos.Y + 11 + (16.0 * i.SelectedListIndex)
 		i.cursorPos.X = i.actionPos.X - 9
 		i.cursorPos.Y = i.actionPos.Y + 5 + (16.0 * i.SelectedActionIndex)
-		if i.inventory.HasItems() {
+		if state.Player.TeamState.HasItems() {
 			item = state.Player.TeamState.GetItemWithIndex(i.SelectedListIndex)
 			drawInfoBox = true
 			formattedItemDescription = core.GetFormattedValueMax(item.Description, 22)
@@ -110,7 +117,7 @@ func (i *InventoryUi) Update(delta int64, state *core.State) {
 	case "character":
 		i.cursorPos.X = effectPos.X - 12
 		i.cursorPos.Y = effectPos.Y + 16
-		if i.inventory.HasItems() {
+		if state.Player.TeamState.HasItems() {
 			item = state.Player.TeamState.GetItemWithIndex(i.SelectedListIndex)
 			drawInfoBox = true
 			formattedItemDescription = core.GetFormattedValueMax(item.Description, 22)
@@ -129,15 +136,7 @@ func (i *InventoryUi) Update(delta int64, state *core.State) {
 	i.characterEffect.Update(effectPos, true, i.SelectedCharacter, i.charImages[i.SelectedCharacter], item, state.Player.TeamState.Characters[0])
 }
 
-func (i *InventoryUi) UpdateState(delta int64, state *core.State) {
-	if !state.Inventory.IsActive {
-		i.justOpened = true
-		return
-	}
-	if i.justOpened {
-		i.justOpened = false
-		return
-	}
+func (i *InventoryUi) handleInput(delta int64, state *core.State) {
 	teamState := state.Player.TeamState
 	if teamState == nil {
 		log.Fatal("inventory opened with no team!")
@@ -146,7 +145,7 @@ func (i *InventoryUi) UpdateState(delta int64, state *core.State) {
 	if inpututil.IsKeyJustPressed(ebiten.KeyBackspace) {
 		switch i.ActiveElement {
 		case "list":
-			state.Inventory.Close()
+			state.UI.Close()
 			state.Player.Activate()
 		case "action":
 			i.ActiveElement = "list"
