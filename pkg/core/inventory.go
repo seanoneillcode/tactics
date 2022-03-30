@@ -71,7 +71,7 @@ func (i *Inventory) Update(delta int64, state *State) {
 				// drop
 				state.Player.TeamState.RemoveItem(item.Name)
 				i.ActiveElement = "list"
-				if i.SelectedListIndex == len(i.TeamState.Items) {
+				if i.SelectedListIndex == len(i.TeamState.ItemHolders) {
 					i.SelectedListIndex = i.SelectedListIndex - 1
 				}
 			}
@@ -90,7 +90,7 @@ func (i *Inventory) Update(delta int64, state *State) {
 				// ??
 			}
 			i.ActiveElement = "list"
-			if i.SelectedListIndex == len(i.TeamState.Items) {
+			if i.SelectedListIndex == len(i.TeamState.ItemHolders) {
 				i.SelectedListIndex = i.SelectedListIndex - 1
 			}
 		}
@@ -117,7 +117,7 @@ func (i *Inventory) Update(delta int64, state *State) {
 		case "list":
 			if i.HasItems() {
 				i.SelectedListIndex = i.SelectedListIndex + 1
-				if i.SelectedListIndex == len(i.TeamState.Items) {
+				if i.SelectedListIndex == len(i.TeamState.ItemHolders) {
 					i.SelectedListIndex = i.SelectedListIndex - 1
 				}
 			} else {
@@ -142,5 +142,5 @@ func (i *Inventory) Update(delta int64, state *State) {
 }
 
 func (i *Inventory) HasItems() bool {
-	return len(i.TeamState.Items) > 0
+	return len(i.TeamState.ItemHolders) > 0
 }
