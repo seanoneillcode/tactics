@@ -20,11 +20,11 @@ func main() {
 			Shop:      core.NewShop(),
 			Inventory: core.NewInventory(),
 		},
-		dialogBox:   gui.NewDialogueBox(),
-		shopUi:      gui.NewShopUi(),
-		camera:      core.NewCamera(),
-		inventoryUi: gui.NewInventoryUi(),
+		dialogBox: gui.NewDialogueBox(),
+		shopUi:    gui.NewShopUi(),
+		camera:    core.NewCamera(),
 	}
+	g.inventoryUi = gui.NewInventoryUi(g.state.Inventory)
 	g.state.Map.LoadLevel("siopa")
 	g.state.Player.EnterLevel(g.state.Map.Level)
 
@@ -64,7 +64,6 @@ func (g *Game) Update() error {
 		g.state.ActiveDialog.Update(delta, g.state)
 	}
 	g.state.Shop.Update(delta, g.state)
-	g.state.Inventory.Update(delta, g.state)
 
 	// update camera
 	g.camera.Update(delta, g.state)

@@ -126,3 +126,7 @@ func (t *TeamState) refreshItemList() {
 	t.Iteration = t.Iteration + 1
 	t.ItemList = t.GetItemList()
 }
+
+func (t *TeamState) HasItems() bool {
+	return len(t.ItemHolders) > 0
+}

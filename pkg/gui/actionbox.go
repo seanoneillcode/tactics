@@ -26,11 +26,7 @@ func (a *ActionBox) Draw(screen *ebiten.Image) {
 	a.equipAction.Draw(screen)
 }
 
-func (a *ActionBox) Update(delta int64, pos *elem.Pos, inventory *core.Inventory) {
-	var currentItem *core.Item
-	if inventory.HasItems() {
-		currentItem = inventory.TeamState.GetItemWithIndex(inventory.SelectedListIndex)
-	}
+func (a *ActionBox) Update(delta int64, pos *elem.Pos, currentItem *core.Item) {
 	showUse := currentItem != nil && currentItem.CanConsume
 	disableUse := currentItem == nil
 	showEquip := !showUse

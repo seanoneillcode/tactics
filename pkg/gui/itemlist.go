@@ -22,9 +22,9 @@ func NewInvItemList() *InvItemList {
 	}
 }
 
-func (i *InvItemList) createItemList(inventory *core.Inventory) []*itemEntry {
-	itemNames := inventory.TeamState.GetItemList()
-	itemMap := inventory.TeamState.ItemHolders
+func (i *InvItemList) createItemList(teamState *core.TeamState) []*itemEntry {
+	itemNames := teamState.GetItemList()
+	itemMap := teamState.ItemHolders
 	x := i.pos.X + offsetX
 	y := i.pos.Y + offsetY
 	var invItems []*itemEntry
@@ -50,10 +50,10 @@ func (i *InvItemList) Draw(screen *ebiten.Image) {
 	}
 }
 
-func (i *InvItemList) Update(delta int64, inventory *core.Inventory) {
-	if i.currentIteration != inventory.TeamState.Iteration {
-		i.currentIteration = inventory.TeamState.Iteration
-		i.itemList = i.createItemList(inventory)
+func (i *InvItemList) Update(delta int64, teamState *core.TeamState) {
+	if i.currentIteration != teamState.Iteration {
+		i.currentIteration = teamState.Iteration
+		i.itemList = i.createItemList(teamState)
 	}
 }
 
