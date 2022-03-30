@@ -22,6 +22,14 @@ var effectPos = &elem.Pos{
 	Y: 32,
 }
 
+type ctx string
+
+const (
+	listCtx      ctx = "list"
+	actionCtx    ctx = "action"
+	characterCtx ctx = "character"
+)
+
 type InventoryUi struct {
 	cursor              *elem.Cursor
 	actionBox           *ActionBox
@@ -29,10 +37,10 @@ type InventoryUi struct {
 	invItemList         *InvItemList
 	teamState           *core.TeamState
 	justOpened          bool
-	ActiveElement       string // list, action, character
-	SelectedListIndex   int
-	SelectedActionIndex int
-	SelectedCharacter   string
+	activeCtx           ctx // list, action, character
+	selectedListIndex   int
+	selectedActionIndex int
+	selectedCharacter   string
 	currentIteration    int
 	currentItem         *core.Item
 	IsActive            bool
@@ -58,9 +66,8 @@ func NewInventoryUi() *InventoryUi {
 			"default": common.LoadImage("default-avatar.png"),
 		},
 		characterEffect:   elem.NewEffectCard("effect-card-bg.png"),
-		ActiveElement:     "list",
-		SelectedListIndex: 0,
-		SelectedCharacter: "default",
+		activeCtx:         listCtx,
+		selectedCharacter: "default",
 	}
 	return i
 }
@@ -72,10 +79,10 @@ func (i *InventoryUi) Draw(screen *ebiten.Image) {
 
 	i.bg.Draw(screen)
 	i.invItemList.Draw(screen)
-	if i.ActiveElement == "action" {
+	if i.activeCtx == actionCtx {
 		i.actionBox.Draw(screen)
 	}
-	if i.ActiveElement == "character" {
+	if i.activeCtx == characterCtx {
 		i.actionBox.Draw(screen)
 		i.characterEffect.Draw(screen)
 	}
@@ -100,25 +107,25 @@ func (i *InventoryUi) Update(delta int64, state *core.State) {
 	var formattedItemDescription string
 	var item *core.Item
 	// figure out cursor, actionBox positions
-	switch i.ActiveElement {
-	case "list":
+	switch i.activeCtx {
+	case listCtx:
 		i.cursorPos.X = i.listPos.X - 14
-		i.cursorPos.Y = i.listPos.Y + (16.0 * i.SelectedListIndex)
-	case "action":
+		i.cursorPos.Y = i.listPos.Y + (16.0 * i.selectedListIndex)
+	case actionCtx:
 		i.actionPos.X = i.listPos.X + 2
-		i.actionPos.Y = i.listPos.Y + 11 + (16.0 * i.SelectedListIndex)
+		i.actionPos.Y = i.listPos.Y + 11 + (16.0 * i.selectedListIndex)
 		i.cursorPos.X = i.actionPos.X - 9
-		i.cursorPos.Y = i.actionPos.Y + 5 + (16.0 * i.SelectedActionIndex)
+		i.cursorPos.Y = i.actionPos.Y + 5 + (16.0 * i.selectedActionIndex)
 		if state.Player.TeamState.HasItems() {
-			item = state.Player.TeamState.GetItemWithIndex(i.SelectedListIndex)
+			item = state.Player.TeamState.GetItemWithIndex(i.selectedListIndex)
 			drawInfoBox = true
 			formattedItemDescription = core.GetFormattedValueMax(item.Description, 22)
 		}
-	case "character":
+	case characterCtx:
 		i.cursorPos.X = effectPos.X - 12
 		i.cursorPos.Y = effectPos.Y + 16
 		if state.Player.TeamState.HasItems() {
-			item = state.Player.TeamState.GetItemWithIndex(i.SelectedListIndex)
+			item = state.Player.TeamState.GetItemWithIndex(i.selectedListIndex)
 			drawInfoBox = true
 			formattedItemDescription = core.GetFormattedValueMax(item.Description, 22)
 		}
@@ -126,14 +133,14 @@ func (i *InventoryUi) Update(delta int64, state *core.State) {
 
 	var currentItem *core.Item
 	if state.Player.TeamState.HasItems() {
-		currentItem = state.Player.TeamState.GetItemWithIndex(i.SelectedListIndex)
+		currentItem = state.Player.TeamState.GetItemWithIndex(i.selectedListIndex)
 	}
 
 	i.cursor.Update(delta, i.cursorPos)
 	i.actionBox.Update(delta, i.actionPos, currentItem)
 	i.invItemList.Update(delta, state.Player.TeamState)
 	i.infoBox.Update(invInfoPos, drawInfoBox, formattedItemDescription)
-	i.characterEffect.Update(effectPos, true, i.SelectedCharacter, i.charImages[i.SelectedCharacter], item, state.Player.TeamState.Characters[0])
+	i.characterEffect.Update(effectPos, true, i.selectedCharacter, i.charImages[i.selectedCharacter], item, state.Player.TeamState.Characters[0])
 }
 
 func (i *InventoryUi) handleInput(delta int64, state *core.State) {
@@ -143,41 +150,41 @@ func (i *InventoryUi) handleInput(delta int64, state *core.State) {
 	}
 
 	if inpututil.IsKeyJustPressed(ebiten.KeyBackspace) {
-		switch i.ActiveElement {
-		case "list":
+		switch i.activeCtx {
+		case listCtx:
 			state.UI.Close()
 			state.Player.Activate()
-		case "action":
-			i.ActiveElement = "list"
-		case "character":
-			i.ActiveElement = "action"
+		case actionCtx:
+			i.activeCtx = listCtx
+		case characterCtx:
+			i.activeCtx = actionCtx
 		}
 		return
 	}
 	if inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
-		switch i.ActiveElement {
-		case "list":
+		switch i.activeCtx {
+		case listCtx:
 			if teamState.HasItems() {
-				i.ActiveElement = "action"
-				i.SelectedActionIndex = 0
+				i.activeCtx = actionCtx
+				i.selectedActionIndex = 0
 			}
-		case "action":
-			item := teamState.GetItemWithIndex(i.SelectedListIndex)
-			if i.SelectedActionIndex == 0 {
-				i.ActiveElement = "character"
+		case actionCtx:
+			item := teamState.GetItemWithIndex(i.selectedListIndex)
+			if i.selectedActionIndex == 0 {
+				i.activeCtx = characterCtx
 			} else {
 				// drop
 				teamState.RemoveItem(item.Name)
-				i.ActiveElement = "list"
-				if i.SelectedListIndex == len(teamState.ItemHolders) {
-					i.SelectedListIndex = i.SelectedListIndex - 1
-					if i.SelectedListIndex < 0 {
-						i.SelectedListIndex = 0
+				i.activeCtx = listCtx
+				if i.selectedListIndex == len(teamState.ItemHolders) {
+					i.selectedListIndex = i.selectedListIndex - 1
+					if i.selectedListIndex < 0 {
+						i.selectedListIndex = 0
 					}
 				}
 			}
-		case "character":
-			item := teamState.GetItemWithIndex(i.SelectedListIndex)
+		case characterCtx:
+			item := teamState.GetItemWithIndex(i.selectedListIndex)
 			// use
 			log.Printf("selecting use, item: %v", item.Description)
 			if item.CanConsume {
@@ -190,52 +197,52 @@ func (i *InventoryUi) handleInput(delta int64, state *core.State) {
 				}
 				// ??
 			}
-			i.ActiveElement = "list"
-			if i.SelectedListIndex == len(teamState.ItemHolders) {
-				i.SelectedListIndex = i.SelectedListIndex - 1
-				if i.SelectedListIndex < 0 {
-					i.SelectedListIndex = 0
+			i.activeCtx = listCtx
+			if i.selectedListIndex == len(teamState.ItemHolders) {
+				i.selectedListIndex = i.selectedListIndex - 1
+				if i.selectedListIndex < 0 {
+					i.selectedListIndex = 0
 				}
 			}
 		}
 		return
 	}
 	if inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) || inpututil.IsKeyJustPressed(ebiten.KeyW) {
-		switch i.ActiveElement {
-		case "list":
-			i.SelectedListIndex = i.SelectedListIndex - 1
-			if i.SelectedListIndex < 0 {
-				i.SelectedListIndex = 0
+		switch i.activeCtx {
+		case listCtx:
+			i.selectedListIndex = i.selectedListIndex - 1
+			if i.selectedListIndex < 0 {
+				i.selectedListIndex = 0
 			}
-		case "action":
-			i.SelectedActionIndex = i.SelectedActionIndex - 1
-			if i.SelectedActionIndex < 0 {
-				i.SelectedActionIndex = 0
+		case actionCtx:
+			i.selectedActionIndex = i.selectedActionIndex - 1
+			if i.selectedActionIndex < 0 {
+				i.selectedActionIndex = 0
 			}
-		case "character":
+		case characterCtx:
 			// todo select up down character
 		}
 	}
 	if inpututil.IsKeyJustPressed(ebiten.KeyArrowDown) || inpututil.IsKeyJustPressed(ebiten.KeyS) {
-		switch i.ActiveElement {
-		case "list":
+		switch i.activeCtx {
+		case listCtx:
 			if teamState.HasItems() {
-				i.SelectedListIndex = i.SelectedListIndex + 1
-				if i.SelectedListIndex == len(teamState.ItemHolders) {
-					i.SelectedListIndex = i.SelectedListIndex - 1
-					if i.SelectedListIndex < 0 {
-						i.SelectedListIndex = 0
+				i.selectedListIndex = i.selectedListIndex + 1
+				if i.selectedListIndex == len(teamState.ItemHolders) {
+					i.selectedListIndex = i.selectedListIndex - 1
+					if i.selectedListIndex < 0 {
+						i.selectedListIndex = 0
 					}
 				}
 			} else {
-				i.SelectedListIndex = 0
+				i.selectedListIndex = 0
 			}
-		case "action":
-			i.SelectedActionIndex = i.SelectedActionIndex + 1
-			if i.SelectedActionIndex == 2 {
-				i.SelectedActionIndex = i.SelectedActionIndex - 1
+		case actionCtx:
+			i.selectedActionIndex = i.selectedActionIndex + 1
+			if i.selectedActionIndex == 2 {
+				i.selectedActionIndex = i.selectedActionIndex - 1
 			}
-		case "character":
+		case characterCtx:
 			// todo select up down character
 		}
 	}
