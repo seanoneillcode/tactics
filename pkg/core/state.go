@@ -6,4 +6,5 @@ type State struct {
 	ActiveDialog *Dialog // todo move into UI
 	Shop         *Shop
 	UI           *UI
+	Control      *Control
 }

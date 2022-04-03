@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"github.com/seanoneillcode/go-tactics/pkg/gui/inv"
+	"github.com/seanoneillcode/go-tactics/pkg/gui/menu"
 	"log"
 	"time"
 
@@ -16,15 +17,17 @@ func main() {
 	g := &Game{
 		lastUpdateCalled: time.Now(),
 		state: &core.State{
-			Player: core.NewPlayer(),
-			Map:    core.NewMap(),
-			Shop:   core.NewShop(),
-			UI:     core.NewUI(),
+			Control: &core.Control{},
+			Player:  core.NewPlayer(),
+			Map:     core.NewMap(),
+			Shop:    core.NewShop(),
+			UI:      core.NewUI(),
 		},
 		dialogBox:   gui.NewDialogueBox(),
-		shopUi:      gui.NewShopUi(),
+		shopUI:      gui.NewShopUi(),
 		camera:      core.NewCamera(),
-		inventoryUi: inv.NewInventoryUi(),
+		inventoryUI: inv.NewInventoryUi(),
+		menuUI:      menu.NewUI(),
 	}
 	g.state.Map.LoadLevel("siopa")
 	g.state.Player.EnterLevel(g.state.Map.Level)
@@ -49,8 +52,9 @@ type Game struct {
 	state            *core.State
 	camera           *core.Camera
 	dialogBox        *gui.DialogueBox
-	shopUi           *gui.ShopUi
-	inventoryUi      *inv.InventoryUi
+	shopUI           *gui.ShopUI
+	inventoryUI      gui.UI
+	menuUI           gui.UI
 }
 
 func (g *Game) Update() error {
@@ -71,11 +75,12 @@ func (g *Game) Update() error {
 
 	// update UI
 	g.dialogBox.Update(delta, g.state)
-	g.shopUi.Update(delta, g.state)
-	g.inventoryUi.Update(delta, g.state)
+	g.shopUI.Update(delta, g.state)
+	g.inventoryUI.Update(delta, g.state)
+	g.menuUI.Update(delta, g.state)
 
 	// handle escape
-	if ebiten.IsKeyPressed(ebiten.KeyEscape) {
+	if ebiten.IsKeyPressed(ebiten.KeyEscape) || g.state.Control.Command == "exit" {
 		return NormalEscapeError
 	}
 	return nil
@@ -86,8 +91,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	g.state.Player.Draw(g.camera.GetBuffer())
 	g.camera.DrawBuffer(screen)
 	g.dialogBox.Draw(screen)
-	g.shopUi.Draw(screen)
-	g.inventoryUi.Draw(screen)
+	g.shopUI.Draw(screen)
+	g.inventoryUI.Draw(screen)
+	g.menuUI.Draw(screen)
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {

@@ -10,7 +10,7 @@ import (
 	"github.com/seanoneillcode/go-tactics/pkg/gui/elem"
 )
 
-type ShopUi struct {
+type ShopUI struct {
 	shop           *core.Shop
 	bg             *elem.StaticImage
 	cursor         *elem.Cursor
@@ -41,8 +41,8 @@ var confirmationPos = &elem.Pos{
 	Y: 64,
 }
 
-func NewShopUi() *ShopUi {
-	s := &ShopUi{
+func NewShopUi() *ShopUI {
+	s := &ShopUI{
 		bg:           elem.NewStaticImage("shop-bg.png", 0, 0),
 		cursor:       elem.NewCursor(),
 		confirmation: elem.NewButton("Buy", "shop-confirmation-bg.png"),
@@ -55,7 +55,7 @@ func NewShopUi() *ShopUi {
 	return s
 }
 
-func (s *ShopUi) Draw(screen *ebiten.Image) {
+func (s *ShopUI) Draw(screen *ebiten.Image) {
 	if s.shop == nil || !s.shop.IsActive {
 		return
 	}
@@ -75,7 +75,7 @@ func (s *ShopUi) Draw(screen *ebiten.Image) {
 	s.cursor.Draw(screen)
 }
 
-func (s *ShopUi) Update(delta int64, state *core.State) {
+func (s *ShopUI) Update(delta int64, state *core.State) {
 	s.shop = state.Shop
 	if s.shop.IsActive && !s.isLoaded {
 		s.isLoaded = true
@@ -113,7 +113,7 @@ func (s *ShopUi) Update(delta int64, state *core.State) {
 	s.confirmation.Update(delta, confirmationPos, confirmationDisable, true)
 }
 
-func (s *ShopUi) updatePlayerMoney(money int) {
+func (s *ShopUI) updatePlayerMoney(money int) {
 	playerMoneyString := fmt.Sprintf("%dg", money)
 	playerMoneyWidth := text.BoundString(elem.StandardFont, playerMoneyString).Size().X / common.ScaleF
 	s.playerMoney.SetValue(playerMoneyString)
