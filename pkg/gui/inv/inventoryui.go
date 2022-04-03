@@ -161,6 +161,11 @@ func (i *InventoryUi) handleInput(delta int64, state *core.State) {
 		}
 		return
 	}
+	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
+		state.UI.Close()
+		state.Player.Activate()
+		return
+	}
 	if inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
 		switch i.activeCtx {
 		case listCtx:

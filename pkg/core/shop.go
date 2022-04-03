@@ -9,9 +9,9 @@ import (
 type Shop struct {
 	Data              *ShopData
 	IsActive          bool
-	ActiveElement     string
-	SelectedListIndex int
-	justOpened        bool
+	ActiveElement     string // todo move UI state into gui package
+	SelectedListIndex int    // todo move UI state into gui package
+	justOpened        bool   // todo move UI state into gui package
 }
 
 func NewShop() *Shop {
