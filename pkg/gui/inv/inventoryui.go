@@ -101,7 +101,7 @@ func (r *InventoryUI) Update(delta int64, state *core.State) {
 		r.justOpened = false
 		return
 	}
-	r.handleInput(delta, state)
+	r.handleInput(state)
 
 	var drawInfoBox bool
 	var formattedItemDescription string
@@ -143,7 +143,7 @@ func (r *InventoryUI) Update(delta int64, state *core.State) {
 	r.characterEffect.Update(effectPos, true, r.selectedCharacter, r.charImages[r.selectedCharacter], item, state.Player.TeamState.Characters[0])
 }
 
-func (r *InventoryUI) handleInput(delta int64, state *core.State) {
+func (r *InventoryUI) handleInput(state *core.State) {
 	teamState := state.Player.TeamState
 	if teamState == nil {
 		log.Fatal("inventory opened with no team!")
@@ -152,6 +152,8 @@ func (r *InventoryUI) handleInput(delta int64, state *core.State) {
 	if inpututil.IsKeyJustPressed(ebiten.KeyBackspace) {
 		switch r.activeCtx {
 		case listCtx:
+			r.reset()
+			r.IsActive = false
 			state.UI.Open(core.MenuUI)
 		case actionCtx:
 			r.activeCtx = listCtx
@@ -163,6 +165,8 @@ func (r *InventoryUI) handleInput(delta int64, state *core.State) {
 	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
 		state.UI.Close()
 		state.Player.Activate()
+		r.reset()
+		r.IsActive = false
 		return
 	}
 	if inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
@@ -257,4 +261,9 @@ func (r *InventoryUI) handleInput(delta int64, state *core.State) {
 		// change to other item list
 	}
 
+}
+
+func (r *InventoryUI) reset() {
+	r.selectedListIndex = 0
+	r.selectedActionIndex = 0
 }

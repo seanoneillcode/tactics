@@ -27,6 +27,8 @@ func NewPlayer() *Player {
 		TeamState: NewTeamState(),
 	}
 	p.TeamState.Characters = append(p.TeamState.Characters, NewCharacterState())
+	p.TeamState.Characters = append(p.TeamState.Characters, NewCharacterState())
+	p.TeamState.Characters = append(p.TeamState.Characters, NewCharacterState())
 	return p
 }
 

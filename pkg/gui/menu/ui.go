@@ -20,6 +20,7 @@ type ui struct {
 	justOpened        bool
 	selectedListIndex int
 	IsActive          bool
+	cards             []*elem.CharacterCard
 }
 
 func NewUI() *ui {
@@ -50,12 +51,17 @@ func (r *ui) Draw(screen *ebiten.Image) {
 	for _, o := range r.options {
 		o.Draw(screen)
 	}
+	for _, card := range r.cards {
+		card.Draw(screen)
+	}
 }
 
+// TODO consider Open() function, called when ui is opened
 func (r *ui) Update(delta int64, state *core.State) {
 	if !state.UI.IsMenuActive() {
 		r.IsActive = false
 		r.justOpened = true
+		r.rebuild(state.Player.TeamState.Characters)
 		return
 	}
 	r.IsActive = true
@@ -63,21 +69,25 @@ func (r *ui) Update(delta int64, state *core.State) {
 		r.justOpened = false
 		return
 	}
-	r.handleInput(delta, state)
+	r.handleInput(state)
 	highlightPos := &elem.Pos{X: listPos.X, Y: listPos.Y}
 	highlightPos.Y = listPos.Y + (16.0 * r.selectedListIndex)
 	r.highlight.SetPos(highlightPos)
 }
 
-func (r *ui) handleInput(delta int64, state *core.State) {
+func (r *ui) handleInput(state *core.State) {
 	if inpututil.IsKeyJustPressed(ebiten.KeyBackspace) {
 		state.UI.Close()
 		state.Player.Activate()
+		r.reset()
+		r.IsActive = false
 		return
 	}
 	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
 		state.UI.Close()
 		state.Player.Activate()
+		r.reset()
+		r.IsActive = false
 		return
 	}
 	if inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) || inpututil.IsKeyJustPressed(ebiten.KeyW) {
@@ -112,4 +122,21 @@ func (r *ui) handleInput(delta int64, state *core.State) {
 			state.Control.ExitGame()
 		}
 	}
+}
+
+func (r *ui) reset() {
+	r.selectedListIndex = 0
+}
+
+func (r *ui) rebuild(characters []*core.CharacterState) {
+	var cards []*elem.CharacterCard
+	pos := elem.Pos{
+		X: 16,
+		Y: 32,
+	}
+	for _, c := range characters {
+		cards = append(cards, elem.NewCharacterCard("name", c, pos))
+		pos.Y = pos.Y + 64
+	}
+	r.cards = cards
 }
