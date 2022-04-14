@@ -6,7 +6,7 @@ import (
 )
 
 type Level struct {
-	name      string
+	Name      string
 	npcs      []*Npc
 	links     []*Link
 	pickups   []*Pickup
@@ -21,7 +21,7 @@ func NewLevel(name string) *Level {
 	objects := tiledGrid.GetObjectData()
 
 	return &Level{
-		name:      name,
+		Name:      name,
 		npcs:      loadNpcs(objects),
 		links:     loadLinks(objects),
 		pickups:   loadPickups(objects),

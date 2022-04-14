@@ -6,6 +6,7 @@ type CharacterState struct {
 	Magic               int
 	ActiveStatusEffects []string // poison, etc
 	EquippedItems       map[string]*Item
+	Name                string
 
 	// stats
 	Stats *Stats
@@ -24,8 +25,9 @@ type Stats struct {
 	MagicDef       int // magical damage reduction
 }
 
-func NewCharacterState() *CharacterState {
+func NewCharacterState(name string) *CharacterState {
 	return &CharacterState{
+		Name:   name,
 		Health: 10,
 		Stats: &Stats{
 			MaxHealth:  10,

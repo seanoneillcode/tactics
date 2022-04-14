@@ -1,10 +1,12 @@
 package core
 
 type State struct {
-	Player       *Player
-	Map          *Map
-	ActiveDialog *Dialog // todo move into UI
-	Shop         *Shop
-	UI           *UI
-	Control      *Control
+	Player           *Player
+	TeamState        *TeamState
+	Map              *Map
+	ActiveDialog     *Dialog
+	Shop             *Shop
+	UI               *UI
+	Control          *Control
+	TotalElapsedTime int64
 }

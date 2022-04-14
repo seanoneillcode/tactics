@@ -21,7 +21,7 @@ func NewMap() *Map {
 
 func (m *Map) LoadLevel(name string) {
 	for _, level := range m.levels {
-		if level.name == name {
+		if level.Name == name {
 			log.Printf("using existing loaded level")
 			m.Level = level
 			return

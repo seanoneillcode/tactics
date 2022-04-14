@@ -20,7 +20,11 @@ type ItemHolder struct {
 
 func NewTeamState() *TeamState {
 	ts := &TeamState{
-		Characters:  []*CharacterState{},
+		Characters: []*CharacterState{
+			NewCharacterState("alice"),
+			NewCharacterState("bob"),
+			NewCharacterState("carl"),
+		},
 		Money:       200,
 		ItemHolders: map[string]*ItemHolder{},
 		ItemList:    []string{},

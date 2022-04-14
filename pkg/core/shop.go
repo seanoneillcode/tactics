@@ -52,16 +52,16 @@ func (s *Shop) Update(delta int64, state *State) {
 		switch s.ActiveElement {
 		case "list":
 			shopItem := s.Data.Items[s.SelectedListIndex]
-			if shopItem.Cost > state.Player.TeamState.Money {
+			if shopItem.Cost > state.TeamState.Money {
 				return
 			}
 			s.ActiveElement = "confirmation"
 		case "confirmation":
 			shopItem := s.Data.Items[s.SelectedListIndex]
-			if shopItem.Cost > state.Player.TeamState.Money {
+			if shopItem.Cost > state.TeamState.Money {
 				return
 			}
-			state.Player.TeamState.BuyItem(shopItem.Item, shopItem.Cost)
+			state.TeamState.BuyItem(shopItem.Item, shopItem.Cost)
 			s.ActiveElement = "list"
 		}
 		return

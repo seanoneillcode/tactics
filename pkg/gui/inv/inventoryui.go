@@ -116,35 +116,35 @@ func (r *InventoryUI) Update(delta int64, state *core.State) {
 		r.actionPos.Y = r.listPos.Y + 11 + (16.0 * r.selectedListIndex)
 		r.cursorPos.X = r.actionPos.X - 9
 		r.cursorPos.Y = r.actionPos.Y + 5 + (16.0 * r.selectedActionIndex)
-		if state.Player.TeamState.HasItems() {
-			item = state.Player.TeamState.GetItemWithIndex(r.selectedListIndex)
+		if state.TeamState.HasItems() {
+			item = state.TeamState.GetItemWithIndex(r.selectedListIndex)
 			drawInfoBox = true
 			formattedItemDescription = core.GetFormattedValueMax(item.Description, 22)
 		}
 	case characterCtx:
 		r.cursorPos.X = effectPos.X - 12
 		r.cursorPos.Y = effectPos.Y + 16
-		if state.Player.TeamState.HasItems() {
-			item = state.Player.TeamState.GetItemWithIndex(r.selectedListIndex)
+		if state.TeamState.HasItems() {
+			item = state.TeamState.GetItemWithIndex(r.selectedListIndex)
 			drawInfoBox = true
 			formattedItemDescription = core.GetFormattedValueMax(item.Description, 22)
 		}
 	}
 
 	var currentItem *core.Item
-	if state.Player.TeamState.HasItems() {
-		currentItem = state.Player.TeamState.GetItemWithIndex(r.selectedListIndex)
+	if state.TeamState.HasItems() {
+		currentItem = state.TeamState.GetItemWithIndex(r.selectedListIndex)
 	}
 
 	r.cursor.Update(delta, r.cursorPos)
 	r.actionBox.Update(delta, r.actionPos, currentItem)
-	r.invItemList.Update(delta, state.Player.TeamState)
+	r.invItemList.Update(delta, state.TeamState)
 	r.infoBox.Update(invInfoPos, drawInfoBox, formattedItemDescription)
-	r.characterEffect.Update(effectPos, true, r.selectedCharacter, r.charImages[r.selectedCharacter], item, state.Player.TeamState.Characters[0])
+	r.characterEffect.Update(effectPos, true, r.selectedCharacter, r.charImages[r.selectedCharacter], item, state.TeamState.Characters[0])
 }
 
 func (r *InventoryUI) handleInput(state *core.State) {
-	teamState := state.Player.TeamState
+	teamState := state.TeamState
 	if teamState == nil {
 		log.Fatal("inventory opened with no team!")
 	}

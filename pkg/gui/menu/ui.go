@@ -1,21 +1,25 @@
 package menu
 
 import (
+	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/seanoneillcode/go-tactics/pkg/common"
 	"github.com/seanoneillcode/go-tactics/pkg/core"
 	"github.com/seanoneillcode/go-tactics/pkg/gui/elem"
+	"time"
 )
 
 var listPos = &elem.Pos{X: 266, Y: 32}
 
 type ui struct {
-	//
 	highlight  *elem.Sprite
 	bg         *elem.StaticImage
 	charImages map[string]*ebiten.Image
 	options    []*elem.Text
+	location   *elem.Text
+	time       *elem.Text
+	money      *elem.Text
 	// state
 	justOpened        bool
 	selectedListIndex int
@@ -39,6 +43,9 @@ func NewUI() *ui {
 			elem.NewText(listPos.X+textOffset.X, 96+textOffset.Y, "File"),
 			elem.NewText(listPos.X+textOffset.X, 112+textOffset.Y, "Exit"),
 		},
+		money:    elem.NewText(listPos.X+textOffset.X, 172+textOffset.Y, "money:"),
+		location: elem.NewText(listPos.X+textOffset.X, 172+16+textOffset.Y, "location:"),
+		time:     elem.NewText(listPos.X+textOffset.X, 172+32+textOffset.Y, "time:"),
 	}
 }
 
@@ -54,14 +61,18 @@ func (r *ui) Draw(screen *ebiten.Image) {
 	for _, card := range r.cards {
 		card.Draw(screen)
 	}
+	r.location.Draw(screen)
+	r.time.Draw(screen)
+	r.money.Draw(screen)
 }
 
-// TODO consider Open() function, called when ui is opened
 func (r *ui) Update(delta int64, state *core.State) {
 	if !state.UI.IsMenuActive() {
 		r.IsActive = false
 		r.justOpened = true
-		r.rebuild(state.Player.TeamState.Characters)
+		r.rebuild(state.TeamState.Characters)
+		r.location.SetValue(fmt.Sprintf("location: %s", state.Map.Level.Name))
+		r.money.SetValue(fmt.Sprintf("money: %s", fmt.Sprintf("%d", state.TeamState.Money)))
 		return
 	}
 	r.IsActive = true
@@ -73,6 +84,9 @@ func (r *ui) Update(delta int64, state *core.State) {
 	highlightPos := &elem.Pos{X: listPos.X, Y: listPos.Y}
 	highlightPos.Y = listPos.Y + (16.0 * r.selectedListIndex)
 	r.highlight.SetPos(highlightPos)
+	duration := time.Duration(state.TotalElapsedTime) * time.Millisecond
+	z := time.Unix(0, 0).UTC().Add(duration)
+	r.time.SetValue(fmt.Sprintf("time: %s", z.Format("15:04:05")))
 }
 
 func (r *ui) handleInput(state *core.State) {
@@ -131,12 +145,12 @@ func (r *ui) reset() {
 func (r *ui) rebuild(characters []*core.CharacterState) {
 	var cards []*elem.CharacterCard
 	pos := elem.Pos{
-		X: 16,
+		X: 8,
 		Y: 32,
 	}
 	for _, c := range characters {
-		cards = append(cards, elem.NewCharacterCard("name", c, pos))
-		pos.Y = pos.Y + 64
+		cards = append(cards, elem.NewCharacterCard(c, pos))
+		pos.Y = pos.Y + 64 - 8
 	}
 	r.cards = cards
 }

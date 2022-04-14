@@ -14,7 +14,7 @@ type Player struct {
 	lastInput string
 
 	ActiveShop *ShopData
-	TeamState  *TeamState
+
 	// not sure about this
 	isSleeping  bool
 	playerState string
@@ -24,11 +24,7 @@ func NewPlayer() *Player {
 	p := &Player{
 		isActive:  true,
 		Character: NewCharacter("player.png"),
-		TeamState: NewTeamState(),
 	}
-	p.TeamState.Characters = append(p.TeamState.Characters, NewCharacterState())
-	p.TeamState.Characters = append(p.TeamState.Characters, NewCharacterState())
-	p.TeamState.Characters = append(p.TeamState.Characters, NewCharacterState())
 	return p
 }
 
@@ -88,13 +84,13 @@ func (p *Player) Update(delta int64, state *State) {
 			}
 			if ti.pickup != nil && !ti.pickup.isUsed {
 				ti.pickup.isUsed = true
-				p.TeamState.Pickup(ti.pickup)
+				state.TeamState.Pickup(ti.pickup)
 				state.ActiveDialog = getPickupDialog(ti.pickup.itemName)
 			}
 			if ti.action != nil {
 				if ti.action.name == "bed" {
 					p.SetSleep(true)
-					p.TeamState.RestoreHealth()
+					state.TeamState.RestoreHealth()
 				}
 			}
 			if ti.shop != nil {

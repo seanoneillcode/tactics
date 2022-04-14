@@ -17,11 +17,13 @@ func main() {
 	g := &Game{
 		lastUpdateCalled: time.Now(),
 		state: &core.State{
-			Control: &core.Control{},
-			Player:  core.NewPlayer(),
-			Map:     core.NewMap(),
-			Shop:    core.NewShop(),
-			UI:      core.NewUI(),
+			Control:          &core.Control{},
+			Player:           core.NewPlayer(),
+			Map:              core.NewMap(),
+			Shop:             core.NewShop(),
+			UI:               core.NewUI(),
+			TeamState:        core.NewTeamState(),
+			TotalElapsedTime: 12 * 1000 * 60,
 		},
 		dialogBox:   gui.NewDialogueBox(),
 		shopUI:      gui.NewShopUi(),
@@ -61,6 +63,7 @@ func (g *Game) Update() error {
 	// calculate delta
 	delta := time.Now().Sub(g.lastUpdateCalled).Milliseconds()
 	g.lastUpdateCalled = time.Now()
+	g.state.TotalElapsedTime = g.state.TotalElapsedTime + delta
 
 	// update state
 	g.state.Map.Update(delta, g.state)

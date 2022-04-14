@@ -5,6 +5,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/seanoneillcode/go-tactics/pkg/common"
 	"github.com/seanoneillcode/go-tactics/pkg/core"
+	"strings"
 )
 
 type CharacterCard struct {
@@ -14,16 +15,18 @@ type CharacterCard struct {
 	name   *Text
 	health *Text
 	magic  *Text
+	level  *Text
 }
 
-func NewCharacterCard(name string, cs *core.CharacterState, pos Pos) *CharacterCard {
+func NewCharacterCard(cs *core.CharacterState, pos Pos) *CharacterCard {
 	r := &CharacterCard{
 		pos:    &Pos{pos.X, pos.Y},
-		image:  common.LoadImage(fmt.Sprintf("portrait/%s.png", name)),
+		image:  common.LoadImage(fmt.Sprintf("portrait/%s.png", cs.Name)),
 		bg:     common.LoadImage("card-bg.png"),
-		name:   NewText(pos.X+offsetX+48, pos.Y+offsetY, name),
-		health: NewText(pos.X+offsetX+48, pos.Y+offsetY+16, fmt.Sprintf("hp: %v", cs.Health)),
-		magic:  NewText(pos.X+offsetX+48, pos.Y+offsetY+32, fmt.Sprintf("mp: %v", cs.Magic)),
+		name:   NewText(pos.X+offsetX+48, pos.Y+offsetY, strings.Title(cs.Name)),
+		health: NewText(pos.X+offsetX+48+8, pos.Y+offsetY+16, fmt.Sprintf("health: %v", cs.Health)),
+		magic:  NewText(pos.X+offsetX+48+8, pos.Y+offsetY+32, fmt.Sprintf("magic: %v", cs.Magic)),
+		level:  NewText(pos.X+offsetX+180, pos.Y+offsetY, fmt.Sprintf("level: %v", cs.Stats.Level)),
 	}
 	return r
 }
@@ -42,6 +45,7 @@ func (r *CharacterCard) Draw(screen *ebiten.Image) {
 	r.name.Draw(screen)
 	r.health.Draw(screen)
 	r.magic.Draw(screen)
+	r.level.Draw(screen)
 }
 
 func (r *CharacterCard) Update(pos *Pos) {
