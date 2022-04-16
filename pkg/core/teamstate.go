@@ -88,9 +88,8 @@ func (t *TeamState) RemoveItem(name string) {
 	t.refreshItemList()
 }
 
-func (t *TeamState) ConsumeItem(name string) {
-	// todo select character
-	selectedCharacter := t.Characters[0]
+func (t *TeamState) ConsumeItem(name string, index int) {
+	selectedCharacter := t.Characters[index]
 
 	ti := t.ItemHolders[name]
 	for _, e := range ti.Item.Effects {
@@ -100,9 +99,8 @@ func (t *TeamState) ConsumeItem(name string) {
 	t.refreshItemList()
 }
 
-func (t *TeamState) EquipItem(name string) {
-	// todo select character
-	selectedCharacter := t.Characters[0]
+func (t *TeamState) EquipItem(name string, index int) {
+	selectedCharacter := t.Characters[index]
 
 	ti := t.ItemHolders[name]
 	selectedCharacter.EquippedItems[ti.Item.EquipSlot] = ti.Item

@@ -238,15 +238,16 @@ func (r *ui) handleInput(state *core.State) {
 			}
 		case characterCtx:
 			item := teamState.GetItemWithIndex(r.selectedListIndex)
+
 			// use
 			log.Printf("selecting use, item: %v", item.Description)
 			if item.CanConsume {
 				// select character
-				teamState.ConsumeItem(item.Name)
+				teamState.ConsumeItem(item.Name, r.selectedCharacterIndex)
 			} else {
 				if item.CanEquip {
 					// select character
-					teamState.EquipItem(item.Name)
+					teamState.EquipItem(item.Name, r.selectedCharacterIndex)
 				}
 				// ??
 			}
