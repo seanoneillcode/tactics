@@ -1,4 +1,4 @@
-package inv
+package inventory
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"

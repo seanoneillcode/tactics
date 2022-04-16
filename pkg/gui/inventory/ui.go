@@ -1,4 +1,4 @@
-package inv
+package inventory
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
@@ -11,15 +11,21 @@ import (
 
 const offsetX = 4
 const offsetY = 4
+const charactersPerInfoLine = 30
 
 var invInfoPos = &elem.Pos{
-	X: 200,
-	Y: 100,
+	X: 194,
+	Y: 120,
 }
 
 var effectPos = &elem.Pos{
 	X: 200,
 	Y: 32,
+}
+
+var itemImagePos = &elem.Pos{
+	X: 254,
+	Y: 34,
 }
 
 type ctx string
@@ -30,7 +36,7 @@ const (
 	characterCtx ctx = "character"
 )
 
-type InventoryUI struct {
+type ui struct {
 	cursor              *elem.Cursor
 	actionBox           *ActionBox
 	bg                  *elem.StaticImage
@@ -47,16 +53,18 @@ type InventoryUI struct {
 	actionPos           *elem.Pos
 	listPos             *elem.Pos
 	cursorPos           *elem.Pos
-	infoBox             *elem.InfoBox
+	infoBox             *elem.Text
 	characterEffect     *elem.EffectCard
 	charImages          map[string]*ebiten.Image
+	itemImages          map[string]*elem.StaticImage
+	currentItemImage    *elem.StaticImage
 }
 
-func NewInventoryUi() *InventoryUI {
-	i := &InventoryUI{
+func NewUi() *ui {
+	i := &ui{
 		bg:          elem.NewStaticImage("inventory-bg.png", 0, 0),
 		cursor:      elem.NewCursor(),
-		infoBox:     elem.NewInfoBox("", "shop-information-bg.png"),
+		infoBox:     elem.NewText(invInfoPos.X+2, invInfoPos.Y+12, ""),
 		actionBox:   NewActionBox(),
 		invItemList: NewInvItemList(),
 		actionPos:   &elem.Pos{X: 234, Y: 32},
@@ -65,14 +73,23 @@ func NewInventoryUi() *InventoryUI {
 		charImages: map[string]*ebiten.Image{
 			"default": common.LoadImage("default-avatar.png"),
 		},
+		itemImages: map[string]*elem.StaticImage{
+			core.BreadItemName:       elem.NewStaticImage("item/bread.png", float64(itemImagePos.X), float64(itemImagePos.Y)),
+			core.MouldyBreadItemName: elem.NewStaticImage("item/mouldy-bread.png", float64(itemImagePos.X), float64(itemImagePos.Y)),
+			core.HerbItemName:        elem.NewStaticImage("item/herb.png", float64(itemImagePos.X), float64(itemImagePos.Y)),
+			core.PotionItemName:      elem.NewStaticImage("item/potion.png", float64(itemImagePos.X), float64(itemImagePos.Y)),
+			core.PaddedArmorItemName: elem.NewStaticImage("item/padded-armour.png", float64(itemImagePos.X), float64(itemImagePos.Y)),
+			core.SteelArmorItemName:  elem.NewStaticImage("item/steel-armour.png", float64(itemImagePos.X), float64(itemImagePos.Y)),
+		},
 		characterEffect:   elem.NewEffectCard("effect-card-bg.png"),
 		activeCtx:         listCtx,
 		selectedCharacter: "default",
+		currentItemImage:  elem.NewStaticImage("item/unknown.png", float64(itemImagePos.X), float64(itemImagePos.Y)),
 	}
 	return i
 }
 
-func (r *InventoryUI) Draw(screen *ebiten.Image) {
+func (r *ui) Draw(screen *ebiten.Image) {
 	if !r.IsActive {
 		return
 	}
@@ -88,12 +105,16 @@ func (r *InventoryUI) Draw(screen *ebiten.Image) {
 	}
 	r.infoBox.Draw(screen)
 	r.cursor.Draw(screen)
+	if r.currentItemImage != nil {
+		r.currentItemImage.Draw(screen)
+	}
 }
 
-func (r *InventoryUI) Update(delta int64, state *core.State) {
+func (r *ui) Update(delta int64, state *core.State) {
 	if !state.UI.IsInventoryActive() {
 		r.IsActive = false
 		r.justOpened = true
+		r.currentItemImage = nil
 		return
 	}
 	r.IsActive = true
@@ -103,7 +124,6 @@ func (r *InventoryUI) Update(delta int64, state *core.State) {
 	}
 	r.handleInput(state)
 
-	var drawInfoBox bool
 	var formattedItemDescription string
 	var item *core.Item
 	// figure out cursor, actionBox positions
@@ -111,6 +131,11 @@ func (r *InventoryUI) Update(delta int64, state *core.State) {
 	case listCtx:
 		r.cursorPos.X = r.listPos.X - 14
 		r.cursorPos.Y = r.listPos.Y + (16.0 * r.selectedListIndex)
+		if state.TeamState.HasItems() {
+			item = state.TeamState.GetItemWithIndex(r.selectedListIndex)
+			formattedItemDescription = core.GetFormattedValueMax(item.Description, charactersPerInfoLine)
+			r.currentItemImage = r.itemImages[item.Type]
+		}
 	case actionCtx:
 		r.actionPos.X = r.listPos.X + 2
 		r.actionPos.Y = r.listPos.Y + 11 + (16.0 * r.selectedListIndex)
@@ -118,17 +143,14 @@ func (r *InventoryUI) Update(delta int64, state *core.State) {
 		r.cursorPos.Y = r.actionPos.Y + 5 + (16.0 * r.selectedActionIndex)
 		if state.TeamState.HasItems() {
 			item = state.TeamState.GetItemWithIndex(r.selectedListIndex)
-			drawInfoBox = true
-			formattedItemDescription = core.GetFormattedValueMax(item.Description, 22)
+			formattedItemDescription = core.GetFormattedValueMax(item.Description, charactersPerInfoLine)
+			r.currentItemImage = r.itemImages[item.Type]
 		}
+
 	case characterCtx:
 		r.cursorPos.X = effectPos.X - 12
 		r.cursorPos.Y = effectPos.Y + 16
-		if state.TeamState.HasItems() {
-			item = state.TeamState.GetItemWithIndex(r.selectedListIndex)
-			drawInfoBox = true
-			formattedItemDescription = core.GetFormattedValueMax(item.Description, 22)
-		}
+		r.currentItemImage = nil
 	}
 
 	var currentItem *core.Item
@@ -139,11 +161,11 @@ func (r *InventoryUI) Update(delta int64, state *core.State) {
 	r.cursor.Update(delta, r.cursorPos)
 	r.actionBox.Update(delta, r.actionPos, currentItem)
 	r.invItemList.Update(delta, state.TeamState)
-	r.infoBox.Update(invInfoPos, drawInfoBox, formattedItemDescription)
+	r.infoBox.SetValue(formattedItemDescription)
 	r.characterEffect.Update(effectPos, true, r.selectedCharacter, r.charImages[r.selectedCharacter], item, state.TeamState.Characters[0])
 }
 
-func (r *InventoryUI) handleInput(state *core.State) {
+func (r *ui) handleInput(state *core.State) {
 	teamState := state.TeamState
 	if teamState == nil {
 		log.Fatal("inventory opened with no team!")
@@ -263,7 +285,7 @@ func (r *InventoryUI) handleInput(state *core.State) {
 
 }
 
-func (r *InventoryUI) reset() {
+func (r *ui) reset() {
 	r.selectedListIndex = 0
 	r.selectedActionIndex = 0
 }

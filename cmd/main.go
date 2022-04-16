@@ -2,7 +2,7 @@ package main
 
 import (
 	"errors"
-	"github.com/seanoneillcode/go-tactics/pkg/gui/inv"
+	"github.com/seanoneillcode/go-tactics/pkg/gui/inventory"
 	"github.com/seanoneillcode/go-tactics/pkg/gui/menu"
 	"log"
 	"time"
@@ -28,7 +28,7 @@ func main() {
 		dialogBox:   gui.NewDialogueBox(),
 		shopUI:      gui.NewShopUi(),
 		camera:      core.NewCamera(),
-		inventoryUI: inv.NewInventoryUi(),
+		inventoryUI: inventory.NewUi(),
 		menuUI:      menu.NewUI(),
 	}
 	g.state.Map.LoadLevel("siopa")
