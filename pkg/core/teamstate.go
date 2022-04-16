@@ -34,6 +34,11 @@ func NewTeamState() *TeamState {
 	ts.Pickup(&Pickup{itemName: BreadItemName})
 	ts.Pickup(&Pickup{itemName: PotionItemName})
 	ts.Pickup(&Pickup{itemName: PaddedArmorItemName})
+	// for testing
+	ts.Characters[0].Health = 2
+	ts.Characters[1].Magic = 3
+	ts.Characters[2].ActiveStatusEffects = []string{"asleep"}
+
 	return ts
 }
 

@@ -3,7 +3,6 @@ package inventory
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
-	"github.com/seanoneillcode/go-tactics/pkg/common"
 	"github.com/seanoneillcode/go-tactics/pkg/core"
 	"github.com/seanoneillcode/go-tactics/pkg/gui/elem"
 	"log"
@@ -28,6 +27,11 @@ var itemImagePos = &elem.Pos{
 	Y: 34,
 }
 
+var characterCardsPos = &elem.Pos{
+	X: 194,
+	Y: 32,
+}
+
 type ctx string
 
 const (
@@ -37,27 +41,29 @@ const (
 )
 
 type ui struct {
-	cursor              *elem.Cursor
-	actionBox           *ActionBox
-	bg                  *elem.StaticImage
-	invItemList         *InvItemList
-	teamState           *core.TeamState
-	justOpened          bool
-	activeCtx           ctx // list, action, character
-	selectedListIndex   int
-	selectedActionIndex int
-	selectedCharacter   string
-	currentIteration    int
-	currentItem         *core.Item
-	IsActive            bool
-	actionPos           *elem.Pos
-	listPos             *elem.Pos
-	cursorPos           *elem.Pos
-	infoBox             *elem.Text
-	characterEffect     *elem.EffectCard
-	charImages          map[string]*ebiten.Image
-	itemImages          map[string]*elem.StaticImage
-	currentItemImage    *elem.StaticImage
+	cursor                 *elem.Cursor
+	actionBox              *ActionBox
+	bg                     *elem.StaticImage
+	invItemList            *InvItemList
+	teamState              *core.TeamState
+	justOpened             bool
+	activeCtx              ctx // list, action, character
+	selectedListIndex      int
+	selectedActionIndex    int
+	selectedCharacterIndex int
+	selectedCharacter      string
+	currentIteration       int
+	currentItem            *core.Item
+	IsActive               bool
+	actionPos              *elem.Pos
+	listPos                *elem.Pos
+	cursorPos              *elem.Pos
+	infoBox                *elem.Text
+	itemImages             map[string]*elem.StaticImage
+	currentItemImage       *elem.StaticImage
+	itemInfoBg             *elem.StaticImage
+	cards                  map[string]*elem.EffectCard
+	uiDesc                 *elem.Text
 }
 
 func NewUi() *ui {
@@ -65,14 +71,12 @@ func NewUi() *ui {
 		bg:          elem.NewStaticImage("inventory-bg.png", 0, 0),
 		cursor:      elem.NewCursor(),
 		infoBox:     elem.NewText(invInfoPos.X+2, invInfoPos.Y+12, ""),
+		uiDesc:      elem.NewText(8, 4, "Items"),
 		actionBox:   NewActionBox(),
 		invItemList: NewInvItemList(),
 		actionPos:   &elem.Pos{X: 234, Y: 32},
 		listPos:     &elem.Pos{X: 32, Y: 32},
 		cursorPos:   &elem.Pos{X: 0, Y: 0},
-		charImages: map[string]*ebiten.Image{
-			"default": common.LoadImage("default-avatar.png"),
-		},
 		itemImages: map[string]*elem.StaticImage{
 			core.BreadItemName:       elem.NewStaticImage("item/bread.png", float64(itemImagePos.X), float64(itemImagePos.Y)),
 			core.MouldyBreadItemName: elem.NewStaticImage("item/mouldy-bread.png", float64(itemImagePos.X), float64(itemImagePos.Y)),
@@ -81,10 +85,11 @@ func NewUi() *ui {
 			core.PaddedArmorItemName: elem.NewStaticImage("item/padded-armour.png", float64(itemImagePos.X), float64(itemImagePos.Y)),
 			core.SteelArmorItemName:  elem.NewStaticImage("item/steel-armour.png", float64(itemImagePos.X), float64(itemImagePos.Y)),
 		},
-		characterEffect:   elem.NewEffectCard("effect-card-bg.png"),
+		cards:             map[string]*elem.EffectCard{},
 		activeCtx:         listCtx,
 		selectedCharacter: "default",
-		currentItemImage:  elem.NewStaticImage("item/unknown.png", float64(itemImagePos.X), float64(itemImagePos.Y)),
+		currentItemImage:  elem.NewStaticImage("item/unknown.png", float64(invInfoPos.X), float64(invInfoPos.Y)),
+		itemInfoBg:        elem.NewStaticImage("item-info-bg.png", float64(invInfoPos.X-3), float64(invInfoPos.Y)),
 	}
 	return i
 }
@@ -101,19 +106,24 @@ func (r *ui) Draw(screen *ebiten.Image) {
 	}
 	if r.activeCtx == characterCtx {
 		r.actionBox.Draw(screen)
-		r.characterEffect.Draw(screen)
+		for _, card := range r.cards {
+			card.Draw(screen)
+		}
 	}
-	r.infoBox.Draw(screen)
 	r.cursor.Draw(screen)
 	if r.currentItemImage != nil {
+		r.itemInfoBg.Draw(screen)
 		r.currentItemImage.Draw(screen)
 	}
+	r.infoBox.Draw(screen)
+	r.uiDesc.Draw(screen)
 }
 
 func (r *ui) Update(delta int64, state *core.State) {
 	if !state.UI.IsInventoryActive() {
 		r.IsActive = false
 		r.justOpened = true
+		r.rebuild(state.TeamState.Characters)
 		r.currentItemImage = nil
 		return
 	}
@@ -135,6 +145,8 @@ func (r *ui) Update(delta int64, state *core.State) {
 			item = state.TeamState.GetItemWithIndex(r.selectedListIndex)
 			formattedItemDescription = core.GetFormattedValueMax(item.Description, charactersPerInfoLine)
 			r.currentItemImage = r.itemImages[item.Type]
+		} else {
+			r.currentItemImage = nil
 		}
 	case actionCtx:
 		r.actionPos.X = r.listPos.X + 2
@@ -145,12 +157,17 @@ func (r *ui) Update(delta int64, state *core.State) {
 			item = state.TeamState.GetItemWithIndex(r.selectedListIndex)
 			formattedItemDescription = core.GetFormattedValueMax(item.Description, charactersPerInfoLine)
 			r.currentItemImage = r.itemImages[item.Type]
+		} else {
+			r.currentItemImage = nil
 		}
 
 	case characterCtx:
 		r.cursorPos.X = effectPos.X - 12
-		r.cursorPos.Y = effectPos.Y + 16
+		r.cursorPos.Y = effectPos.Y + 16 + (56.0 * r.selectedCharacterIndex)
 		r.currentItemImage = nil
+		if state.TeamState.HasItems() {
+			item = state.TeamState.GetItemWithIndex(r.selectedListIndex)
+		}
 	}
 
 	var currentItem *core.Item
@@ -162,7 +179,10 @@ func (r *ui) Update(delta int64, state *core.State) {
 	r.actionBox.Update(delta, r.actionPos, currentItem)
 	r.invItemList.Update(delta, state.TeamState)
 	r.infoBox.SetValue(formattedItemDescription)
-	r.characterEffect.Update(effectPos, true, r.selectedCharacter, r.charImages[r.selectedCharacter], item, state.TeamState.Characters[0])
+
+	for _, character := range state.TeamState.Characters {
+		r.cards[character.Name].Update(item, character)
+	}
 }
 
 func (r *ui) handleInput(state *core.State) {
@@ -195,8 +215,11 @@ func (r *ui) handleInput(state *core.State) {
 		switch r.activeCtx {
 		case listCtx:
 			if teamState.HasItems() {
-				r.activeCtx = actionCtx
-				r.selectedActionIndex = 0
+				item := teamState.GetItemWithIndex(r.selectedListIndex)
+				if item.CanConsume {
+					r.activeCtx = actionCtx
+					r.selectedActionIndex = 0
+				}
 			}
 		case actionCtx:
 			item := teamState.GetItemWithIndex(r.selectedListIndex)
@@ -234,6 +257,7 @@ func (r *ui) handleInput(state *core.State) {
 					r.selectedListIndex = 0
 				}
 			}
+			r.rebuild(state.TeamState.Characters)
 		}
 		return
 	}
@@ -250,7 +274,10 @@ func (r *ui) handleInput(state *core.State) {
 				r.selectedActionIndex = 0
 			}
 		case characterCtx:
-			// todo select up down character
+			r.selectedCharacterIndex = r.selectedCharacterIndex - 1
+			if r.selectedCharacterIndex < 0 {
+				r.selectedCharacterIndex = 0
+			}
 		}
 	}
 	if inpututil.IsKeyJustPressed(ebiten.KeyArrowDown) || inpututil.IsKeyJustPressed(ebiten.KeyS) {
@@ -273,7 +300,13 @@ func (r *ui) handleInput(state *core.State) {
 				r.selectedActionIndex = r.selectedActionIndex - 1
 			}
 		case characterCtx:
-			// todo select up down character
+			r.selectedCharacterIndex = r.selectedCharacterIndex + 1
+			if r.selectedCharacterIndex == len(teamState.Characters) {
+				r.selectedCharacterIndex = r.selectedCharacterIndex - 1
+				if r.selectedCharacterIndex < 0 {
+					r.selectedCharacterIndex = 0
+				}
+			}
 		}
 	}
 	if inpututil.IsKeyJustPressed(ebiten.KeyArrowLeft) || inpututil.IsKeyJustPressed(ebiten.KeyA) {
@@ -288,4 +321,17 @@ func (r *ui) handleInput(state *core.State) {
 func (r *ui) reset() {
 	r.selectedListIndex = 0
 	r.selectedActionIndex = 0
+}
+
+func (r *ui) rebuild(characters []*core.CharacterState) {
+	cards := map[string]*elem.EffectCard{}
+	pos := elem.Pos{
+		X: characterCardsPos.X,
+		Y: characterCardsPos.Y,
+	}
+	for _, c := range characters {
+		cards[c.Name] = elem.NewEffectCard(c, pos)
+		pos.Y = pos.Y + 56
+	}
+	r.cards = cards
 }

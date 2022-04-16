@@ -33,11 +33,16 @@ func (i *InvItemList) createItemList(teamState *core.TeamState) []*itemEntry {
 		teamItem := itemMap[name]
 		quantity := fmt.Sprintf("%v", teamItem.Amount)
 		costWidth := text.BoundString(elem.StandardFont, quantity).Size().X / common.ScaleF
-		invItems = append(invItems, &itemEntry{
+		entry := &itemEntry{
 			itemRef:  teamItem.Item,
 			name:     elem.NewText(x, y+offset, teamItem.Item.Name),
 			quantity: elem.NewText(x+96+32+offsetX+offsetX-costWidth, y+offset, quantity),
-		})
+		}
+		if !teamItem.Item.CanConsume {
+			entry.name.SetColor(elem.GreyTextColor)
+			entry.quantity.SetColor(elem.GreyTextColor)
+		}
+		invItems = append(invItems, entry)
 		offset = offset + 16
 
 	}

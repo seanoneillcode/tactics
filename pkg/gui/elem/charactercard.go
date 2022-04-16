@@ -23,7 +23,7 @@ func NewCharacterCard(cs *core.CharacterState, pos Pos) *CharacterCard {
 		pos:    &Pos{pos.X, pos.Y},
 		image:  common.LoadImage(fmt.Sprintf("portrait/%s.png", cs.Name)),
 		bg:     common.LoadImage("card-bg.png"),
-		name:   NewText(pos.X+offsetX+48, pos.Y+offsetY, strings.Title(cs.Name)),
+		name:   NewText(pos.X+offsetX-2, pos.Y+offsetY+34, strings.Title(cs.Name)),
 		health: NewText(pos.X+offsetX+48+8, pos.Y+offsetY+16, fmt.Sprintf("health: %v", cs.Health)),
 		magic:  NewText(pos.X+offsetX+48+8, pos.Y+offsetY+32, fmt.Sprintf("magic: %v", cs.Magic)),
 		level:  NewText(pos.X+offsetX+180, pos.Y+offsetY, fmt.Sprintf("level: %v", cs.Stats.Level)),

@@ -20,5 +20,9 @@ func (h *healthEffect) Apply(cs *CharacterState) {
 	}
 }
 func (h *healthEffect) Description(cs *CharacterState) string {
-	return fmt.Sprintf("hp %v -> %v", cs.Health, cs.Health+h.amount)
+	newValue := cs.Health + h.amount
+	if newValue > cs.Stats.MaxHealth {
+		newValue = cs.Stats.MaxHealth
+	}
+	return fmt.Sprintf("health %v -> %v", cs.Health, newValue)
 }

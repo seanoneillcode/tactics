@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
-	"github.com/seanoneillcode/go-tactics/pkg/common"
 	"github.com/seanoneillcode/go-tactics/pkg/core"
 	"github.com/seanoneillcode/go-tactics/pkg/gui/elem"
 	"time"
@@ -13,13 +12,13 @@ import (
 var listPos = &elem.Pos{X: 266, Y: 32}
 
 type ui struct {
-	highlight  *elem.Sprite
-	bg         *elem.StaticImage
-	charImages map[string]*ebiten.Image
-	options    []*elem.Text
-	location   *elem.Text
-	time       *elem.Text
-	money      *elem.Text
+	highlight *elem.Sprite
+	bg        *elem.StaticImage
+	options   []*elem.Text
+	location  *elem.Text
+	time      *elem.Text
+	money     *elem.Text
+	uiDesc    *elem.Text
 	// state
 	justOpened        bool
 	selectedListIndex int
@@ -31,10 +30,8 @@ func NewUI() *ui {
 	textOffset := &elem.Pos{X: 4, Y: 4}
 	return &ui{
 		bg:        elem.NewStaticImage("menu-bg.png", 0, 0),
+		uiDesc:    elem.NewText(8, 4, "Menu"),
 		highlight: elem.NewSprite("menu-highlight.png", float64(listPos.X), float64(listPos.Y)),
-		charImages: map[string]*ebiten.Image{
-			"default": common.LoadImage("default-avatar.png"),
-		},
 		options: []*elem.Text{
 			elem.NewText(listPos.X+textOffset.X, 32+textOffset.Y, "Items"),
 			elem.NewText(listPos.X+textOffset.X, 48+textOffset.Y, "Equipment"),
@@ -64,6 +61,7 @@ func (r *ui) Draw(screen *ebiten.Image) {
 	r.location.Draw(screen)
 	r.time.Draw(screen)
 	r.money.Draw(screen)
+	r.uiDesc.Draw(screen)
 }
 
 func (r *ui) Update(delta int64, state *core.State) {
