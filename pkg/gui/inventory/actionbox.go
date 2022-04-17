@@ -2,36 +2,35 @@ package inventory
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/seanoneillcode/go-tactics/pkg/core"
 	"github.com/seanoneillcode/go-tactics/pkg/gui/elem"
 )
 
 type ActionBox struct {
-	useAction   *elem.Button
-	equipAction *elem.Button
-	dropAction  *elem.Button
+	useAction  *elem.Button
+	dropAction *elem.Button
+	bg         *elem.StaticImage
+	pos        elem.Pos
 }
 
-func NewActionBox() *ActionBox {
+func NewActionBox(pos elem.Pos) *ActionBox {
 	return &ActionBox{
-		useAction:   elem.NewButton("use", "button-bg.png"),
-		equipAction: elem.NewButton("equip", "button-bg.png"),
-		dropAction:  elem.NewButton("drop", "button-bg.png"),
+		useAction:  elem.NewButton("Use", "button-bg.png"),
+		dropAction: elem.NewButton("Drop", "button-bg.png"),
+		bg:         elem.NewStaticImage("action-bg.png", float64(pos.X), float64(pos.Y)),
+		pos: elem.Pos{
+			X: pos.X,
+			Y: pos.Y,
+		},
 	}
 }
 
 func (a *ActionBox) Draw(screen *ebiten.Image) {
+	a.bg.Draw(screen)
 	a.dropAction.Draw(screen)
 	a.useAction.Draw(screen)
-	a.equipAction.Draw(screen)
 }
 
-func (a *ActionBox) Update(delta int64, pos *elem.Pos, currentItem *core.Item) {
-	showUse := currentItem != nil && currentItem.CanConsume
-	disableUse := currentItem == nil
-	showEquip := !showUse
-
-	a.useAction.Update(delta, &elem.Pos{X: pos.X + offsetX, Y: pos.Y + offsetY}, disableUse, showUse)
-	a.equipAction.Update(delta, &elem.Pos{X: pos.X + offsetX, Y: pos.Y + offsetY}, false, showEquip)
-	a.dropAction.Update(delta, &elem.Pos{X: pos.X + offsetX, Y: pos.Y + 16 + offsetY}, false, true)
+func (a *ActionBox) Update(delta int64) {
+	a.useAction.Update(delta, &elem.Pos{X: a.pos.X + offsetX, Y: a.pos.Y + offsetY}, false, true)
+	a.dropAction.Update(delta, &elem.Pos{X: a.pos.X + offsetX, Y: a.pos.Y + 20 + offsetY + offsetY}, false, true)
 }

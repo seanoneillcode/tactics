@@ -1,12 +1,13 @@
 package core
 
 import (
+	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"strings"
 )
 
-const letterSpeed = 20
+const letterSpeed = 40
 const maxRunePerLine = 40
 
 type Dialog struct {
@@ -131,11 +132,13 @@ func (d *Dialog) Update(delta int64, state *State) {
 
 	if d.bufferedText != d.formattedText {
 		d.timer = d.timer + delta
-		if d.timer > letterSpeed {
+		for d.timer > letterSpeed {
+			fmt.Printf("adding letter: timer:%v delta:%v\n", d.timer, delta)
 			d.timer = d.timer - letterSpeed
 			d.index = d.index + 1
 			if d.index == len(d.formattedText)-1 {
 				d.bufferedText = d.formattedText
+				break
 			} else {
 				d.bufferedText = d.formattedText[:d.index]
 			}

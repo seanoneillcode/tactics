@@ -28,9 +28,9 @@ type ui struct {
 
 func NewUI() *ui {
 	textOffset := &elem.Pos{X: 4, Y: 4}
-	return &ui{
+	u := &ui{
 		bg:        elem.NewStaticImage("menu-bg.png", 0, 0),
-		uiDesc:    elem.NewText(8, 4, "Menu"),
+		uiDesc:    elem.NewText(170, 4, "Menu"),
 		highlight: elem.NewSprite("menu-highlight.png", float64(listPos.X), float64(listPos.Y)),
 		options: []*elem.Text{
 			elem.NewText(listPos.X+textOffset.X, 32+textOffset.Y, "Items"),
@@ -44,6 +44,7 @@ func NewUI() *ui {
 		location: elem.NewText(listPos.X+textOffset.X, 172+16+textOffset.Y, "location:"),
 		time:     elem.NewText(listPos.X+textOffset.X, 172+32+textOffset.Y, "time:"),
 	}
+	return u
 }
 
 func (r *ui) Draw(screen *ebiten.Image) {

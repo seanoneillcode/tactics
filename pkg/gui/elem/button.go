@@ -64,7 +64,7 @@ func (b *Button) Draw(screen *ebiten.Image) {
 		screen.DrawImage(b.image, op)
 	}
 	if b.label != nil {
-		b.label.SetPosition(Pos{X: b.pos.X + 2 + offsetX, Y: b.pos.Y + offsetY})
+		b.label.SetPosition(Pos{X: b.pos.X + 2 + offsetX + 12, Y: b.pos.Y + offsetY + 1})
 		b.label.SetColor(*b.textColor)
 		b.label.Draw(screen)
 	}
