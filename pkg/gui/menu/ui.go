@@ -20,10 +20,10 @@ type ui struct {
 	money     *elem.Text
 	uiDesc    *elem.Text
 	// state
-	justOpened        bool
 	selectedListIndex int
 	IsActive          bool
 	cards             []*elem.CharacterCard
+	isLoaded          bool
 }
 
 func NewUI() *ui {
@@ -68,15 +68,15 @@ func (r *ui) Draw(screen *ebiten.Image) {
 func (r *ui) Update(delta int64, state *core.State) {
 	if !state.UI.IsMenuActive() {
 		r.IsActive = false
-		r.justOpened = true
-		r.rebuild(state.TeamState.Characters)
-		r.location.SetValue(fmt.Sprintf("location: %s", state.Map.Level.Name))
-		r.money.SetValue(fmt.Sprintf("money: %s", fmt.Sprintf("%d", state.TeamState.Money)))
+		r.isLoaded = false
 		return
 	}
 	r.IsActive = true
-	if r.justOpened {
-		r.justOpened = false
+	if !r.isLoaded {
+		r.isLoaded = true
+		r.rebuild(state.TeamState.Characters)
+		r.location.SetValue(fmt.Sprintf("location: %s", state.Map.Level.Name))
+		r.money.SetValue(fmt.Sprintf("money: %s", fmt.Sprintf("%d", state.TeamState.Money)))
 		return
 	}
 	r.handleInput(state)

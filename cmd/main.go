@@ -86,6 +86,8 @@ func (g *Game) Update() error {
 	if ebiten.IsKeyPressed(ebiten.KeyEscape) || g.state.Control.Command == "exit" {
 		return NormalEscapeError
 	}
+
+	//fmt.Printf("FPS: %v\n", ebiten.CurrentFPS())
 	return nil
 }
 
