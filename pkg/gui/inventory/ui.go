@@ -67,6 +67,7 @@ type ui struct {
 	itemInfoBg             *elem.StaticImage
 	cards                  map[string]*elem.EffectCard
 	uiDesc                 *elem.Text
+	isLoaded               bool
 }
 
 func NewUi() *ui {
@@ -124,9 +125,13 @@ func (r *ui) Draw(screen *ebiten.Image) {
 func (r *ui) Update(delta int64, state *core.State) {
 	if !state.UI.IsInventoryActive() {
 		r.IsActive = false
+		r.isLoaded = false
+		return
+	}
+	if !r.isLoaded {
+		r.isLoaded = true
 		r.rebuild(state.TeamState.Characters)
 		r.currentItemImage = nil
-		return
 	}
 	r.IsActive = true
 	r.handleInput(state)
