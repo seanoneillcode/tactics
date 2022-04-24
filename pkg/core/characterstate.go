@@ -14,6 +14,7 @@ type CharacterState struct {
 
 type Stats struct {
 	MaxHealth      int
+	MaxMagic       int
 	Level          int
 	Experience     int
 	AttackSkill    int // to hit
@@ -31,6 +32,7 @@ func NewCharacterState(name string) *CharacterState {
 		Health: 10,
 		Stats: &Stats{
 			MaxHealth:  10,
+			MaxMagic:   10,
 			Level:      1,
 			Experience: 0,
 		},

@@ -32,7 +32,10 @@ func NewTeamState() *TeamState {
 	ts.Pickup(&Pickup{itemName: BreadItemName})
 	ts.Pickup(&Pickup{itemName: BreadItemName})
 	ts.Pickup(&Pickup{itemName: BreadItemName})
+	ts.Pickup(&Pickup{itemName: MouldyBreadItemName})
 	ts.Pickup(&Pickup{itemName: PotionItemName})
+	ts.Pickup(&Pickup{itemName: PotionItemName})
+	ts.Pickup(&Pickup{itemName: EtherItemName})
 	ts.Pickup(&Pickup{itemName: PaddedArmorItemName})
 	// for testing
 	ts.Characters[0].Health = 2

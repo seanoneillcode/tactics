@@ -10,6 +10,7 @@ import (
 type EffectCard struct {
 	pos        *Pos
 	image      *ebiten.Image
+	bg         *ebiten.Image
 	name       *Text
 	item       *core.Item
 	changeList []*Text
@@ -19,6 +20,7 @@ func NewEffectCard(cs *core.CharacterState, pos Pos) *EffectCard {
 	r := &EffectCard{
 		pos:   &Pos{pos.X, pos.Y},
 		image: common.LoadImage(fmt.Sprintf("portrait/%s.png", cs.Name)),
+		bg:    common.LoadImage("inv-char-bg.png"),
 		name:  NewText(0, 0, cs.Name),
 	}
 
@@ -27,7 +29,12 @@ func NewEffectCard(cs *core.CharacterState, pos Pos) *EffectCard {
 
 func (r *EffectCard) Draw(screen *ebiten.Image) {
 	op := &ebiten.DrawImageOptions{}
-	op.GeoM.Translate(float64(r.pos.X+2), float64(r.pos.Y+2))
+	op.GeoM.Translate(float64(r.pos.X+48), float64(r.pos.Y))
+	op.GeoM.Scale(common.Scale, common.Scale)
+	screen.DrawImage(r.bg, op)
+
+	op = &ebiten.DrawImageOptions{}
+	op.GeoM.Translate(float64(r.pos.X), float64(r.pos.Y))
 	op.GeoM.Scale(common.Scale, common.Scale)
 	screen.DrawImage(r.image, op)
 

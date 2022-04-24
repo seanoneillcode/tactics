@@ -63,6 +63,18 @@ func NewItem(name string) *Item {
 			},
 			ImagePath: "item/potion.png",
 		}
+	case EtherItemName:
+		return &Item{
+			Type:        EtherItemName,
+			Name:        "Ether",
+			Description: "A distilled crystal that restores magic energy.",
+			CanConsume:  true,
+			CanEquip:    false,
+			Effects: []StateEffect{
+				&magicEffect{amount: 15},
+			},
+			ImagePath: "item/ether.png",
+		}
 	case PaddedArmorItemName:
 		return &Item{
 			Type:        PaddedArmorItemName,
@@ -98,6 +110,7 @@ const (
 	MouldyBreadItemName = "mouldy-bread"
 	HerbItemName        = "herb"
 	PotionItemName      = "potion"
+	EtherItemName       = "ether"
 	PaddedArmorItemName = "padded-armor"
 	SteelArmorItemName  = "steel-armor"
 )

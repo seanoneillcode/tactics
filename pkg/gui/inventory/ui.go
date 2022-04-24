@@ -28,7 +28,7 @@ var itemImagePos = &elem.Pos{
 }
 
 var characterCardsPos = &elem.Pos{
-	X: 194,
+	X: 196,
 	Y: 32,
 }
 
@@ -85,6 +85,7 @@ func NewUi() *ui {
 			core.MouldyBreadItemName: elem.NewStaticImage("item/mouldy-bread.png", float64(itemImagePos.X), float64(itemImagePos.Y)),
 			core.HerbItemName:        elem.NewStaticImage("item/herb.png", float64(itemImagePos.X), float64(itemImagePos.Y)),
 			core.PotionItemName:      elem.NewStaticImage("item/potion.png", float64(itemImagePos.X), float64(itemImagePos.Y)),
+			core.EtherItemName:       elem.NewStaticImage("item/ether.png", float64(itemImagePos.X), float64(itemImagePos.Y)),
 			core.PaddedArmorItemName: elem.NewStaticImage("item/padded-armour.png", float64(itemImagePos.X), float64(itemImagePos.Y)),
 			core.SteelArmorItemName:  elem.NewStaticImage("item/steel-armour.png", float64(itemImagePos.X), float64(itemImagePos.Y)),
 		},
