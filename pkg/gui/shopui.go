@@ -77,22 +77,21 @@ func (s *ShopUI) Draw(screen *ebiten.Image) {
 
 func (s *ShopUI) Update(delta int64, state *core.State) {
 	s.shop = state.Shop
-	if s.shop.IsActive && !s.isLoaded {
+	if !s.shop.IsActive {
+		s.isLoaded = false
+		return
+	}
+	if !s.isLoaded {
 		s.isLoaded = true
 		s.shopName.SetValue(s.shop.Data.MerchantName)
 		s.updatePlayerMoney(state.TeamState.Money)
 		s.shopItems = createListItems(s.shop.Data.Items, listPos.X+offsetX, listPos.Y+offsetY, state.TeamState.Money)
 	}
-	if !s.shop.IsActive && s.isLoaded {
-		s.isLoaded = false
-	}
-	if s.shop.IsActive {
-		desc := s.shop.Data.Items[s.shop.SelectedListIndex].Item.Description
-		s.infoBox.Update(infoPos, true, core.GetFormattedValueMax(desc, 22))
-		if s.oldPlayerMoney != state.TeamState.Money {
-			s.updatePlayerMoney(state.TeamState.Money)
-			s.shopItems = createListItems(s.shop.Data.Items, listPos.X+offsetX, listPos.Y+offsetY, state.TeamState.Money)
-		}
+	desc := s.shop.Data.Items[s.shop.SelectedListIndex].Item.Description
+	s.infoBox.Update(infoPos, true, core.GetFormattedValueMax(desc, 22))
+	if s.oldPlayerMoney != state.TeamState.Money {
+		s.updatePlayerMoney(state.TeamState.Money)
+		s.shopItems = createListItems(s.shop.Data.Items, listPos.X+offsetX, listPos.Y+offsetY, state.TeamState.Money)
 	}
 	var cursorPos *elem.Pos
 	switch s.shop.ActiveElement {
@@ -109,7 +108,6 @@ func (s *ShopUI) Update(delta int64, state *core.State) {
 	}
 	s.cursor.Update(delta, cursorPos)
 	confirmationDisable := s.shop.ActiveElement != "confirmation"
-
 	s.confirmation.Update(delta, confirmationPos, confirmationDisable, true)
 }
 
