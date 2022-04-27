@@ -33,6 +33,6 @@ func (n *Npc) GetPosition() *common.Position {
 	return n.character.pos
 }
 
-func (n *Npc) GetCurrentDialog() *Dialog {
+func (n *Npc) GetCurrentDialog() *DialogData {
 	return n.npcDialog.GetCurrentDialog()
 }

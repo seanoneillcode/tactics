@@ -38,7 +38,7 @@ func (p *Player) Update(delta int64, state *State) {
 	if !p.isActive {
 		return
 	}
-	if state.ActiveDialog != nil {
+	if state.DialogHandler.IsActive {
 		return
 	}
 	if !p.Character.isMoving {
@@ -77,7 +77,7 @@ func (p *Player) Update(delta int64, state *State) {
 
 			// check for things on the tile
 			if ti.npc != nil {
-				state.ActiveDialog = ti.npc.GetCurrentDialog()
+				state.DialogHandler.SetActiveDialog(ti.npc.GetCurrentDialog())
 			}
 			if ti.link != nil {
 				state.Map.StartTransition(ti.link)
@@ -85,7 +85,7 @@ func (p *Player) Update(delta int64, state *State) {
 			if ti.pickup != nil && !ti.pickup.isUsed {
 				ti.pickup.isUsed = true
 				state.TeamState.Pickup(ti.pickup)
-				state.ActiveDialog = getPickupDialog(ti.pickup.itemName)
+				state.DialogHandler.SetActiveDialog(getPickupDialog(ti.pickup.itemName))
 			}
 			if ti.action != nil {
 				if ti.action.name == "bed" {
@@ -127,9 +127,9 @@ func (p *Player) SetSleep(b bool) {
 	p.isSleeping = b
 }
 
-func getPickupDialog(name string) *Dialog {
-	d := &Dialog{
-		lines: []*Line{
+func getPickupDialog(name string) *DialogData {
+	d := &DialogData{
+		Lines: []*Line{
 			{
 				Text: fmt.Sprintf("picked up a '%v'", name),
 			},

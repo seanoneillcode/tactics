@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"github.com/seanoneillcode/go-tactics/pkg/gui/dialog"
 	"github.com/seanoneillcode/go-tactics/pkg/gui/inventory"
 	"github.com/seanoneillcode/go-tactics/pkg/gui/menu"
 	"log"
@@ -21,11 +22,12 @@ func main() {
 			Player:           core.NewPlayer(),
 			Map:              core.NewMap(),
 			Shop:             core.NewShop(),
-			UI:               core.NewUI(),
+			UI:               core.NewUI(), // todo replace with concept of active element or 'mode' and a unified controller for currently active element
 			TeamState:        core.NewTeamState(),
 			TotalElapsedTime: 12 * 1000 * 60,
+			DialogHandler:    core.NewDialogHandler(),
 		},
-		dialogBox:   gui.NewDialogueBox(),
+		dialog:      dialog.NewUi(),
 		shopUI:      gui.NewShopUi(),
 		camera:      core.NewCamera(),
 		inventoryUI: inventory.NewUi(),
@@ -53,7 +55,7 @@ type Game struct {
 	keys             []ebiten.Key
 	state            *core.State
 	camera           *core.Camera
-	dialogBox        *gui.DialogueBox
+	dialog           gui.UI
 	shopUI           *gui.ShopUI
 	inventoryUI      gui.UI
 	menuUI           gui.UI
@@ -68,16 +70,15 @@ func (g *Game) Update() error {
 	// update state
 	g.state.Map.Update(delta, g.state)
 	g.state.Player.Update(delta, g.state)
-	if g.state.ActiveDialog != nil {
-		g.state.ActiveDialog.Update(delta, g.state)
-	}
+	//g.state.ActiveDialog.Update(delta, g.state)
+
 	g.state.Shop.Update(delta, g.state)
 
 	// update camera
 	g.camera.Update(delta, g.state)
 
 	// update UI
-	g.dialogBox.Update(delta, g.state)
+	g.dialog.Update(delta, g.state)
 	g.shopUI.Update(delta, g.state)
 	g.inventoryUI.Update(delta, g.state)
 	g.menuUI.Update(delta, g.state)
@@ -95,7 +96,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	g.state.Map.Level.Draw(g.camera.GetBuffer())
 	g.state.Player.Draw(g.camera.GetBuffer())
 	g.camera.DrawBuffer(screen)
-	g.dialogBox.Draw(screen)
+	g.dialog.Draw(screen)
 	g.shopUI.Draw(screen)
 	g.inventoryUI.Draw(screen)
 	g.menuUI.Draw(screen)

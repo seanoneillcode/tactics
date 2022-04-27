@@ -1,18 +1,17 @@
-package gui
+package elem
 
 import (
 	"image"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/seanoneillcode/go-tactics/pkg/common"
-	"github.com/seanoneillcode/go-tactics/pkg/gui/elem"
 )
 
 const marginX = 4
 const marginY = 4
 
 type TextBox struct {
-	text     *elem.Text
+	text     *Text
 	x        int
 	y        int
 	width    int
@@ -37,7 +36,7 @@ func NewTextBox(x int, y int, width int, height int) *TextBox {
 	partial4 := borderImage4.SubImage(image.Rect(0, 0, width, height+marginY))
 
 	return &TextBox{
-		text:     elem.NewText(x+marginX, y+marginY, ""),
+		text:     NewText(x+marginX, y+marginY, ""),
 		x:        x,
 		y:        y,
 		width:    width,
@@ -92,5 +91,5 @@ func (tb *TextBox) Draw(screen *ebiten.Image) {
 func (tb *TextBox) SetPosition(x int, y int) {
 	tb.x = x
 	tb.y = y
-	tb.text.SetPosition(elem.Pos{X: x + marginX, Y: y + marginY})
+	tb.text.SetPosition(Pos{X: x + marginX, Y: y + marginY})
 }

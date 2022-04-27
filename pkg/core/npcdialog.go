@@ -4,11 +4,11 @@ import "log"
 
 type NpcDialog struct {
 	currentDialogName string
-	currentDialog     *Dialog
-	dialogs           map[string]*Dialog
+	currentDialog     *DialogData
+	dialogs           map[string]*DialogData
 }
 
-func (nd NpcDialog) GetCurrentDialog() *Dialog {
+func (nd NpcDialog) GetCurrentDialog() *DialogData {
 	return nd.currentDialog
 }
 

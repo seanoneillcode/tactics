@@ -1,13 +1,22 @@
 package core
 
+type DialogData struct {
+	Lines []*Line
+}
+
+type Line struct {
+	Name string
+	Text string
+}
+
 // the map is organized by npc Name
 var dialogData = map[string]*NpcDialog{
 	"dave": {
 		// each dialog has a key, this can be changed by events
 		// i.e. player kills a king -> change to king based context dialog
-		dialogs: map[string]*Dialog{
+		dialogs: map[string]*DialogData{
 			"": {
-				lines: []*Line{
+				Lines: []*Line{
 					{
 						Name: "Dave",
 						Text: "\"I'm Dave... \nWhat do you want?\"",
@@ -39,9 +48,9 @@ var dialogData = map[string]*NpcDialog{
 	"anne": {
 		// each dialog has a key, this can be changed by events
 		// i.e. player kills a king -> change to king based context dialog
-		dialogs: map[string]*Dialog{
+		dialogs: map[string]*DialogData{
 			"": {
-				lines: []*Line{
+				Lines: []*Line{
 					{
 						Name: "Anne",
 						Text: "\"Can you fetch a fish for me?\"",
@@ -49,7 +58,7 @@ var dialogData = map[string]*NpcDialog{
 				},
 			},
 			"got-fish": {
-				lines: []*Line{
+				Lines: []*Line{
 					{
 						Name: "Anne",
 						Text: "\"Hey it's my fish!\"",
@@ -63,9 +72,9 @@ var dialogData = map[string]*NpcDialog{
 		},
 	},
 	"wallace": {
-		dialogs: map[string]*Dialog{
+		dialogs: map[string]*DialogData{
 			"": {
-				lines: []*Line{
+				Lines: []*Line{
 					{
 						Name: "Wallace",
 						Text: "\"How did you get back here?\"",

@@ -4,7 +4,7 @@ type State struct {
 	Player           *Player
 	TeamState        *TeamState
 	Map              *Map
-	ActiveDialog     *Dialog
+	DialogHandler    *DialogHandler
 	Shop             *Shop
 	UI               *UI
 	Control          *Control
