@@ -70,8 +70,6 @@ func (g *Game) Update() error {
 	// update state
 	g.state.Map.Update(delta, g.state)
 	g.state.Player.Update(delta, g.state)
-	//g.state.ActiveDialog.Update(delta, g.state)
-
 	g.state.Shop.Update(delta, g.state)
 
 	// update camera
@@ -88,7 +86,8 @@ func (g *Game) Update() error {
 		return NormalEscapeError
 	}
 
-	//fmt.Printf("FPS: %v\n", ebiten.CurrentFPS())
+	//fps := ebiten.CurrentFPS()
+
 	return nil
 }
 

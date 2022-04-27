@@ -124,7 +124,10 @@ func (d *dialogState) GetCurrentLine() (string, string) {
 }
 
 func fullText(name string, text string) string {
-	return name + ":\n" + text
+	if name != "" {
+		return name + ":\n" + text
+	}
+	return text
 }
 
 func (d *dialogState) Update(delta int64) {

@@ -1,7 +1,6 @@
 package dialog
 
 import (
-	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/seanoneillcode/go-tactics/pkg/common"
 	"github.com/seanoneillcode/go-tactics/pkg/core"
@@ -34,7 +33,6 @@ func (r *DialogueBox) Draw(screen *ebiten.Image) {
 func (r *DialogueBox) Update(delta int64, d *dialogState, state *core.State) {
 	name, text := d.GetCurrentLine()
 	if text != r.currentText || name != r.currentName {
-		fmt.Printf("update: name: %v text: %v\n", name, text)
 		r.currentText = text
 		if r.currentName != name || name == "" {
 			r.width, r.height = elem.GetMaxWidthHeight(d.GetNextLinesForName())
