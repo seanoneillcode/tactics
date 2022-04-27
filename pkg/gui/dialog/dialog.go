@@ -1,7 +1,6 @@
 package dialog
 
 import (
-	"fmt"
 	"github.com/seanoneillcode/go-tactics/pkg/core"
 )
 
@@ -17,34 +16,39 @@ type dialogState struct {
 	currentName      string
 	order            int
 	names            []string
-
-	// ugh
-	initialized bool
 }
 
 type lineState struct {
-	Name string
-	Text string
+	Name     string
+	Text     string
+	FullText string
 }
 
-func NewDialog(data *core.DialogData) *dialogState {
+func NewDialogState(data *core.DialogData) *dialogState {
 	d := &dialogState{}
 	var lines []*lineState
 	for _, l := range data.Lines {
 		lines = append(lines, &lineState{
-			Name: l.Name,
-			Text: l.Text,
+			Name:     l.Name,
+			Text:     l.Text,
+			FullText: fullText(l.Name, l.Text),
 		})
 	}
 	d.lines = lines
-	return d
-}
-
-func (l *lineState) FullText() string {
-	if l.Name == "" {
-		return l.Text
+	names := map[string]bool{}
+	for _, line := range d.lines {
+		if ok, _ := names[line.Name]; !ok {
+			names[line.Name] = true
+		}
 	}
-	return l.Name + "\n" + l.Text
+	d.names = []string{}
+	for name := range names {
+		d.names = append(d.names, name)
+	}
+	line := d.lines[d.currentLineIndex]
+	d.currentName = line.Name
+	d.formattedText = core.GetFormattedValue(line.FullText)
+	return d
 }
 
 func (d *dialogState) Reset() {
@@ -65,7 +69,7 @@ func (d *dialogState) Reset() {
 	}
 	line := d.lines[d.currentLineIndex]
 	d.currentName = line.Name
-	d.formattedText = core.GetFormattedValue(line.Text)
+	d.formattedText = core.GetFormattedValue(line.FullText)
 }
 
 func (d *dialogState) IsBuffering() bool {
@@ -94,7 +98,7 @@ func (d *dialogState) NextLine() {
 		}
 	}
 	d.currentName = l.Name
-	d.formattedText = core.GetFormattedValue(l.Text)
+	d.formattedText = core.GetFormattedValue(l.FullText)
 }
 
 func (d *dialogState) GetNameOrder() int {
@@ -106,7 +110,7 @@ func (d *dialogState) GetNextLinesForName() []string {
 	for index, line := range d.lines {
 		if index >= d.currentLineIndex {
 			if d.currentName == line.Name {
-				f = append(f, core.GetFormattedValue(line.FullText()))
+				f = append(f, core.GetFormattedValue(line.FullText))
 			} else {
 				break
 			}
@@ -115,23 +119,18 @@ func (d *dialogState) GetNextLinesForName() []string {
 	return f
 }
 
-func (d *dialogState) GetCurrentLine() *lineState {
-	return &lineState{
-		Name: d.currentName,
-		Text: d.bufferedText,
-	}
+func (d *dialogState) GetCurrentLine() (string, string) {
+	return d.currentName, d.bufferedText
 }
 
-func (d *dialogState) Update(delta int64, state *core.State) {
-	if !d.initialized {
-		d.initialized = true
-		d.Reset()
-	}
+func fullText(name string, text string) string {
+	return name + ":\n" + text
+}
 
+func (d *dialogState) Update(delta int64) {
 	if d.bufferedText != d.formattedText {
 		d.timer = d.timer + delta
 		for d.timer > letterSpeed {
-			fmt.Printf("adding letter: timer:%v delta:%v\n", d.timer, delta)
 			d.timer = d.timer - letterSpeed
 			d.index = d.index + 1
 			if d.index == len(d.formattedText)-1 {

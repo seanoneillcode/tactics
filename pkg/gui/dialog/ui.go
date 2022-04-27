@@ -35,12 +35,12 @@ func (r *ui) Update(delta int64, state *core.State) {
 	r.IsActive = true
 	if !r.isLoaded {
 		r.isLoaded = true
-		r.activeDialog = NewDialog(state.DialogHandler.ActiveDialog)
+		r.activeDialog = NewDialogState(state.DialogHandler.ActiveDialog)
 		return
 	}
 	r.handleInput(state)
 	if r.activeDialog != nil {
-		r.activeDialog.Update(delta, state)
+		r.activeDialog.Update(delta)
 	}
 	r.dialogBox.Update(delta, r.activeDialog, state)
 }

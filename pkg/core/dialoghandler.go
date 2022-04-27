@@ -1,6 +1,8 @@
 package core
 
-import "strings"
+import (
+	"strings"
+)
 
 const maxRunePerLine = 40
 
