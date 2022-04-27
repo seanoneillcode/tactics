@@ -29,16 +29,16 @@ const offsetX = 4
 const offsetY = 4
 
 var listPos = &elem.Pos{
-	X: 48,
-	Y: 64,
+	X: 16,
+	Y: 48,
 }
 var infoPos = &elem.Pos{
-	X: 208,
-	Y: 80,
+	X: 168,
+	Y: 66,
 }
 var confirmationPos = &elem.Pos{
-	X: 208,
-	Y: 64,
+	X: 168,
+	Y: 48,
 }
 
 func NewShopUi() *ShopUI {
@@ -46,10 +46,10 @@ func NewShopUi() *ShopUI {
 		bg:           elem.NewStaticImage("shop-bg.png", 0, 0),
 		cursor:       elem.NewCursor(),
 		confirmation: elem.NewButton("Buy", "shop-confirmation-bg.png"),
-		playerName:   elem.NewText(240+offsetX, 16+offsetY, "Player"),
-		moneyLabel:   elem.NewText(240+offsetX, 32+offsetY, "Money"),
-		playerMoney:  elem.NewText(240+64+offsetX, 32+offsetY, ""),
-		shopName:     elem.NewText(48+offsetX, 32+offsetY, "Shop"),
+		playerName:   elem.NewText(168+offsetX, 8+offsetY, "Player"),
+		moneyLabel:   elem.NewText(168+offsetX, 24+offsetY, "Money"),
+		playerMoney:  elem.NewText(168+32+offsetX, 24+offsetY, ""),
+		shopName:     elem.NewText(16+offsetX, 8+offsetY, "Shop"),
 		infoBox:      elem.NewInfoBox("", "shop-information-bg.png"),
 	}
 	return s
@@ -115,7 +115,7 @@ func (s *ShopUI) updatePlayerMoney(money int) {
 	playerMoneyString := fmt.Sprintf("%dg", money)
 	playerMoneyWidth := text.BoundString(elem.StandardFont, playerMoneyString).Size().X / common.ScaleF
 	s.playerMoney.SetValue(playerMoneyString)
-	pos := elem.Pos{X: 240 + 64 + offsetX + 8 + 32 - playerMoneyWidth, Y: 32 + offsetY}
+	pos := elem.Pos{X: 168 + 64 + offsetX + 8 + 32 - playerMoneyWidth, Y: 24 + offsetY}
 	s.playerMoney.SetPosition(pos)
 	s.oldPlayerMoney = money
 }

@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-var listPos = &elem.Pos{X: 266, Y: 32}
+var listPos = &elem.Pos{X: 220, Y: 16}
 
 type ui struct {
 	highlight *elem.Sprite
@@ -18,7 +18,6 @@ type ui struct {
 	location  *elem.Text
 	time      *elem.Text
 	money     *elem.Text
-	uiDesc    *elem.Text
 	// state
 	selectedListIndex int
 	IsActive          bool
@@ -30,19 +29,18 @@ func NewUI() *ui {
 	textOffset := &elem.Pos{X: 4, Y: 4}
 	u := &ui{
 		bg:        elem.NewStaticImage("menu-bg.png", 0, 0),
-		uiDesc:    elem.NewText(170, 4, "Menu"),
 		highlight: elem.NewSprite("menu-highlight.png", float64(listPos.X), float64(listPos.Y)),
 		options: []*elem.Text{
-			elem.NewText(listPos.X+textOffset.X, 32+textOffset.Y, "Items"),
-			elem.NewText(listPos.X+textOffset.X, 48+textOffset.Y, "Equipment"),
-			elem.NewText(listPos.X+textOffset.X, 64+textOffset.Y, "Magic"),
-			elem.NewText(listPos.X+textOffset.X, 80+textOffset.Y, "Settings"),
-			elem.NewText(listPos.X+textOffset.X, 96+textOffset.Y, "File"),
-			elem.NewText(listPos.X+textOffset.X, 112+textOffset.Y, "Exit"),
+			elem.NewText(listPos.X+textOffset.X, 16+textOffset.Y, "Items"),
+			elem.NewText(listPos.X+textOffset.X, 32+textOffset.Y, "Equipment"),
+			elem.NewText(listPos.X+textOffset.X, 48+textOffset.Y, "Magic"),
+			elem.NewText(listPos.X+textOffset.X, 64+textOffset.Y, "Settings"),
+			elem.NewText(listPos.X+textOffset.X, 80+textOffset.Y, "File"),
+			elem.NewText(listPos.X+textOffset.X, 96+textOffset.Y, "Exit"),
 		},
-		money:    elem.NewText(listPos.X+textOffset.X, 172+textOffset.Y, "money:"),
-		location: elem.NewText(listPos.X+textOffset.X, 172+16+textOffset.Y, "location:"),
-		time:     elem.NewText(listPos.X+textOffset.X, 172+32+textOffset.Y, "time:"),
+		money:    elem.NewText(listPos.X+textOffset.X, 144+textOffset.Y, "money:"),
+		location: elem.NewText(listPos.X+textOffset.X, 144+16+textOffset.Y, "location:"),
+		time:     elem.NewText(listPos.X+textOffset.X, 144+32+textOffset.Y, "time:"),
 	}
 	return u
 }
@@ -62,7 +60,6 @@ func (r *ui) Draw(screen *ebiten.Image) {
 	r.location.Draw(screen)
 	r.time.Draw(screen)
 	r.money.Draw(screen)
-	r.uiDesc.Draw(screen)
 }
 
 func (r *ui) Update(delta int64, state *core.State) {
@@ -144,12 +141,12 @@ func (r *ui) reset() {
 func (r *ui) rebuild(characters []*core.CharacterState) {
 	var cards []*elem.CharacterCard
 	pos := elem.Pos{
-		X: 8,
-		Y: 32,
+		X: 12,
+		Y: 8,
 	}
 	for _, c := range characters {
 		cards = append(cards, elem.NewCharacterCard(c, pos))
-		pos.Y = pos.Y + 64 - 8
+		pos.Y = pos.Y + 48 + 8
 	}
 	r.cards = cards
 }

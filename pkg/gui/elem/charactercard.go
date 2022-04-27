@@ -26,7 +26,7 @@ func NewCharacterCard(cs *core.CharacterState, pos Pos) *CharacterCard {
 		name:   NewText(pos.X+offsetX-2, pos.Y+offsetY+34, strings.Title(cs.Name)),
 		health: NewText(pos.X+offsetX+48+8, pos.Y+offsetY+16, fmt.Sprintf("health: %v", cs.Health)),
 		magic:  NewText(pos.X+offsetX+48+8, pos.Y+offsetY+32, fmt.Sprintf("magic: %v", cs.Magic)),
-		level:  NewText(pos.X+offsetX+180, pos.Y+offsetY, fmt.Sprintf("level: %v", cs.Stats.Level)),
+		level:  NewText(pos.X+offsetX+144, pos.Y+offsetY, fmt.Sprintf("level: %v", cs.Stats.Level)),
 	}
 	return r
 }

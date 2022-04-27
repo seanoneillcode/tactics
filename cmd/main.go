@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/seanoneillcode/go-tactics/pkg/gui/dialog"
 	"github.com/seanoneillcode/go-tactics/pkg/gui/inventory"
 	"github.com/seanoneillcode/go-tactics/pkg/gui/menu"
@@ -85,7 +86,9 @@ func (g *Game) Update() error {
 	if ebiten.IsKeyPressed(ebiten.KeyEscape) || g.state.Control.Command == "exit" {
 		return NormalEscapeError
 	}
-
+	if inpututil.IsKeyJustPressed(ebiten.KeyF) {
+		ebiten.SetFullscreen(!ebiten.IsFullscreen())
+	}
 	//fps := ebiten.CurrentFPS()
 
 	return nil
