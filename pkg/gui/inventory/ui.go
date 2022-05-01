@@ -10,31 +10,31 @@ import (
 
 const offsetX = 4
 const offsetY = 4
-const charactersPerInfoLine = 30
+const charactersPerInfoLine = 24
 
 var invInfoPos = &elem.Pos{
-	X: 194,
-	Y: 120,
+	X: 170,
+	Y: 98,
 }
 
 var effectPos = &elem.Pos{
-	X: 200,
-	Y: 32,
+	X: 166,
+	Y: 16,
 }
 
 var itemImagePos = &elem.Pos{
-	X: 254,
-	Y: 34,
+	X: 210,
+	Y: 24,
 }
 
 var characterCardsPos = &elem.Pos{
-	X: 196,
-	Y: 32,
+	X: 170,
+	Y: 20,
 }
 
 var actionPos = &elem.Pos{
-	X: 160,
-	Y: 80,
+	X: 120,
+	Y: 40,
 }
 
 type ctx string
@@ -75,11 +75,11 @@ func NewUi() *ui {
 		bg:          elem.NewStaticImage("inventory-bg.png", 0, 0),
 		cursor:      elem.NewCursor(),
 		infoBox:     elem.NewText(invInfoPos.X+2, invInfoPos.Y+12, ""),
-		uiDesc:      elem.NewText(170, 4, "Items"),
+		uiDesc:      elem.NewText(223, 4, "Items"),
 		actionBox:   NewActionBox(*actionPos),
 		invItemList: NewInvItemList(),
 		actionPos:   actionPos,
-		listPos:     &elem.Pos{X: 32, Y: 32},
+		listPos:     &elem.Pos{X: 8, Y: 8},
 		cursorPos:   &elem.Pos{X: 0, Y: 0},
 		itemImages: map[string]*elem.StaticImage{
 			core.BreadItemName:       elem.NewStaticImage("item/bread.png", float64(itemImagePos.X), float64(itemImagePos.Y)),
@@ -140,7 +140,7 @@ func (r *ui) Update(delta int64, state *core.State) {
 	var item *core.Item
 	switch r.activeCtx {
 	case listCtx:
-		r.cursorPos.X = r.listPos.X - 14
+		r.cursorPos.X = r.listPos.X - 8
 		r.cursorPos.Y = r.listPos.Y + (16.0 * r.selectedListIndex)
 		if state.TeamState.HasItems() {
 			item = state.TeamState.GetItemWithIndex(r.selectedListIndex)
@@ -162,7 +162,7 @@ func (r *ui) Update(delta int64, state *core.State) {
 
 	case characterCtx:
 		r.cursorPos.X = effectPos.X - 12
-		r.cursorPos.Y = effectPos.Y + 16 + (56.0 * r.selectedCharacterIndex)
+		r.cursorPos.Y = effectPos.Y + 16 + (52.0 * r.selectedCharacterIndex)
 		r.currentItemImage = nil
 		if state.TeamState.HasItems() {
 			item = state.TeamState.GetItemWithIndex(r.selectedListIndex)
@@ -326,7 +326,7 @@ func (r *ui) rebuild(characters []*core.CharacterState) {
 	}
 	for _, c := range characters {
 		cards[c.Name] = elem.NewEffectCard(c, pos)
-		pos.Y = pos.Y + 56
+		pos.Y = pos.Y + 52
 	}
 	r.cards = cards
 }

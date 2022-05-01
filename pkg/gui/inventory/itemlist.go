@@ -18,7 +18,7 @@ type InvItemList struct {
 
 func NewInvItemList() *InvItemList {
 	return &InvItemList{
-		pos: &elem.Pos{X: 32, Y: 32},
+		pos: &elem.Pos{X: 8, Y: 8},
 	}
 }
 
