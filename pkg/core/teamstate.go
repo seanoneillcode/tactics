@@ -42,6 +42,8 @@ func NewTeamState() *TeamState {
 	ts.Characters[1].Magic = 3
 	ts.Characters[2].ActiveStatusEffects = []string{"asleep"}
 
+	ts.EquipItem("Padded Armour", 0)
+
 	return ts
 }
 

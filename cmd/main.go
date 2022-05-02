@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/seanoneillcode/go-tactics/pkg/gui/dialog"
+	"github.com/seanoneillcode/go-tactics/pkg/gui/equipment"
 	"github.com/seanoneillcode/go-tactics/pkg/gui/inventory"
 	"github.com/seanoneillcode/go-tactics/pkg/gui/menu"
 	"log"
@@ -33,6 +34,7 @@ func main() {
 		camera:      core.NewCamera(),
 		inventoryUI: inventory.NewUi(),
 		menuUI:      menu.NewUI(),
+		equipmentUI: equipment.NewUI(),
 	}
 	g.state.Map.LoadLevel("siopa")
 	g.state.Player.EnterLevel(g.state.Map.Level)
@@ -60,6 +62,7 @@ type Game struct {
 	shopUI           *gui.ShopUI
 	inventoryUI      gui.UI
 	menuUI           gui.UI
+	equipmentUI      gui.UI
 }
 
 func (g *Game) Update() error {
@@ -81,6 +84,7 @@ func (g *Game) Update() error {
 	g.shopUI.Update(delta, g.state)
 	g.inventoryUI.Update(delta, g.state)
 	g.menuUI.Update(delta, g.state)
+	g.equipmentUI.Update(delta, g.state)
 
 	// handle escape
 	if ebiten.IsKeyPressed(ebiten.KeyEscape) || g.state.Control.Command == "exit" {
@@ -102,6 +106,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	g.shopUI.Draw(screen)
 	g.inventoryUI.Draw(screen)
 	g.menuUI.Draw(screen)
+	g.equipmentUI.Draw(screen)
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {

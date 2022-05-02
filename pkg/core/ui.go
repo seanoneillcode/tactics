@@ -25,7 +25,7 @@ func NewUI() *UI {
 }
 
 func (i *UI) Open(uiType UIName) {
-	if uiType == ItemsUI || uiType == MenuUI {
+	if uiType == ItemsUI || uiType == MenuUI || uiType == EquipmentUI {
 		i.UIType = uiType
 		i.IsActive = true
 	}
@@ -38,6 +38,10 @@ func (i *UI) Close() {
 
 func (i *UI) IsInventoryActive() bool {
 	return i.IsActive && i.UIType == "items"
+}
+
+func (i *UI) IsEquipmentActive() bool {
+	return i.IsActive && i.UIType == "equipment"
 }
 
 func (i *UI) IsMenuActive() bool {

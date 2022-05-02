@@ -85,6 +85,7 @@ func NewItem(name string) *Item {
 			StatEffects: []Stats{
 				{Defence: 1},
 			},
+			EquipSlot: "armor",
 			ImagePath: "item/padded-armour.png",
 		}
 	case SteelArmorItemName:
@@ -98,6 +99,7 @@ func NewItem(name string) *Item {
 				{Defence: 3},
 				{Speed: -1},
 			},
+			EquipSlot: "armor",
 			ImagePath: "item/steel-armour.png",
 		}
 	}
