@@ -28,8 +28,8 @@ type ui struct {
 func NewUI() *ui {
 	textOffset := &elem.Pos{X: 4, Y: 4}
 	u := &ui{
-		bg:        elem.NewStaticImage("menu-bg.png", 0, 0),
-		highlight: elem.NewSprite("menu-highlight.png", float64(listPos.X), float64(listPos.Y)),
+		bg:        elem.NewStaticImage("uis/menu/menu-bg.png", 0, 0),
+		highlight: elem.NewSprite("uis/menu/menu-highlight.png", float64(listPos.X), float64(listPos.Y)),
 		options: []*elem.Text{
 			elem.NewText(listPos.X+textOffset.X, 16+textOffset.Y, "Items"),
 			elem.NewText(listPos.X+textOffset.X, 32+textOffset.Y, "Equipment"),

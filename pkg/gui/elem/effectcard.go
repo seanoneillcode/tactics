@@ -20,7 +20,7 @@ func NewEffectCard(cs *core.CharacterState, pos Pos) *EffectCard {
 	r := &EffectCard{
 		pos:   &Pos{pos.X, pos.Y},
 		image: common.LoadImage(fmt.Sprintf("portrait/%s.png", cs.Name)),
-		bg:    common.LoadImage("inv-char-bg.png"),
+		bg:    common.LoadImage("elem/effectcard-bg.png"),
 		name:  NewText(0, 0, cs.Name),
 	}
 

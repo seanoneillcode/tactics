@@ -23,16 +23,16 @@ type TextBox struct {
 }
 
 func NewTextBox(x int, y int, width int, height int) *TextBox {
-	borderImage1 := common.LoadImage("text-border-1.png")
+	borderImage1 := common.LoadImage("elem/text-border-1.png")
 	partial1 := borderImage1.SubImage(image.Rect(0, 0, width+marginX+marginX, height+marginY+marginY))
 
-	borderImage2 := common.LoadImage("text-border-2.png")
+	borderImage2 := common.LoadImage("elem/text-border-2.png")
 	partial2 := borderImage2.SubImage(image.Rect(0, 0, width+marginX+marginX, height))
 
-	borderImage3 := common.LoadImage("text-border-3.png")
+	borderImage3 := common.LoadImage("elem/text-border-3.png")
 	partial3 := borderImage3
 
-	borderImage4 := common.LoadImage("text-border-4.png")
+	borderImage4 := common.LoadImage("elem/text-border-4.png")
 	partial4 := borderImage4.SubImage(image.Rect(0, 0, width, height+marginY))
 
 	return &TextBox{

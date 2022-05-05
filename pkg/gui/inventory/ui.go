@@ -72,7 +72,7 @@ type ui struct {
 
 func NewUi() *ui {
 	i := &ui{
-		bg:          elem.NewStaticImage("inventory-bg.png", 0, 0),
+		bg:          elem.NewStaticImage("uis/inventory/inventory-bg.png", 0, 0),
 		cursor:      elem.NewCursor(),
 		infoBox:     elem.NewText(invInfoPos.X+2, invInfoPos.Y+12, ""),
 		uiDesc:      elem.NewText(223, 4, "Items"),
@@ -93,7 +93,7 @@ func NewUi() *ui {
 		cards:            map[string]*elem.EffectCard{},
 		activeCtx:        listCtx,
 		currentItemImage: nil,
-		itemInfoBg:       elem.NewStaticImage("item-info-bg.png", float64(invInfoPos.X-3), float64(invInfoPos.Y)),
+		itemInfoBg:       elem.NewStaticImage("uis/inventory/item-info-bg.png", float64(invInfoPos.X-3), float64(invInfoPos.Y)),
 	}
 	return i
 }

@@ -43,14 +43,14 @@ var confirmationPos = &elem.Pos{
 
 func NewShopUi() *ShopUI {
 	s := &ShopUI{
-		bg:           elem.NewStaticImage("shop-bg.png", 0, 0),
+		bg:           elem.NewStaticImage("uis/shop/shop-bg.png", 0, 0),
 		cursor:       elem.NewCursor(),
-		confirmation: elem.NewButton("Buy", "shop-confirmation-bg.png"),
+		confirmation: elem.NewButton("Buy", "uis/shop/shop-confirmation-bg.png"),
 		playerName:   elem.NewText(168+offsetX, 8+offsetY, "Player"),
 		moneyLabel:   elem.NewText(168+offsetX, 24+offsetY, "Money"),
 		playerMoney:  elem.NewText(168+32+offsetX, 24+offsetY, ""),
 		shopName:     elem.NewText(16+offsetX, 8+offsetY, "Shop"),
-		infoBox:      elem.NewInfoBox("", "shop-information-bg.png"),
+		infoBox:      elem.NewInfoBox("", "uis/shop/shop-information-bg.png"),
 	}
 	return s
 }

@@ -15,7 +15,7 @@ type Cursor struct {
 
 func NewCursor() *Cursor {
 	return &Cursor{
-		image: common.LoadImage("shop-cursor.png"),
+		image: common.LoadImage("elem/cursor.png"),
 		pos:   Pos{},
 	}
 }

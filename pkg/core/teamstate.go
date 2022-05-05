@@ -37,6 +37,10 @@ func NewTeamState() *TeamState {
 	ts.Pickup(&Pickup{itemName: PotionItemName})
 	ts.Pickup(&Pickup{itemName: EtherItemName})
 	ts.Pickup(&Pickup{itemName: PaddedArmorItemName})
+	ts.Pickup(&Pickup{itemName: PaddedArmorItemName})
+	ts.Pickup(&Pickup{itemName: SteelArmorItemName})
+	ts.Pickup(&Pickup{itemName: SteelArmorItemName})
+	ts.Pickup(&Pickup{itemName: SteelArmorItemName})
 	// for testing
 	ts.Characters[0].Health = 2
 	ts.Characters[1].Magic = 3

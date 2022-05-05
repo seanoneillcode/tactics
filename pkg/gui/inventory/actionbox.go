@@ -14,9 +14,9 @@ type ActionBox struct {
 
 func NewActionBox(pos elem.Pos) *ActionBox {
 	return &ActionBox{
-		useAction:  elem.NewButton("Use", "button-bg.png"),
-		dropAction: elem.NewButton("Drop", "button-bg.png"),
-		bg:         elem.NewStaticImage("action-bg.png", float64(pos.X), float64(pos.Y)),
+		useAction:  elem.NewButton("Use", "uis/inventory/button-bg.png"),
+		dropAction: elem.NewButton("Drop", "uis/inventory/button-bg.png"),
+		bg:         elem.NewStaticImage("uis/inventory/action-bg.png", float64(pos.X), float64(pos.Y)),
 		pos: elem.Pos{
 			X: pos.X,
 			Y: pos.Y,

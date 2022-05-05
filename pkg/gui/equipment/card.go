@@ -42,9 +42,6 @@ func (r *card) Update(pos elem.Pos, isSelected bool, charState *core.CharacterSt
 		X: pos.X + 24 + 1,
 		Y: pos.Y + 8 + 1,
 	})
-	if r.isSelected {
-		r.handleInput()
-	}
 }
 
 func (r *card) Draw(screen *ebiten.Image) {

@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	resourceDirectory = "res/"
+	resourceDirectory = "res/levels/"
 )
 
 type TiledGrid struct {
