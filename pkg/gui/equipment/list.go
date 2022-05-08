@@ -93,6 +93,10 @@ func (r *List) handleInput() {
 	}
 }
 
+func (r *List) currentItem() *itemEntry {
+	return r.itemList[r.index]
+}
+
 type itemEntry struct {
 	itemRef  *core.Item
 	name     *elem.Text

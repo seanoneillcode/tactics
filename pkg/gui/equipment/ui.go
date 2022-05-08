@@ -86,7 +86,7 @@ func (r *ui) Update(delta int64, state *core.State) {
 		c.Update(pos, isSelected, state.TeamState.Characters[r.selectedCharacterIndex])
 	}
 
-	r.list.Update(state.TeamState, r.cards[0].currentSlot().SlotType)
+	r.list.Update(state.TeamState, r.currentSlot().SlotType)
 }
 
 func (r *ui) handleInput(state *core.State) {
@@ -109,12 +109,12 @@ func (r *ui) handleInput(state *core.State) {
 		switch r.activeCtx {
 		case slotCtx:
 			r.activeCtx = equipmentListCtx
-			r.list.updateList(teamState, r.cards[0].currentSlot().SlotType)
+			r.list.updateList(teamState, r.currentSlot().SlotType)
 		case equipmentListCtx:
 			r.activeCtx = slotCtx
 			// equip item to slot
-			//item := teamState.GetItemWithIndex(r.selectedSlotIndex)
-			//teamState.EquipItem(item.Name, r.selectedCharacterIndex)
+			item := teamState.GetItemWithName(r.list.currentItem().itemRef.Name)
+			teamState.EquipItem(item.Name, r.selectedCharacterIndex)
 		}
 		return
 	}
@@ -157,6 +157,10 @@ func (r *ui) handleInput(state *core.State) {
 			r.cards[r.selectedCharacterIndex].handleInput()
 		}
 	}
+}
+
+func (r *ui) currentSlot() *slotEntry {
+	return r.cards[0].currentSlot()
 }
 
 func (r *ui) rebuild() {

@@ -155,6 +155,10 @@ func (t *TeamState) GetItemWithIndex(index int) *Item {
 	return t.GetItem(t.ItemList[index])
 }
 
+func (t *TeamState) GetItemWithName(name string) *Item {
+	return t.GetItem(name)
+}
+
 func (t *TeamState) refreshItemList() {
 	t.Iteration = t.Iteration + 1
 	t.ItemList = t.GetItemList()
