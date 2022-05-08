@@ -13,9 +13,10 @@ import (
 
 type List struct {
 	// assets
-	pos      *elem.Pos
-	itemList []*itemEntry
-	bg       *elem.StaticImage
+	pos       *elem.Pos
+	itemList  []*itemEntry
+	bg        *elem.StaticImage
+	highlight *elem.Sprite
 
 	// state
 	currentIteration int
@@ -24,8 +25,9 @@ type List struct {
 
 func NewList(pos elem.Pos) *List {
 	return &List{
-		pos: &elem.Pos{X: pos.X, Y: pos.Y},
-		bg:  elem.NewStaticImage("uis/equipment/list-bg.png", float64(pos.X), float64(pos.Y)),
+		pos:       &elem.Pos{X: pos.X, Y: pos.Y},
+		bg:        elem.NewStaticImage("uis/equipment/list-bg.png", float64(pos.X), float64(pos.Y)),
+		highlight: elem.NewSprite("uis/equipment/highlight.png", 0, 0),
 	}
 }
 
@@ -59,11 +61,13 @@ func (r *List) createList(teamState *core.TeamState, slot string) []*itemEntry {
 		offset = offset + 16
 
 	}
+	r.index = 0
 	return invItems
 }
 
 func (r *List) Draw(screen *ebiten.Image) {
 	r.bg.Draw(screen)
+	r.highlight.Draw(screen)
 	for _, item := range r.itemList {
 		item.Draw(screen)
 	}
@@ -74,6 +78,10 @@ func (r *List) Update(teamState *core.TeamState, slot string) {
 		r.currentIteration = teamState.Iteration
 		r.updateList(teamState, slot)
 	}
+	r.highlight.SetPos(&elem.Pos{
+		X: r.pos.X,
+		Y: r.pos.Y + (16 * r.index),
+	})
 }
 
 func (r *List) handleInput() {

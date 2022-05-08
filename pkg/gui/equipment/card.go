@@ -28,6 +28,9 @@ func NewCard(name string) *card {
 
 func (r *card) Update(pos elem.Pos, isSelected bool, charState *core.CharacterState) {
 	r.isSelected = isSelected
+	if !isSelected {
+		r.selectedSlotIndex = 0
+	}
 	for index, s := range r.slots {
 		isHighlighted := index == r.selectedSlotIndex
 		s.Update(elem.Pos{

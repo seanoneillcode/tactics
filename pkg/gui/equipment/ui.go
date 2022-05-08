@@ -38,16 +38,30 @@ func NewUI() *ui {
 	i := &ui{
 		bg:        elem.NewStaticImage("uis/equipment/bg.png", 0, 0),
 		activeCtx: slotCtx,
-		originalCards: []*card{
+		cards: []*card{
 			NewCard("alice"),
 			NewCard("bob"),
 			NewCard("carl"),
 		},
-		cards: []*card{},
-		list:  NewList(listPos),
+		list: NewList(listPos),
 	}
-	i.rebuild()
 	return i
+}
+
+func (r *ui) rotateCards(amount int) {
+	length := len(r.cards)
+	var tmp = make([]*card, length)
+	for index, _ := range r.cards {
+		newIndex := index + amount
+		if newIndex == length {
+			newIndex = 0
+		}
+		if newIndex == -1 {
+			newIndex = length - 1
+		}
+		tmp[newIndex] = r.cards[index]
+	}
+	r.cards = tmp
 }
 
 func (r *ui) Draw(screen *ebiten.Image) {
@@ -112,7 +126,6 @@ func (r *ui) handleInput(state *core.State) {
 			r.list.updateList(teamState, r.currentSlot().SlotType)
 		case equipmentListCtx:
 			r.activeCtx = slotCtx
-			// equip item to slot
 			item := teamState.GetItemWithName(r.list.currentItem().itemRef.Name)
 			teamState.EquipItem(item.Name, r.selectedCharacterIndex)
 		}
@@ -126,7 +139,7 @@ func (r *ui) handleInput(state *core.State) {
 			if r.selectedCharacterIndex == 3 {
 				r.selectedCharacterIndex = 0
 			}
-			r.rebuild()
+			r.rotateCards(1)
 		}
 		return
 	}
@@ -137,7 +150,7 @@ func (r *ui) handleInput(state *core.State) {
 			if r.selectedCharacterIndex == -1 {
 				r.selectedCharacterIndex = 2
 			}
-			r.rebuild()
+			r.rotateCards(-1)
 		}
 		return
 	}
@@ -145,7 +158,7 @@ func (r *ui) handleInput(state *core.State) {
 	if inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) || inpututil.IsKeyJustPressed(ebiten.KeyW) {
 		switch r.activeCtx {
 		case slotCtx:
-			r.cards[r.selectedCharacterIndex].handleInput()
+			r.cards[0].handleInput()
 		case equipmentListCtx:
 			r.list.handleInput()
 		}
@@ -154,21 +167,13 @@ func (r *ui) handleInput(state *core.State) {
 	if inpututil.IsKeyJustPressed(ebiten.KeyArrowDown) || inpututil.IsKeyJustPressed(ebiten.KeyS) {
 		switch r.activeCtx {
 		case slotCtx:
-			r.cards[r.selectedCharacterIndex].handleInput()
+			r.cards[0].handleInput()
+		case equipmentListCtx:
+			r.list.handleInput()
 		}
 	}
 }
 
 func (r *ui) currentSlot() *slotEntry {
 	return r.cards[0].currentSlot()
-}
-
-func (r *ui) rebuild() {
-	var newCards []*card
-
-	for index := range r.originalCards {
-		newCards = append(newCards, r.originalCards[(index+r.selectedCharacterIndex)%3])
-	}
-
-	r.cards = newCards
 }

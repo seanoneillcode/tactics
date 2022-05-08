@@ -75,6 +75,18 @@ func (t *TeamState) RestoreHealth() {
 }
 
 func (t *TeamState) BuyItem(item *Item, cost int) {
+	t.addItem(item)
+	t.Money = t.Money - cost
+	t.refreshItemList()
+}
+
+func (t *TeamState) Pickup(pickup *Pickup) {
+	ni := NewItem(pickup.itemName)
+	t.addItem(ni)
+	t.refreshItemList()
+}
+
+func (t *TeamState) addItem(item *Item) {
 	ti, has := t.ItemHolders[item.Name]
 	if !has {
 		t.ItemHolders[item.Name] = &ItemHolder{
@@ -84,22 +96,6 @@ func (t *TeamState) BuyItem(item *Item, cost int) {
 	} else {
 		ti.Amount = ti.Amount + 1
 	}
-	t.Money = t.Money - cost
-	t.refreshItemList()
-}
-
-func (t *TeamState) Pickup(pickup *Pickup) {
-	ni := NewItem(pickup.itemName)
-	ti, has := t.ItemHolders[ni.Name]
-	if !has {
-		t.ItemHolders[ni.Name] = &ItemHolder{
-			Item:   ni,
-			Amount: 1,
-		}
-	} else {
-		ti.Amount = ti.Amount + 1
-	}
-	t.refreshItemList()
 }
 
 func (t *TeamState) RemoveItem(name string) {
@@ -129,7 +125,13 @@ func (t *TeamState) EquipItem(name string, index int) {
 	selectedCharacter := t.Characters[index]
 
 	ti := t.ItemHolders[name]
+	oldItem, ok := selectedCharacter.EquippedItems[ti.Item.EquipSlot]
+	// slot is already equipped
+	if ok {
+		t.addItem(oldItem)
+	}
 	selectedCharacter.EquippedItems[ti.Item.EquipSlot] = ti.Item
+	t.RemoveItem(name)
 	t.refreshItemList()
 }
 
