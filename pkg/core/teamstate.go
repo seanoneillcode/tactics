@@ -135,6 +135,16 @@ func (t *TeamState) EquipItem(name string, index int) {
 	t.refreshItemList()
 }
 
+func (t *TeamState) UnEquipItem(equipSlot string, index int) {
+	selectedCharacter := t.Characters[index]
+	oldItem, ok := selectedCharacter.EquippedItems[equipSlot]
+	if ok {
+		t.addItem(oldItem)
+		delete(selectedCharacter.EquippedItems, equipSlot)
+	}
+	t.refreshItemList()
+}
+
 func (t *TeamState) GetItem(name string) *Item {
 	ti, has := t.ItemHolders[name]
 	if !has {

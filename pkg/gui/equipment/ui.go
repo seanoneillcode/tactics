@@ -16,7 +16,7 @@ const (
 )
 
 var listPos = elem.Pos{
-	X: 120,
+	X: 160,
 	Y: 0,
 }
 
@@ -25,7 +25,7 @@ type ui struct {
 	bg            *elem.StaticImage
 	originalCards []*card
 	cards         []*card
-	list          *List
+	list          *elem.List
 
 	// state
 	activeCtx              ctx
@@ -43,9 +43,30 @@ func NewUI() *ui {
 			NewCard("bob"),
 			NewCard("carl"),
 		},
-		list: NewList(listPos),
+		list: elem.NewList(listPos),
 	}
 	return i
+}
+
+func createList(teamState *core.TeamState, slot string) []elem.ListItem {
+	itemNames := teamState.GetItemList()
+	itemMap := teamState.ItemHolders
+	var invItems []elem.ListItem
+	var offset = 0
+	invItems = append(invItems, elem.NewUnEquipItem())
+	for _, name := range itemNames {
+		teamItem := itemMap[name]
+		if teamItem.Item.CanConsume {
+			continue
+		}
+		if teamItem.Item.EquipSlot != slot {
+			continue
+		}
+		entry := elem.NewShopListItem(teamItem.Item, teamItem.Amount)
+		invItems = append(invItems, entry)
+		offset = offset + 16
+	}
+	return invItems
 }
 
 func (r *ui) rotateCards(amount int) {
@@ -100,7 +121,8 @@ func (r *ui) Update(delta int64, state *core.State) {
 		c.Update(pos, isSelected, state.TeamState.Characters[r.selectedCharacterIndex])
 	}
 
-	r.list.Update(state.TeamState, r.currentSlot().SlotType)
+	r.list.Update() // 	r.list.Update()//
+
 }
 
 func (r *ui) handleInput(state *core.State) {
@@ -122,12 +144,23 @@ func (r *ui) handleInput(state *core.State) {
 	if inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
 		switch r.activeCtx {
 		case slotCtx:
+			newList := createList(teamState, r.currentSlot().SlotType)
+			if len(newList) == 0 {
+				break
+			}
 			r.activeCtx = equipmentListCtx
-			r.list.updateList(teamState, r.currentSlot().SlotType)
+			r.list.SetListItems(newList)
+			//r.list.updateList(teamState, r.currentSlot().SlotType)
 		case equipmentListCtx:
 			r.activeCtx = slotCtx
-			item := teamState.GetItemWithName(r.list.currentItem().itemRef.Name)
-			teamState.EquipItem(item.Name, r.selectedCharacterIndex)
+			currentItem := r.list.CurrentItem()
+			if currentItem == nil {
+				// remove item
+				teamState.UnEquipItem(r.currentSlot().SlotType, r.selectedCharacterIndex)
+			} else {
+				item := teamState.GetItemWithName(currentItem.Name)
+				teamState.EquipItem(item.Name, r.selectedCharacterIndex)
+			}
 		}
 		return
 	}
@@ -160,7 +193,7 @@ func (r *ui) handleInput(state *core.State) {
 		case slotCtx:
 			r.cards[0].handleInput()
 		case equipmentListCtx:
-			r.list.handleInput()
+			r.list.HandleInput()
 		}
 
 	}
@@ -169,7 +202,7 @@ func (r *ui) handleInput(state *core.State) {
 		case slotCtx:
 			r.cards[0].handleInput()
 		case equipmentListCtx:
-			r.list.handleInput()
+			r.list.HandleInput()
 		}
 	}
 }
