@@ -70,6 +70,10 @@ func (r *card) handleInput() {
 	}
 }
 
+func (r *card) currentSlot() *slotEntry {
+	return r.slots[r.selectedSlotIndex]
+}
+
 type slotEntry struct {
 	image       *elem.Sprite
 	bg          *elem.Sprite

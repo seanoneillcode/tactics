@@ -72,32 +72,23 @@ type ui struct {
 
 func NewUi() *ui {
 	i := &ui{
-		bg:          elem.NewStaticImage("uis/inventory/inventory-bg.png", 0, 0),
-		cursor:      elem.NewCursor(),
-		infoBox:     elem.NewText(invInfoPos.X+2, invInfoPos.Y+12, ""),
-		uiDesc:      elem.NewText(223, 4, "Items"),
-		actionBox:   NewActionBox(*actionPos),
-		invItemList: NewInvItemList(),
-		actionPos:   actionPos,
-		listPos:     &elem.Pos{X: 8, Y: 8},
-		cursorPos:   &elem.Pos{X: 0, Y: 0},
-		itemImages: map[string]*elem.StaticImage{
-			core.BreadItemName:        elem.NewStaticImage("item/bread.png", float64(itemImagePos.X), float64(itemImagePos.Y)),
-			core.MouldyBreadItemName:  elem.NewStaticImage("item/mouldy-bread.png", float64(itemImagePos.X), float64(itemImagePos.Y)),
-			core.HerbItemName:         elem.NewStaticImage("item/herb.png", float64(itemImagePos.X), float64(itemImagePos.Y)),
-			core.PotionItemName:       elem.NewStaticImage("item/potion.png", float64(itemImagePos.X), float64(itemImagePos.Y)),
-			core.EtherItemName:        elem.NewStaticImage("item/ether.png", float64(itemImagePos.X), float64(itemImagePos.Y)),
-			core.PaddedArmorItemName:  elem.NewStaticImage("item/padded-armor.png", float64(itemImagePos.X), float64(itemImagePos.Y)),
-			core.LeatherArmorItemName: elem.NewStaticImage("item/leather-armor.png", float64(itemImagePos.X), float64(itemImagePos.Y)),
-			core.SteelArmorItemName:   elem.NewStaticImage("item/steel-armor.png", float64(itemImagePos.X), float64(itemImagePos.Y)),
-			core.ChainArmorItemName:   elem.NewStaticImage("item/chain-mail-armor.png", float64(itemImagePos.X), float64(itemImagePos.Y)),
-			core.MagicRingItemName:    elem.NewStaticImage("item/ring.png", float64(itemImagePos.X), float64(itemImagePos.Y)),
-			core.ShortSwordItemName:   elem.NewStaticImage("item/short-sword.png", float64(itemImagePos.X), float64(itemImagePos.Y)),
-		},
+		bg:               elem.NewStaticImage("uis/inventory/inventory-bg.png", 0, 0),
+		cursor:           elem.NewCursor(),
+		infoBox:          elem.NewText(invInfoPos.X+2, invInfoPos.Y+12, ""),
+		uiDesc:           elem.NewText(223, 4, "Items"),
+		actionBox:        NewActionBox(*actionPos),
+		invItemList:      NewInvItemList(),
+		actionPos:        actionPos,
+		listPos:          &elem.Pos{X: 8, Y: 8},
+		cursorPos:        &elem.Pos{X: 0, Y: 0},
+		itemImages:       map[string]*elem.StaticImage{},
 		cards:            map[string]*elem.EffectCard{},
 		activeCtx:        listCtx,
 		currentItemImage: nil,
 		itemInfoBg:       elem.NewStaticImage("uis/inventory/item-info-bg.png", float64(invInfoPos.X-3), float64(invInfoPos.Y)),
+	}
+	for _, item := range core.AllItems {
+		i.itemImages[item.Type] = elem.NewStaticImage(item.ImagePath, float64(itemImagePos.X), float64(itemImagePos.Y))
 	}
 	return i
 }

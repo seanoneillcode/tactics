@@ -83,11 +83,10 @@ func (r *ui) Update(delta int64, state *core.State) {
 			X: index * 110,
 			Y: 0,
 		}
-
 		c.Update(pos, isSelected, state.TeamState.Characters[r.selectedCharacterIndex])
 	}
 
-	r.list.Update(state.TeamState)
+	r.list.Update(state.TeamState, r.cards[0].currentSlot().SlotType)
 }
 
 func (r *ui) handleInput(state *core.State) {
@@ -99,7 +98,6 @@ func (r *ui) handleInput(state *core.State) {
 	if inpututil.IsKeyJustPressed(ebiten.KeyBackspace) {
 		switch r.activeCtx {
 		case slotCtx:
-			//r.reset()
 			state.UI.Open(core.MenuUI)
 		case equipmentListCtx:
 			r.activeCtx = slotCtx
@@ -111,6 +109,7 @@ func (r *ui) handleInput(state *core.State) {
 		switch r.activeCtx {
 		case slotCtx:
 			r.activeCtx = equipmentListCtx
+			r.list.updateList(teamState, r.cards[0].currentSlot().SlotType)
 		case equipmentListCtx:
 			r.activeCtx = slotCtx
 			// equip item to slot

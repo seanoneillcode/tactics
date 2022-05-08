@@ -29,7 +29,11 @@ func NewList(pos elem.Pos) *List {
 	}
 }
 
-func (r *List) createList(teamState *core.TeamState) []*itemEntry {
+func (r *List) updateList(teamState *core.TeamState, slot string) {
+	r.itemList = r.createList(teamState, slot)
+}
+
+func (r *List) createList(teamState *core.TeamState, slot string) []*itemEntry {
 	itemNames := teamState.GetItemList()
 	itemMap := teamState.ItemHolders
 	x := r.pos.X + 4
@@ -39,6 +43,9 @@ func (r *List) createList(teamState *core.TeamState) []*itemEntry {
 	for _, name := range itemNames {
 		teamItem := itemMap[name]
 		if teamItem.Item.CanConsume {
+			continue
+		}
+		if teamItem.Item.EquipSlot != slot {
 			continue
 		}
 		quantity := fmt.Sprintf("%v", teamItem.Amount)
@@ -62,10 +69,10 @@ func (r *List) Draw(screen *ebiten.Image) {
 	}
 }
 
-func (r *List) Update(teamState *core.TeamState) {
+func (r *List) Update(teamState *core.TeamState, slot string) {
 	if r.currentIteration != teamState.Iteration {
 		r.currentIteration = teamState.Iteration
-		r.itemList = r.createList(teamState)
+		r.updateList(teamState, slot)
 	}
 }
 
