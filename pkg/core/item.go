@@ -86,7 +86,7 @@ func NewItem(name string) *Item {
 				{Defence: 1},
 			},
 			EquipSlot: "armor",
-			ImagePath: "item/padded-armour.png",
+			ImagePath: "item/padded-armor.png",
 		}
 	case SteelArmorItemName:
 		return &Item{
@@ -100,7 +100,7 @@ func NewItem(name string) *Item {
 				{Speed: -2},
 			},
 			EquipSlot: "armor",
-			ImagePath: "item/steel-armour.png",
+			ImagePath: "item/steel-armor.png",
 		}
 	case LeatherArmorItemName:
 		return &Item{
@@ -114,7 +114,7 @@ func NewItem(name string) *Item {
 				{Speed: -1},
 			},
 			EquipSlot: "armor",
-			ImagePath: "item/leather-armour.png",
+			ImagePath: "item/leather-armor.png",
 		}
 	case ChainArmorItemName:
 		return &Item{
@@ -128,7 +128,7 @@ func NewItem(name string) *Item {
 				{Speed: -1},
 			},
 			EquipSlot: "armor",
-			ImagePath: "item/chain-mail-armour.png",
+			ImagePath: "item/chain-mail-armor.png",
 		}
 	case BatteredSwordItemName:
 		return &Item{

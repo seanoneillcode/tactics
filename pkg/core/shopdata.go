@@ -55,5 +55,17 @@ var shopData = map[string][]*ShopItem{
 			Item: NewItem(SteelArmorItemName),
 			Cost: 100,
 		},
+		&ShopItem{
+			Item: NewItem(LeatherArmorItemName),
+			Cost: 10,
+		},
+		&ShopItem{
+			Item: NewItem(MagicRingItemName),
+			Cost: 10,
+		},
+		&ShopItem{
+			Item: NewItem(BatteredSwordItemName),
+			Cost: 10,
+		},
 	},
 }
