@@ -70,7 +70,7 @@ func NewTeamState() *TeamState {
 
 func (t *TeamState) RestoreHealth() {
 	for _, c := range t.Characters {
-		c.Health = c.Stats.MaxHealth
+		c.Health = c.EquippedStats.MaxHealth
 	}
 }
 
@@ -130,7 +130,7 @@ func (t *TeamState) EquipItem(name string, index int) {
 	if ok {
 		t.addItem(oldItem)
 	}
-	selectedCharacter.EquippedItems[ti.Item.EquipSlot] = ti.Item
+	selectedCharacter.EquipItem(ti.Item.EquipSlot, ti.Item)
 	t.RemoveItem(name)
 	t.refreshItemList()
 }
@@ -140,7 +140,7 @@ func (t *TeamState) UnEquipItem(equipSlot string, index int) {
 	oldItem, ok := selectedCharacter.EquippedItems[equipSlot]
 	if ok {
 		t.addItem(oldItem)
-		delete(selectedCharacter.EquippedItems, equipSlot)
+		selectedCharacter.UnEquipItem(equipSlot)
 	}
 	t.refreshItemList()
 }

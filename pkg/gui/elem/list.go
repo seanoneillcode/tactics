@@ -8,6 +8,8 @@ import (
 	"github.com/seanoneillcode/go-tactics/pkg/core"
 )
 
+const RemoveItem = "Remove Equipment"
+
 type List struct {
 	// assets
 	pos       *Pos

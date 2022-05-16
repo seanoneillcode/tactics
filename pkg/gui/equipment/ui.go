@@ -17,7 +17,17 @@ const (
 
 var listPos = elem.Pos{
 	X: 160,
+	Y: 64,
+}
+
+var effectPos = elem.Pos{
+	X: 160,
 	Y: 0,
+}
+
+var cardPos = elem.Pos{
+	X: 16,
+	Y: 16,
 }
 
 type ui struct {
@@ -26,12 +36,14 @@ type ui struct {
 	originalCards []*card
 	cards         []*card
 	list          *elem.List
+	effect        *Effect
 
 	// state
 	activeCtx              ctx
 	IsActive               bool
 	isLoaded               bool
 	selectedCharacterIndex int
+	currentCardIndex       int
 }
 
 func NewUI() *ui {
@@ -43,7 +55,8 @@ func NewUI() *ui {
 			NewCard("bob"),
 			NewCard("carl"),
 		},
-		list: elem.NewList(listPos),
+		list:   elem.NewList(listPos),
+		effect: NewEffect(effectPos),
 	}
 	return i
 }
@@ -69,33 +82,15 @@ func createList(teamState *core.TeamState, slot string) []elem.ListItem {
 	return invItems
 }
 
-func (r *ui) rotateCards(amount int) {
-	length := len(r.cards)
-	var tmp = make([]*card, length)
-	for index, _ := range r.cards {
-		newIndex := index + amount
-		if newIndex == length {
-			newIndex = 0
-		}
-		if newIndex == -1 {
-			newIndex = length - 1
-		}
-		tmp[newIndex] = r.cards[index]
-	}
-	r.cards = tmp
-}
-
 func (r *ui) Draw(screen *ebiten.Image) {
 	if !r.IsActive {
 		return
 	}
-
 	r.bg.Draw(screen)
-	for _, c := range r.cards {
-		c.Draw(screen)
-	}
+	r.cards[r.selectedCharacterIndex].Draw(screen)
 	if r.activeCtx == equipmentListCtx {
 		r.list.Draw(screen)
+		r.effect.Draw(screen)
 	}
 }
 
@@ -107,21 +102,21 @@ func (r *ui) Update(delta int64, state *core.State) {
 	}
 	if !r.isLoaded {
 		r.isLoaded = true
+		currentCard(r).selectedSlotIndex = 0 // reset position to start
+		r.selectedCharacterIndex = 0
 		return
 	}
 	r.IsActive = true
 	r.handleInput(state)
 
-	for index, c := range r.cards {
-		isSelected := index == 0
-		pos := elem.Pos{
-			X: index * 110,
-			Y: 0,
-		}
-		c.Update(pos, isSelected, state.TeamState.Characters[r.selectedCharacterIndex])
-	}
+	currentCard(r).Update(cardPos, state.TeamState.Characters[r.selectedCharacterIndex])
 
-	r.list.Update() // 	r.list.Update()//
+	r.list.Update()
+
+	if r.activeCtx == equipmentListCtx {
+		item := r.list.CurrentItem()
+		r.effect.Update(item, state.TeamState.Characters[r.selectedCharacterIndex])
+	}
 
 }
 
@@ -144,19 +139,18 @@ func (r *ui) handleInput(state *core.State) {
 	if inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
 		switch r.activeCtx {
 		case slotCtx:
-			newList := createList(teamState, r.currentSlot().SlotType)
+			newList := createList(teamState, currentSlot(r).SlotType)
 			if len(newList) == 0 {
 				break
 			}
 			r.activeCtx = equipmentListCtx
 			r.list.SetListItems(newList)
-			//r.list.updateList(teamState, r.currentSlot().SlotType)
 		case equipmentListCtx:
 			r.activeCtx = slotCtx
 			currentItem := r.list.CurrentItem()
 			if currentItem == nil {
 				// remove item
-				teamState.UnEquipItem(r.currentSlot().SlotType, r.selectedCharacterIndex)
+				teamState.UnEquipItem(currentSlot(r).SlotType, r.selectedCharacterIndex)
 			} else {
 				item := teamState.GetItemWithName(currentItem.Name)
 				teamState.EquipItem(item.Name, r.selectedCharacterIndex)
@@ -168,22 +162,24 @@ func (r *ui) handleInput(state *core.State) {
 	if inpututil.IsKeyJustPressed(ebiten.KeyArrowRight) || inpututil.IsKeyJustPressed(ebiten.KeyD) {
 		switch r.activeCtx {
 		case slotCtx:
+			index := currentCard(r).selectedSlotIndex
 			r.selectedCharacterIndex = r.selectedCharacterIndex + 1
 			if r.selectedCharacterIndex == 3 {
 				r.selectedCharacterIndex = 0
 			}
-			r.rotateCards(1)
+			currentCard(r).selectedSlotIndex = index
 		}
 		return
 	}
 	if inpututil.IsKeyJustPressed(ebiten.KeyArrowLeft) || inpututil.IsKeyJustPressed(ebiten.KeyA) {
 		switch r.activeCtx {
 		case slotCtx:
+			index := currentCard(r).selectedSlotIndex
 			r.selectedCharacterIndex = r.selectedCharacterIndex - 1
 			if r.selectedCharacterIndex == -1 {
 				r.selectedCharacterIndex = 2
 			}
-			r.rotateCards(-1)
+			currentCard(r).selectedSlotIndex = index
 		}
 		return
 	}
@@ -191,7 +187,7 @@ func (r *ui) handleInput(state *core.State) {
 	if inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) || inpututil.IsKeyJustPressed(ebiten.KeyW) {
 		switch r.activeCtx {
 		case slotCtx:
-			r.cards[0].handleInput()
+			currentCard(r).handleInput()
 		case equipmentListCtx:
 			r.list.HandleInput()
 		}
@@ -200,13 +196,17 @@ func (r *ui) handleInput(state *core.State) {
 	if inpututil.IsKeyJustPressed(ebiten.KeyArrowDown) || inpututil.IsKeyJustPressed(ebiten.KeyS) {
 		switch r.activeCtx {
 		case slotCtx:
-			r.cards[0].handleInput()
+			currentCard(r).handleInput()
 		case equipmentListCtx:
 			r.list.HandleInput()
 		}
 	}
 }
 
-func (r *ui) currentSlot() *slotEntry {
-	return r.cards[0].currentSlot()
+func currentSlot(r *ui) *slotEntry {
+	return r.cards[r.selectedCharacterIndex].currentSlot()
+}
+
+func currentCard(r *ui) *card {
+	return r.cards[r.selectedCharacterIndex]
 }

@@ -15,16 +15,16 @@ type healthEffect struct {
 
 func (h *healthEffect) Apply(cs *CharacterState) {
 	cs.Health = cs.Health + h.amount
-	if cs.Health > cs.Stats.MaxHealth {
-		cs.Health = cs.Stats.MaxHealth
+	if cs.Health > cs.EquippedStats.MaxHealth {
+		cs.Health = cs.EquippedStats.MaxHealth
 	}
 }
 func (h *healthEffect) Description(cs *CharacterState) string {
 	newValue := cs.Health + h.amount
-	if newValue > cs.Stats.MaxHealth {
-		newValue = cs.Stats.MaxHealth
+	if newValue > cs.EquippedStats.MaxHealth {
+		newValue = cs.EquippedStats.MaxHealth
 	}
-	return fmt.Sprintf("healt\n%v > %v", cs.Health, newValue)
+	return fmt.Sprintf("health\n%v > %v", cs.Health, newValue)
 }
 
 type magicEffect struct {
@@ -33,14 +33,14 @@ type magicEffect struct {
 
 func (h *magicEffect) Apply(cs *CharacterState) {
 	cs.Magic = cs.Magic + h.amount
-	if cs.Magic > cs.Stats.MaxMagic {
-		cs.Magic = cs.Stats.MaxMagic
+	if cs.Magic > cs.EquippedStats.MaxMagic {
+		cs.Magic = cs.EquippedStats.MaxMagic
 	}
 }
 func (h *magicEffect) Description(cs *CharacterState) string {
 	newValue := cs.Magic + h.amount
-	if newValue > cs.Stats.MaxMagic {
-		newValue = cs.Stats.MaxMagic
+	if newValue > cs.EquippedStats.MaxMagic {
+		newValue = cs.EquippedStats.MaxMagic
 	}
 	return fmt.Sprintf("magic\n%v > %v", cs.Magic, newValue)
 }

@@ -11,7 +11,7 @@ type Item struct {
 	CanConsume  bool
 	CanEquip    bool
 	Effects     []StateEffect
-	StatEffects []Stats
+	StatChanges []StatChange
 	EquipSlot   string
 	ImagePath   string
 }
@@ -29,7 +29,7 @@ func NewItem(name string) *Item {
 		CanEquip:    i.CanEquip,
 		Effects:     i.Effects,
 		ImagePath:   i.ImagePath,
-		StatEffects: i.StatEffects,
+		StatChanges: i.StatChanges,
 		EquipSlot:   i.EquipSlot,
 	}
 	return newItem
@@ -97,8 +97,8 @@ var AllItems = map[string]*Item{
 		Description: "A tunic made from several layer of cotton that reduces damage.",
 		CanConsume:  false,
 		CanEquip:    true,
-		StatEffects: []Stats{
-			{Defence: 1},
+		StatChanges: []StatChange{
+			&defenseChange{amount: 1},
 		},
 		EquipSlot: "armor",
 		ImagePath: "item/padded-armor.png",
@@ -109,9 +109,9 @@ var AllItems = map[string]*Item{
 		Description: "A heavy piece of chest armour made from overlapping steel plates.",
 		CanConsume:  false,
 		CanEquip:    true,
-		StatEffects: []Stats{
-			{Defence: 5},
-			{Speed: -2},
+		StatChanges: []StatChange{
+			&defenseChange{amount: 5},
+			&speedChange{amount: -2},
 		},
 		EquipSlot: "armor",
 		ImagePath: "item/steel-armor.png",
@@ -122,9 +122,9 @@ var AllItems = map[string]*Item{
 		Description: "A tough chest piece made from thick leather. It smells like burnt sweat.",
 		CanConsume:  false,
 		CanEquip:    true,
-		StatEffects: []Stats{
-			{Defence: 2},
-			{Speed: -1},
+		StatChanges: []StatChange{
+			&defenseChange{amount: 2},
+			&speedChange{amount: -1},
 		},
 		EquipSlot: "armor",
 		ImagePath: "item/leather-armor.png",
@@ -135,9 +135,9 @@ var AllItems = map[string]*Item{
 		Description: "A light and thin shirt of chain mail.",
 		CanConsume:  false,
 		CanEquip:    true,
-		StatEffects: []Stats{
-			{Defence: 3},
-			{Speed: -1},
+		StatChanges: []StatChange{
+			&defenseChange{amount: 3},
+			&speedChange{amount: -1},
 		},
 		EquipSlot: "armor",
 		ImagePath: "item/chain-mail-armor.png",
@@ -148,9 +148,9 @@ var AllItems = map[string]*Item{
 		Description: "Dents, scratches and signs of repair. It still cuts if swung hard enough.",
 		CanConsume:  false,
 		CanEquip:    true,
-		StatEffects: []Stats{
-			{Defence: 1},
-			{AttackSkill: 2},
+		StatChanges: []StatChange{
+			&defenseChange{amount: 1},
+			&attackChange{amount: 2},
 		},
 		EquipSlot: "weapon",
 		ImagePath: "item/short-sword.png",
@@ -161,9 +161,9 @@ var AllItems = map[string]*Item{
 		Description: "Long and gentle with a sharp tip. It's too light to parry with, but that's okay if you're fast enough.",
 		CanConsume:  false,
 		CanEquip:    true,
-		StatEffects: []Stats{
-			{AttackSkill: 4},
-			{Speed: 1},
+		StatChanges: []StatChange{
+			&attackChange{amount: 4},
+			&speedChange{amount: 1},
 		},
 		EquipSlot: "weapon",
 		ImagePath: "item/short-sword.png",
@@ -174,9 +174,9 @@ var AllItems = map[string]*Item{
 		Description: "Curved and sharp with a little weight. It's meant for horse back, but found everywhere.",
 		CanConsume:  false,
 		CanEquip:    true,
-		StatEffects: []Stats{
-			{AttackSkill: 4},
-			{Defence: 1},
+		StatChanges: []StatChange{
+			&attackChange{amount: 4},
+			&defenseChange{amount: 1},
 		},
 		EquipSlot: "weapon",
 		ImagePath: "item/short-sword.png",
@@ -187,8 +187,8 @@ var AllItems = map[string]*Item{
 		Description: "A hands length of sharp steel. Used in the kitchen or the pub.",
 		CanConsume:  false,
 		CanEquip:    true,
-		StatEffects: []Stats{
-			{AttackSkill: 1},
+		StatChanges: []StatChange{
+			&attackChange{amount: 1},
 		},
 		EquipSlot: "weapon",
 		ImagePath: "item/short-sword.png",
@@ -199,8 +199,9 @@ var AllItems = map[string]*Item{
 		Description: "A newly cut length of pine, fashioned into a staff. Springy and soft.",
 		CanConsume:  false,
 		CanEquip:    true,
-		StatEffects: []Stats{
-			{AttackSkill: 2},
+		StatChanges: []StatChange{
+			&attackChange{amount: 2},
+			&defenseChange{amount: 2},
 		},
 		EquipSlot: "weapon",
 		ImagePath: "item/short-sword.png",
@@ -211,8 +212,8 @@ var AllItems = map[string]*Item{
 		Description: "A common hunting bow, found in every village.",
 		CanConsume:  false,
 		CanEquip:    true,
-		StatEffects: []Stats{
-			{AttackSkill: 3},
+		StatChanges: []StatChange{
+			&attackChange{amount: 3},
 		},
 		EquipSlot: "weapon",
 		ImagePath: "item/short-sword.png",
@@ -223,8 +224,8 @@ var AllItems = map[string]*Item{
 		Description: "An old sock with holes. After returning from the lost sock void, it is filled with eldritch knowledge.",
 		CanConsume:  false,
 		CanEquip:    true,
-		StatEffects: []Stats{
-			{MagicDef: 3},
+		StatChanges: []StatChange{
+			&magicDefChange{amount: 3},
 		},
 		EquipSlot: "special",
 		ImagePath: "item/ring.png",
@@ -235,8 +236,8 @@ var AllItems = map[string]*Item{
 		Description: "A ring of unknown materials, it glows lightly. It shifts and warps when it's in your peripheral vision.",
 		CanConsume:  false,
 		CanEquip:    true,
-		StatEffects: []Stats{
-			{MagicSkill: 3},
+		StatChanges: []StatChange{
+			&magicAttChange{amount: 3},
 		},
 		EquipSlot: "special",
 		ImagePath: "item/ring.png",
@@ -247,8 +248,8 @@ var AllItems = map[string]*Item{
 		Description: "A unfashionable hat, dusty and stained. It's feels like wearing an old couch on your head.",
 		CanConsume:  false,
 		CanEquip:    true,
-		StatEffects: []Stats{
-			{MaxMagic: 3},
+		StatChanges: []StatChange{
+			&magicMaxChange{amount: 3},
 		},
 		EquipSlot: "special",
 		ImagePath: "item/ring.png",

@@ -12,7 +12,6 @@ type card struct {
 	portrait          *elem.Sprite
 	slots             []*slotEntry
 	selectedSlotIndex int
-	isSelected        bool
 }
 
 func NewCard(name string) *card {
@@ -26,32 +25,26 @@ func NewCard(name string) *card {
 	}
 }
 
-func (r *card) Update(pos elem.Pos, isSelected bool, charState *core.CharacterState) {
-	r.isSelected = isSelected
-	if !isSelected {
-		r.selectedSlotIndex = 0
-	}
+func (r *card) Update(pos elem.Pos, charState *core.CharacterState) {
 	for index, s := range r.slots {
 		isHighlighted := index == r.selectedSlotIndex
 		s.Update(elem.Pos{
-			X: pos.X + 4,
-			Y: 72 + (pos.Y+24)*index,
+			X: pos.X,
+			Y: 72 + (index * 24),
 		},
 			isHighlighted,
 			charState,
 		)
 	}
 	r.portrait.SetPos(&elem.Pos{
-		X: pos.X + 24 + 1,
-		Y: pos.Y + 8 + 1,
+		X: pos.X + 40,
+		Y: pos.Y,
 	})
 }
 
 func (r *card) Draw(screen *ebiten.Image) {
-	if r.isSelected {
-		for _, s := range r.slots {
-			s.Draw(screen)
-		}
+	for _, s := range r.slots {
+		s.Draw(screen)
 	}
 	r.portrait.Draw(screen)
 }
