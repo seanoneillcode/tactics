@@ -2,7 +2,7 @@ package elem
 
 import (
 	"fmt"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
+	"github.com/seanoneillcode/go-tactics/pkg/input"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/seanoneillcode/go-tactics/pkg/core"
@@ -62,14 +62,14 @@ func (r *List) CurrentItem() *core.Item {
 }
 
 func (r *List) HandleInput() {
-	if inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) || inpututil.IsKeyJustPressed(ebiten.KeyW) {
+	if input.IsUpJustPressed() {
 		r.index = r.index - 1
 		if r.index < 0 {
 			r.index = 0
 		}
 		return
 	}
-	if inpututil.IsKeyJustPressed(ebiten.KeyArrowDown) || inpututil.IsKeyJustPressed(ebiten.KeyS) {
+	if input.IsDownJustPressed() {
 		r.index = r.index + 1
 		if r.index == len(r.itemList) {
 			r.index = r.index - 1

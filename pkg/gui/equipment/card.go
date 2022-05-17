@@ -3,9 +3,9 @@ package equipment
 import (
 	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/seanoneillcode/go-tactics/pkg/core"
 	"github.com/seanoneillcode/go-tactics/pkg/gui/elem"
+	"github.com/seanoneillcode/go-tactics/pkg/input"
 )
 
 type card struct {
@@ -50,14 +50,14 @@ func (r *card) Draw(screen *ebiten.Image) {
 }
 
 func (r *card) handleInput() {
-	if inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) || inpututil.IsKeyJustPressed(ebiten.KeyW) {
+	if input.IsUpJustPressed() {
 		r.selectedSlotIndex = r.selectedSlotIndex - 1
 		if r.selectedSlotIndex < 0 {
 			r.selectedSlotIndex = 0
 		}
 		return
 	}
-	if inpututil.IsKeyJustPressed(ebiten.KeyArrowDown) || inpututil.IsKeyJustPressed(ebiten.KeyS) {
+	if input.IsDownJustPressed() {
 		r.selectedSlotIndex = r.selectedSlotIndex + 1
 		if r.selectedSlotIndex == 3 {
 			r.selectedSlotIndex = r.selectedSlotIndex - 1

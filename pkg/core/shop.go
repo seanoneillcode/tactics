@@ -1,8 +1,7 @@
 package core
 
 import (
-	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
+	"github.com/seanoneillcode/go-tactics/pkg/input"
 	"log"
 )
 
@@ -38,7 +37,7 @@ func (s *Shop) Update(delta int64, state *State) {
 		log.Fatalf("opened a shop with no Data")
 		return
 	}
-	if inpututil.IsKeyJustPressed(ebiten.KeyBackspace) {
+	if input.IsCancelPressed() {
 		switch s.ActiveElement {
 		case "list":
 			s.IsActive = false // close shop
@@ -48,7 +47,7 @@ func (s *Shop) Update(delta int64, state *State) {
 		}
 		return
 	}
-	if inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
+	if input.IsEnterPressed() {
 		switch s.ActiveElement {
 		case "list":
 			shopItem := s.Data.Items[s.SelectedListIndex]
@@ -67,19 +66,19 @@ func (s *Shop) Update(delta int64, state *State) {
 		return
 	}
 
-	if inpututil.IsKeyJustPressed(ebiten.KeyArrowLeft) || inpututil.IsKeyJustPressed(ebiten.KeyA) {
+	if input.IsLeftJustPressed() {
 		switch s.ActiveElement {
 		case "confirmation":
 			s.ActiveElement = "list"
 		}
 	}
-	if inpututil.IsKeyJustPressed(ebiten.KeyArrowRight) || inpututil.IsKeyJustPressed(ebiten.KeyD) {
+	if input.IsRightJustPressed() {
 		switch s.ActiveElement {
 		case "list":
 			s.ActiveElement = "confirmation"
 		}
 	}
-	if inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) || inpututil.IsKeyJustPressed(ebiten.KeyW) {
+	if input.IsUpJustPressed() {
 		switch s.ActiveElement {
 		case "list":
 			s.SelectedListIndex = s.SelectedListIndex - 1
@@ -89,7 +88,7 @@ func (s *Shop) Update(delta int64, state *State) {
 		}
 		log.Printf("selected index: %v", s.SelectedListIndex)
 	}
-	if inpututil.IsKeyJustPressed(ebiten.KeyArrowDown) || inpututil.IsKeyJustPressed(ebiten.KeyS) {
+	if input.IsDownJustPressed() {
 		switch s.ActiveElement {
 		case "list":
 			s.SelectedListIndex = s.SelectedListIndex + 1

@@ -3,9 +3,9 @@ package menu
 import (
 	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/seanoneillcode/go-tactics/pkg/core"
 	"github.com/seanoneillcode/go-tactics/pkg/gui/elem"
+	"github.com/seanoneillcode/go-tactics/pkg/input"
 	"time"
 )
 
@@ -86,27 +86,27 @@ func (r *ui) Update(delta int64, state *core.State) {
 }
 
 func (r *ui) handleInput(state *core.State) {
-	if inpututil.IsKeyJustPressed(ebiten.KeyBackspace) {
+	if input.IsCancelPressed() {
 		state.UI.Close()
 		state.Player.Activate()
 		r.reset()
 		r.IsActive = false
 		return
 	}
-	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
+	if input.IsMenuPressed() {
 		state.UI.Close()
 		state.Player.Activate()
 		r.reset()
 		r.IsActive = false
 		return
 	}
-	if inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) || inpututil.IsKeyJustPressed(ebiten.KeyW) {
+	if input.IsUpJustPressed() {
 		r.selectedListIndex = r.selectedListIndex - 1
 		if r.selectedListIndex < 0 {
 			r.selectedListIndex = 0
 		}
 	}
-	if inpututil.IsKeyJustPressed(ebiten.KeyArrowDown) || inpututil.IsKeyJustPressed(ebiten.KeyS) {
+	if input.IsDownJustPressed() {
 		r.selectedListIndex = r.selectedListIndex + 1
 		if r.selectedListIndex == 6 {
 			r.selectedListIndex = r.selectedListIndex - 1
@@ -115,7 +115,7 @@ func (r *ui) handleInput(state *core.State) {
 			}
 		}
 	}
-	if inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
+	if input.IsEnterPressed() {
 		switch r.selectedListIndex {
 		// items
 		case 0:

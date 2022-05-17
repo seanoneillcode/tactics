@@ -2,9 +2,9 @@ package core
 
 import (
 	"fmt"
+	"github.com/seanoneillcode/go-tactics/pkg/input"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/seanoneillcode/go-tactics/pkg/common"
 )
 
@@ -44,16 +44,16 @@ func (p *Player) Update(delta int64, state *State) {
 	if !p.Character.isMoving {
 		var inputX = 0
 		var inputY = 0
-		if ebiten.IsKeyPressed(ebiten.KeyArrowLeft) || ebiten.IsKeyPressed(ebiten.KeyA) {
+		if input.IsLeftPressed() {
 			inputX = inputX - 1
 		}
-		if ebiten.IsKeyPressed(ebiten.KeyArrowRight) || ebiten.IsKeyPressed(ebiten.KeyD) {
+		if input.IsRightPressed() {
 			inputX = inputX + 1
 		}
-		if ebiten.IsKeyPressed(ebiten.KeyArrowUp) || ebiten.IsKeyPressed(ebiten.KeyW) {
+		if input.IsUpPressed() {
 			inputY = inputY - 1
 		}
-		if ebiten.IsKeyPressed(ebiten.KeyArrowDown) || ebiten.IsKeyPressed(ebiten.KeyS) {
+		if input.IsDownPressed() {
 			inputY = inputY + 1
 		}
 		if inputX != 0 && inputY != 0 {
@@ -102,7 +102,7 @@ func (p *Player) Update(delta int64, state *State) {
 	}
 
 	// consider this key more carefully
-	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
+	if input.IsMenuPressed() {
 		state.UI.Open(MenuUI)
 		p.isActive = false
 	}

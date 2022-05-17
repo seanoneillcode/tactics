@@ -7,6 +7,7 @@ import (
 	"github.com/seanoneillcode/go-tactics/pkg/gui/equipment"
 	"github.com/seanoneillcode/go-tactics/pkg/gui/inventory"
 	"github.com/seanoneillcode/go-tactics/pkg/gui/menu"
+	"github.com/seanoneillcode/go-tactics/pkg/input"
 	"log"
 	"time"
 
@@ -93,6 +94,7 @@ func (g *Game) Update() error {
 	if inpututil.IsKeyJustPressed(ebiten.KeyF) {
 		ebiten.SetFullscreen(!ebiten.IsFullscreen())
 	}
+	input.Update()
 	//fps := ebiten.CurrentFPS()
 
 	return nil

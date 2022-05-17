@@ -2,9 +2,9 @@ package equipment
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/seanoneillcode/go-tactics/pkg/core"
 	"github.com/seanoneillcode/go-tactics/pkg/gui/elem"
+	"github.com/seanoneillcode/go-tactics/pkg/input"
 	"log"
 )
 
@@ -126,7 +126,7 @@ func (r *ui) handleInput(state *core.State) {
 		log.Fatal("equipment opened with no team!")
 	}
 
-	if inpututil.IsKeyJustPressed(ebiten.KeyBackspace) {
+	if input.IsCancelPressed() {
 		switch r.activeCtx {
 		case slotCtx:
 			state.UI.Open(core.MenuUI)
@@ -136,7 +136,7 @@ func (r *ui) handleInput(state *core.State) {
 		return
 	}
 
-	if inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
+	if input.IsEnterPressed() {
 		switch r.activeCtx {
 		case slotCtx:
 			newList := createList(teamState, currentSlot(r).SlotType)
@@ -159,7 +159,7 @@ func (r *ui) handleInput(state *core.State) {
 		return
 	}
 
-	if inpututil.IsKeyJustPressed(ebiten.KeyArrowRight) || inpututil.IsKeyJustPressed(ebiten.KeyD) {
+	if input.IsRightJustPressed() {
 		switch r.activeCtx {
 		case slotCtx:
 			index := currentCard(r).selectedSlotIndex
@@ -171,7 +171,7 @@ func (r *ui) handleInput(state *core.State) {
 		}
 		return
 	}
-	if inpututil.IsKeyJustPressed(ebiten.KeyArrowLeft) || inpututil.IsKeyJustPressed(ebiten.KeyA) {
+	if input.IsLeftJustPressed() {
 		switch r.activeCtx {
 		case slotCtx:
 			index := currentCard(r).selectedSlotIndex
@@ -184,7 +184,7 @@ func (r *ui) handleInput(state *core.State) {
 		return
 	}
 
-	if inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) || inpututil.IsKeyJustPressed(ebiten.KeyW) {
+	if input.IsUpJustPressed() {
 		switch r.activeCtx {
 		case slotCtx:
 			currentCard(r).handleInput()
@@ -193,7 +193,7 @@ func (r *ui) handleInput(state *core.State) {
 		}
 
 	}
-	if inpututil.IsKeyJustPressed(ebiten.KeyArrowDown) || inpututil.IsKeyJustPressed(ebiten.KeyS) {
+	if input.IsDownJustPressed() {
 		switch r.activeCtx {
 		case slotCtx:
 			currentCard(r).handleInput()

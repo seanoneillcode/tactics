@@ -2,8 +2,8 @@ package dialog
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/seanoneillcode/go-tactics/pkg/core"
+	"github.com/seanoneillcode/go-tactics/pkg/input"
 )
 
 type ui struct {
@@ -46,7 +46,7 @@ func (r *ui) Update(delta int64, state *core.State) {
 }
 
 func (r *ui) handleInput(state *core.State) {
-	if inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
+	if input.IsEnterPressed() {
 		if r.activeDialog.IsBuffering() {
 			r.activeDialog.SkipBuffer()
 		} else {

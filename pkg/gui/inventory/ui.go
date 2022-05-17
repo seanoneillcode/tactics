@@ -2,9 +2,9 @@ package inventory
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/seanoneillcode/go-tactics/pkg/core"
 	"github.com/seanoneillcode/go-tactics/pkg/gui/elem"
+	"github.com/seanoneillcode/go-tactics/pkg/input"
 	"log"
 )
 
@@ -180,7 +180,7 @@ func (r *ui) handleInput(state *core.State) {
 		log.Fatal("inventory opened with no team!")
 	}
 
-	if inpututil.IsKeyJustPressed(ebiten.KeyBackspace) {
+	if input.IsCancelPressed() {
 		switch r.activeCtx {
 		case listCtx:
 			r.reset()
@@ -193,14 +193,14 @@ func (r *ui) handleInput(state *core.State) {
 		}
 		return
 	}
-	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
+	if input.IsMenuPressed() {
 		state.UI.Close()
 		state.Player.Activate()
 		r.reset()
 		r.IsActive = false
 		return
 	}
-	if inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
+	if input.IsEnterPressed() {
 		switch r.activeCtx {
 		case listCtx:
 			if teamState.HasItems() {
@@ -249,7 +249,7 @@ func (r *ui) handleInput(state *core.State) {
 		}
 		return
 	}
-	if inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) || inpututil.IsKeyJustPressed(ebiten.KeyW) {
+	if input.IsUpJustPressed() {
 		switch r.activeCtx {
 		case listCtx:
 			r.selectedListIndex = r.selectedListIndex - 1
@@ -268,7 +268,7 @@ func (r *ui) handleInput(state *core.State) {
 			}
 		}
 	}
-	if inpututil.IsKeyJustPressed(ebiten.KeyArrowDown) || inpututil.IsKeyJustPressed(ebiten.KeyS) {
+	if input.IsDownJustPressed() {
 		switch r.activeCtx {
 		case listCtx:
 			if teamState.HasItems() {
@@ -296,12 +296,6 @@ func (r *ui) handleInput(state *core.State) {
 				}
 			}
 		}
-	}
-	if inpututil.IsKeyJustPressed(ebiten.KeyArrowLeft) || inpututil.IsKeyJustPressed(ebiten.KeyA) {
-		// change to other item list
-	}
-	if inpututil.IsKeyJustPressed(ebiten.KeyArrowRight) || inpututil.IsKeyJustPressed(ebiten.KeyD) {
-		// change to other item list
 	}
 
 }
