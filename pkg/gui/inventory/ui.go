@@ -56,18 +56,18 @@ type ui struct {
 	selectedActionIndex    int
 	selectedCharacterIndex int
 	currentIteration       int
-	currentItem            *core.Item
-	IsActive               bool
-	actionPos              *elem.Pos
-	listPos                *elem.Pos
-	cursorPos              *elem.Pos
-	infoBox                *elem.Text
-	itemImages             map[string]*elem.StaticImage
-	currentItemImage       *elem.StaticImage
-	itemInfoBg             *elem.StaticImage
-	cards                  map[string]*elem.EffectCard
-	uiDesc                 *elem.Text
-	isLoaded               bool
+	//currentItem            *core.Item
+	IsActive         bool
+	actionPos        *elem.Pos
+	listPos          *elem.Pos
+	cursorPos        *elem.Pos
+	infoBox          *elem.Text
+	itemImages       map[string]*elem.StaticImage
+	currentItemImage *elem.StaticImage
+	itemInfoBg       *elem.StaticImage
+	cards            map[string]*elem.EffectCard
+	uiDesc           *elem.Text
+	isLoaded         bool
 }
 
 func NewUi() *ui {
@@ -130,6 +130,7 @@ func (r *ui) Update(delta int64, state *core.State) {
 	}
 	r.IsActive = true
 	r.handleInput(state)
+	r.invItemList.Update(delta, state.TeamState, r.selectedListIndex)
 
 	var formattedItemDescription string
 	var item *core.Item
@@ -138,7 +139,7 @@ func (r *ui) Update(delta int64, state *core.State) {
 		r.cursorPos.X = r.listPos.X - 8
 		r.cursorPos.Y = r.listPos.Y + (16.0 * r.selectedListIndex)
 		if state.TeamState.HasItems() {
-			item = state.TeamState.GetItemWithIndex(r.selectedListIndex)
+			item = state.TeamState.GetItemWithName(r.invItemList.CurrentItem().Name)
 			formattedItemDescription = core.GetFormattedValueMax(item.Description, charactersPerInfoLine)
 			r.currentItemImage = r.itemImages[item.Type]
 		} else {
@@ -148,7 +149,7 @@ func (r *ui) Update(delta int64, state *core.State) {
 		r.cursorPos.X = r.actionPos.X - 9
 		r.cursorPos.Y = r.actionPos.Y + 5 + (24.0 * r.selectedActionIndex)
 		if state.TeamState.HasItems() {
-			item = state.TeamState.GetItemWithIndex(r.selectedListIndex)
+			item = state.TeamState.GetItemWithName(r.invItemList.CurrentItem().Name)
 			formattedItemDescription = core.GetFormattedValueMax(item.Description, charactersPerInfoLine)
 			r.currentItemImage = r.itemImages[item.Type]
 		} else {
@@ -160,13 +161,13 @@ func (r *ui) Update(delta int64, state *core.State) {
 		r.cursorPos.Y = effectPos.Y + 16 + (52.0 * r.selectedCharacterIndex)
 		r.currentItemImage = nil
 		if state.TeamState.HasItems() {
-			item = state.TeamState.GetItemWithIndex(r.selectedListIndex)
+			item = state.TeamState.GetItemWithName(r.invItemList.CurrentItem().Name)
 		}
 	}
 
 	r.cursor.Update(delta, r.cursorPos)
 	r.actionBox.Update(delta)
-	r.invItemList.Update(delta, state.TeamState)
+
 	r.infoBox.SetValue(formattedItemDescription)
 
 	for _, character := range state.TeamState.Characters {
@@ -204,14 +205,14 @@ func (r *ui) handleInput(state *core.State) {
 		switch r.activeCtx {
 		case listCtx:
 			if teamState.HasItems() {
-				item := teamState.GetItemWithIndex(r.selectedListIndex)
+				item := teamState.GetItemWithName(r.invItemList.CurrentItem().Name)
 				if item.CanConsume {
 					r.activeCtx = actionCtx
 					r.selectedActionIndex = 0
 				}
 			}
 		case actionCtx:
-			item := teamState.GetItemWithIndex(r.selectedListIndex)
+			item := teamState.GetItemWithName(r.invItemList.CurrentItem().Name)
 			if r.selectedActionIndex == 0 {
 				r.activeCtx = characterCtx
 			} else {
@@ -226,7 +227,7 @@ func (r *ui) handleInput(state *core.State) {
 				}
 			}
 		case characterCtx:
-			item := teamState.GetItemWithIndex(r.selectedListIndex)
+			item := teamState.GetItemWithName(r.invItemList.CurrentItem().Name)
 
 			// use
 			log.Printf("selecting use, item: %v", item.Description)

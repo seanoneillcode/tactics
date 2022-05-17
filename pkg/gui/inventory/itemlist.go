@@ -14,12 +14,20 @@ type InvItemList struct {
 	pos              *elem.Pos
 	itemList         []*itemEntry
 	currentIteration int
+	currentIndex     int
 }
 
 func NewInvItemList() *InvItemList {
 	return &InvItemList{
 		pos: &elem.Pos{X: 8, Y: 8},
 	}
+}
+
+func (i *InvItemList) CurrentItem() *core.Item {
+	if len(i.itemList) > 0 {
+		return i.itemList[i.currentIndex].itemRef
+	}
+	return nil
 }
 
 func (i *InvItemList) createItemList(teamState *core.TeamState) []*itemEntry {
@@ -31,16 +39,15 @@ func (i *InvItemList) createItemList(teamState *core.TeamState) []*itemEntry {
 	var offset = 0
 	for _, name := range itemNames {
 		teamItem := itemMap[name]
+		if !teamItem.Item.CanConsume {
+			continue
+		}
 		quantity := fmt.Sprintf("%v", teamItem.Amount)
 		costWidth := text.BoundString(elem.StandardFont, quantity).Size().X / common.ScaleF
 		entry := &itemEntry{
 			itemRef:  teamItem.Item,
 			name:     elem.NewText(x, y+offset, teamItem.Item.Name),
 			quantity: elem.NewText(x+96+32+offsetX+offsetX-costWidth, y+offset, quantity),
-		}
-		if !teamItem.Item.CanConsume {
-			entry.name.SetColor(elem.GreyTextColor)
-			entry.quantity.SetColor(elem.GreyTextColor)
 		}
 		invItems = append(invItems, entry)
 		offset = offset + 16
@@ -55,7 +62,8 @@ func (i *InvItemList) Draw(screen *ebiten.Image) {
 	}
 }
 
-func (i *InvItemList) Update(delta int64, teamState *core.TeamState) {
+func (i *InvItemList) Update(delta int64, teamState *core.TeamState, currentIndex int) {
+	i.currentIndex = currentIndex
 	if i.currentIteration != teamState.Iteration {
 		i.currentIteration = teamState.Iteration
 		i.itemList = i.createItemList(teamState)
