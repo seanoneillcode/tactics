@@ -72,28 +72,28 @@ func IsLeftPressed() bool {
 	return ebiten.GamepadAxisValue(0, 0) < -threshold || ebiten.IsKeyPressed(ebiten.KeyArrowLeft) || ebiten.IsKeyPressed(ebiten.KeyA)
 }
 
-func IsLeftJustPressed() bool {
-	return inputStateVar.left || inpututil.IsKeyJustPressed(ebiten.KeyArrowLeft) || inpututil.IsKeyJustPressed(ebiten.KeyA)
-}
-
 func IsRightPressed() bool {
 	return ebiten.GamepadAxisValue(0, 0) > threshold || ebiten.IsKeyPressed(ebiten.KeyArrowRight) || ebiten.IsKeyPressed(ebiten.KeyD)
-}
-
-func IsRightJustPressed() bool {
-	return inputStateVar.right || inpututil.IsKeyJustPressed(ebiten.KeyArrowRight) || inpututil.IsKeyJustPressed(ebiten.KeyD)
 }
 
 func IsUpPressed() bool {
 	return ebiten.GamepadAxisValue(0, 1) < -threshold || ebiten.IsKeyPressed(ebiten.KeyArrowUp) || ebiten.IsKeyPressed(ebiten.KeyW)
 }
 
-func IsUpJustPressed() bool {
-	return inputStateVar.up || inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) || inpututil.IsKeyJustPressed(ebiten.KeyW)
-}
-
 func IsDownPressed() bool {
 	return ebiten.GamepadAxisValue(0, 1) > threshold || ebiten.IsKeyPressed(ebiten.KeyArrowDown) || ebiten.IsKeyPressed(ebiten.KeyS)
+}
+
+func IsLeftJustPressed() bool {
+	return inputStateVar.left || inpututil.IsKeyJustPressed(ebiten.KeyArrowLeft) || inpututil.IsKeyJustPressed(ebiten.KeyA)
+}
+
+func IsRightJustPressed() bool {
+	return inputStateVar.right || inpututil.IsKeyJustPressed(ebiten.KeyArrowRight) || inpututil.IsKeyJustPressed(ebiten.KeyD)
+}
+
+func IsUpJustPressed() bool {
+	return inputStateVar.up || inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) || inpututil.IsKeyJustPressed(ebiten.KeyW)
 }
 
 func IsDownJustPressed() bool {
@@ -101,13 +101,13 @@ func IsDownJustPressed() bool {
 }
 
 func IsEnterPressed() bool {
-	return inpututil.IsGamepadButtonJustPressed(0, ebiten.GamepadButton2) || inpututil.IsKeyJustPressed(ebiten.KeyEnter)
+	return inpututil.IsGamepadButtonJustPressed(0, ebiten.GamepadButton0) || inpututil.IsKeyJustPressed(ebiten.KeyEnter)
 }
 
 func IsCancelPressed() bool {
-	return inpututil.IsGamepadButtonJustPressed(0, ebiten.GamepadButton3) || inpututil.IsKeyJustPressed(ebiten.KeyBackspace)
+	return inpututil.IsGamepadButtonJustPressed(0, ebiten.GamepadButton1) || inpututil.IsKeyJustPressed(ebiten.KeyBackspace)
 }
 
 func IsMenuPressed() bool {
-	return inpututil.IsGamepadButtonJustPressed(0, ebiten.GamepadButton0) || inpututil.IsKeyJustPressed(ebiten.KeySpace)
+	return inpututil.IsGamepadButtonJustPressed(0, ebiten.GamepadButton3) || inpututil.IsKeyJustPressed(ebiten.KeySpace)
 }
