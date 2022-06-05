@@ -86,7 +86,6 @@ func (s *Shop) Update(delta int64, state *State) {
 				s.SelectedListIndex = 0
 			}
 		}
-		log.Printf("selected index: %v", s.SelectedListIndex)
 	}
 	if input.IsDownJustPressed() {
 		switch s.ActiveElement {
@@ -96,6 +95,5 @@ func (s *Shop) Update(delta int64, state *State) {
 				s.SelectedListIndex = s.SelectedListIndex - 1
 			}
 		}
-		log.Printf("selected index: %v", s.SelectedListIndex)
 	}
 }

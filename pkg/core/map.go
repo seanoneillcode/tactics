@@ -22,12 +22,10 @@ func NewMap() *Map {
 func (m *Map) LoadLevel(name string) {
 	for _, level := range m.levels {
 		if level.Name == name {
-			log.Printf("using existing loaded level")
 			m.Level = level
 			return
 		}
 	}
-	log.Printf("loading new level")
 	newLevel := NewLevel(name)
 	m.Level = newLevel
 	m.levels = append(m.levels, newLevel)

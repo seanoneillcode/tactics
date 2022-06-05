@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	characterMoveTime   = 200.0 // milliseconds
+	characterMoveTime   = 250.0 // milliseconds
 	characterMoveAmount = common.TileSize / characterMoveTime
 )
 
