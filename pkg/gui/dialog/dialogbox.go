@@ -57,12 +57,12 @@ func (r *DialogueBox) getOffset(name string, state *core.State) *elem.Pos {
 	}
 	if name == "Player" {
 		offset.X = 140
-		offset.Y = 140 + r.height
+		offset.Y = common.HalfScreenHeight + r.height
 	}
 	// info box
 	if name == "" {
 		offset.X = 120
-		offset.Y = 120 + r.height
+		offset.Y = common.HalfScreenHeight + r.height
 	}
 	// invert the directions
 	if state.Player.Character.Direction.Y == 1 {
@@ -71,7 +71,7 @@ func (r *DialogueBox) getOffset(name string, state *core.State) *elem.Pos {
 			offset.Y = 60 - r.height
 		} else {
 			offset.X = 140
-			offset.Y = 140 + r.height
+			offset.Y = common.HalfScreenHeight + r.height
 		}
 	}
 	return offset
