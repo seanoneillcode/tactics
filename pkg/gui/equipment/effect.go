@@ -1,6 +1,7 @@
 package equipment
 
 import (
+	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/seanoneillcode/go-tactics/pkg/common"
 	"github.com/seanoneillcode/go-tactics/pkg/core"
@@ -44,9 +45,55 @@ func (r *Effect) Update(item *core.Item, cs *core.CharacterState) {
 }
 
 func (r *Effect) rebuild(item *core.Item, cs *core.CharacterState) {
+	// copy over everything except current item for slot
+	minusCurrentItem := map[string]*core.Item{}
+	for _, ei := range cs.EquippedItems {
+		minusCurrentItem[ei.EquipSlot] = ei
+	}
+	minusCurrentItem[item.EquipSlot] = item
+	newStats := cs.ApplyItemsToStats(minusCurrentItem, cs.BaseStats)
+
 	var changes []*elem.Text
-	for _, ef := range item.StatChanges {
-		changes = append(changes, elem.NewText(0, 0, ef.Description(cs.EquippedStats)))
+
+	if newStats.AttackSkill != cs.EquippedStats.AttackSkill {
+		msg := fmt.Sprintf("attack skill %v > %v", cs.EquippedStats.AttackSkill, newStats.AttackSkill)
+		changes = append(changes, elem.NewText(0, 0, msg))
+	}
+	if newStats.AttackStrength != cs.EquippedStats.AttackStrength {
+		msg := fmt.Sprintf("attack strength %v > %v", cs.EquippedStats.AttackStrength, newStats.AttackStrength)
+		changes = append(changes, elem.NewText(0, 0, msg))
+	}
+	if newStats.Speed != cs.EquippedStats.Speed {
+		msg := fmt.Sprintf("speed %v > %v", cs.EquippedStats.Speed, newStats.Speed)
+		changes = append(changes, elem.NewText(0, 0, msg))
+	}
+	if newStats.Agility != cs.EquippedStats.Agility {
+		msg := fmt.Sprintf("agility %v > %v", cs.EquippedStats.Agility, newStats.Agility)
+		changes = append(changes, elem.NewText(0, 0, msg))
+	}
+	if newStats.Defence != cs.EquippedStats.Defence {
+		msg := fmt.Sprintf("defense %v > %v", cs.EquippedStats.Defence, newStats.Defence)
+		changes = append(changes, elem.NewText(0, 0, msg))
+	}
+	if newStats.MagicSkill != cs.EquippedStats.MagicSkill {
+		msg := fmt.Sprintf("magic skill %v > %v", cs.EquippedStats.MagicSkill, newStats.MagicSkill)
+		changes = append(changes, elem.NewText(0, 0, msg))
+	}
+	if newStats.MagicDef != cs.EquippedStats.MagicDef {
+		msg := fmt.Sprintf("magic defense %v > %v", cs.EquippedStats.MagicDef, newStats.MagicDef)
+		changes = append(changes, elem.NewText(0, 0, msg))
+	}
+	if newStats.MaxMagic != cs.EquippedStats.MaxMagic {
+		msg := fmt.Sprintf("max magic %v > %v", cs.EquippedStats.MaxMagic, newStats.MaxMagic)
+		changes = append(changes, elem.NewText(0, 0, msg))
+	}
+	if newStats.MaxHealth != cs.EquippedStats.MaxHealth {
+		msg := fmt.Sprintf("max health %v > %v", cs.EquippedStats.MaxHealth, newStats.MaxHealth)
+		changes = append(changes, elem.NewText(0, 0, msg))
+	}
+
+	if len(changes) == 0 {
+		changes = append(changes, elem.NewText(0, 0, "no change"))
 	}
 	for i, change := range changes {
 		change.SetPosition(elem.Pos{

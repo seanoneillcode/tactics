@@ -48,32 +48,32 @@ func NewCharacterState(name string) *CharacterState {
 
 func (r *CharacterState) EquipItem(slot string, item *Item) {
 	r.EquippedItems[slot] = item
-	r.updateStats()
+	r.EquippedStats = r.ApplyItemsToStats(r.EquippedItems, r.BaseStats)
 }
 
 func (r *CharacterState) UnEquipItem(slot string) {
 	delete(r.EquippedItems, slot)
-	r.updateStats()
+	r.EquippedStats = r.ApplyItemsToStats(r.EquippedItems, r.BaseStats)
 }
 
-func (r *CharacterState) updateStats() {
+func (r *CharacterState) ApplyItemsToStats(items map[string]*Item, stats *Stats) *Stats {
 	newStats := &Stats{
-		MaxHealth:      r.BaseStats.MaxHealth,
-		MaxMagic:       r.BaseStats.MaxMagic,
-		Level:          r.BaseStats.Level,
-		Experience:     r.BaseStats.Experience,
-		AttackSkill:    r.BaseStats.AttackSkill,
-		AttackStrength: r.BaseStats.AttackStrength,
-		Defence:        r.BaseStats.Defence,
-		Agility:        r.BaseStats.Agility,
-		Speed:          r.BaseStats.Speed,
-		MagicSkill:     r.BaseStats.MagicSkill,
-		MagicDef:       r.BaseStats.MagicDef,
+		MaxHealth:      stats.MaxHealth,
+		MaxMagic:       stats.MaxMagic,
+		Level:          stats.Level,
+		Experience:     stats.Experience,
+		AttackSkill:    stats.AttackSkill,
+		AttackStrength: stats.AttackStrength,
+		Defence:        stats.Defence,
+		Agility:        stats.Agility,
+		Speed:          stats.Speed,
+		MagicSkill:     stats.MagicSkill,
+		MagicDef:       stats.MagicDef,
 	}
-	for _, ei := range r.EquippedItems {
+	for _, ei := range items {
 		for _, sc := range ei.StatChanges {
 			sc.Apply(newStats)
 		}
 	}
-	r.EquippedStats = newStats
+	return newStats
 }
