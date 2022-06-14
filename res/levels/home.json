@@ -107,6 +107,28 @@
                  "width":16,
                  "x":64,
                  "y":128
+                }, 
+                {
+                 "height":16,
+                 "id":10,
+                 "name":"region-home",
+                 "properties":[
+                        {
+                         "name":"direction",
+                         "type":"string",
+                         "value":"left"
+                        }, 
+                        {
+                         "name":"to-level",
+                         "type":"string",
+                         "value":"region"
+                        }],
+                 "rotation":0,
+                 "type":"link",
+                 "visible":true,
+                 "width":16,
+                 "x":0,
+                 "y":64
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -115,10 +137,10 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":10,
+ "nextobjectid":11,
  "orientation":"orthogonal",
  "renderorder":"right-down",
- "tiledversion":"1.7.2",
+ "tiledversion":"1.5.0",
  "tileheight":16,
  "tilesets":[
         {
@@ -131,6 +153,6 @@
         }],
  "tilewidth":16,
  "type":"map",
- "version":"1.6",
+ "version":1.5,
  "width":16
 }
