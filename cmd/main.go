@@ -37,7 +37,7 @@ func main() {
 		menuUI:      menu.NewUI(),
 		equipmentUI: equipment.NewUI(),
 	}
-	g.state.Map.LoadLevel("siopa")
+	g.state.Map.LoadLevel("pub-level")
 	g.state.Player.EnterLevel(g.state.Map.Level)
 
 	ebiten.SetWindowSize(common.ScreenWidth*common.Scale, common.ScreenHeight*common.Scale)
