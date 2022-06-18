@@ -15,8 +15,7 @@ type Player struct {
 	lastInput string
 
 	ActiveShop *ShopData
-
-	playerState string
+	sleepTimer int64
 }
 
 func NewPlayer() *Player {
@@ -38,6 +37,10 @@ func (p *Player) Update(delta int64, state *State) {
 		return
 	}
 	if state.DialogHandler.IsActive {
+		return
+	}
+	if p.sleepTimer > 0 {
+		p.sleepTimer = p.sleepTimer - delta
 		return
 	}
 	if !p.Character.isMoving {
@@ -88,7 +91,8 @@ func (p *Player) Update(delta int64, state *State) {
 			}
 			if ti.action != nil {
 				if ti.action.name == "bed" {
-					state.Map.FadeOut(PlayerSleepTime)
+					p.sleepTimer = PlayerSleepTime
+					state.Map.fader.FadeOutAndIn(PlayerSleepTime)
 					state.TeamState.RestoreHealth()
 				}
 			}

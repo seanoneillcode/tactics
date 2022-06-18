@@ -97,17 +97,6 @@
                  "width":16,
                  "x":32,
                  "y":0
-                }, 
-                {
-                 "height":16,
-                 "id":11,
-                 "name":"bed",
-                 "rotation":0,
-                 "type":"action",
-                 "visible":true,
-                 "width":16,
-                 "x":32,
-                 "y":16
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -119,7 +108,7 @@
  "nextobjectid":12,
  "orientation":"orthogonal",
  "renderorder":"right-down",
- "tiledversion":"1.7.2",
+ "tiledversion":"1.5.0",
  "tileheight":16,
  "tilesets":[
         {
@@ -132,6 +121,6 @@
         }],
  "tilewidth":16,
  "type":"map",
- "version":"1.6",
+ "version":1.5,
  "width":16
 }
