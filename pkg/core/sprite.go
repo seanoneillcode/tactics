@@ -21,11 +21,11 @@ func NewSprite(imageFileName string) *Sprite {
 	}
 }
 
-func (s *Sprite) Draw(screen *ebiten.Image) {
+func (s *Sprite) Draw(camera *Camera) {
 	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Translate(s.x, s.y)
 	op.GeoM.Scale(common.Scale, common.Scale)
-	screen.DrawImage(s.image.SubImage(image.Rect(s.frame*common.TileSize, 0, (s.frame+1)*common.TileSize, common.TileSize)).(*ebiten.Image), op)
+	camera.DrawImage(s.image.SubImage(image.Rect(s.frame*common.TileSize, 0, (s.frame+1)*common.TileSize, common.TileSize)).(*ebiten.Image), op)
 }
 
 func (s *Sprite) SetPosition(x float64, y float64) {

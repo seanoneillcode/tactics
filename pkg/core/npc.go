@@ -1,7 +1,6 @@
 package core
 
 import (
-	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/seanoneillcode/go-tactics/pkg/common"
 )
 
@@ -17,8 +16,8 @@ func NewNpc(name string) *Npc {
 	}
 }
 
-func (n *Npc) Draw(screen *ebiten.Image) {
-	n.character.Draw(screen)
+func (n *Npc) Draw(camera *Camera) {
+	n.character.Draw(camera)
 }
 
 func (n *Npc) Update(delta int64, state *State) {

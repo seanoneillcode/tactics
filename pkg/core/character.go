@@ -1,7 +1,6 @@
 package core
 
 import (
-	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/seanoneillcode/go-tactics/pkg/common"
 )
 
@@ -34,7 +33,7 @@ func NewCharacter(imageFileName string) *Character {
 	}
 }
 
-func (c *Character) Draw(screen *ebiten.Image) {
+func (c *Character) Draw(camera *Camera) {
 	if !c.isMoving {
 		if c.Direction.Y == -1 {
 			c.sprite.SetFrame(1)
@@ -73,7 +72,7 @@ func (c *Character) Draw(screen *ebiten.Image) {
 			c.sprite.SetFrame(frameB)
 		}
 	}
-	c.sprite.Draw(screen)
+	c.sprite.Draw(camera)
 }
 
 func (c *Character) Update(delta int64) {

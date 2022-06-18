@@ -1,7 +1,6 @@
 package core
 
 import (
-	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/seanoneillcode/go-tactics/pkg/common"
 )
 
@@ -37,13 +36,13 @@ func (l *Level) Update(delta int64, state *State) {
 	}
 }
 
-func (l *Level) Draw(screen *ebiten.Image) {
-	l.tiledGrid.Draw(screen)
+func (l *Level) Draw(camera *Camera) {
+	l.tiledGrid.Draw(camera)
 	for _, npc := range l.npcs {
-		npc.Draw(screen)
+		npc.Draw(camera)
 	}
 	for _, pickup := range l.pickups {
-		pickup.Draw(screen)
+		pickup.Draw(camera)
 	}
 }
 

@@ -47,7 +47,6 @@ const fadeTimeHalf = fadeTime / 2
 
 func (c *Camera) DrawBuffer(screen *ebiten.Image) {
 	ops := &ebiten.DrawImageOptions{}
-	ops.GeoM = c.worldMatrix()
 	if c.fadeTimer > 0 {
 		if c.fadeTimer >= fadeTimeHalf {
 			var level = float64(c.fadeTimer-fadeTimeHalf) / float64(fadeTimeHalf)
@@ -59,12 +58,7 @@ func (c *Camera) DrawBuffer(screen *ebiten.Image) {
 	screen.DrawImage(c.buffer, ops)
 }
 
-func (c *Camera) worldMatrix() ebiten.GeoM {
-	m := ebiten.GeoM{}
-	m.Translate(-c.pos.X, -c.pos.Y)
-	return m
-}
-
-func (c *Camera) GetBuffer() *ebiten.Image {
-	return c.buffer
+func (c *Camera) DrawImage(img *ebiten.Image, options *ebiten.DrawImageOptions) {
+	options.GeoM.Translate(-c.pos.X, -c.pos.Y)
+	c.buffer.DrawImage(img, options)
 }

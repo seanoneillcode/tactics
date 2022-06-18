@@ -1,7 +1,6 @@
 package core
 
 import (
-	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/seanoneillcode/go-tactics/pkg/common"
 )
 
@@ -37,12 +36,12 @@ func (n *Pickup) GetPosition() *common.Position {
 	}
 }
 
-func (n *Pickup) Draw(screen *ebiten.Image) {
+func (n *Pickup) Draw(camera *Camera) {
 	if !n.isUsed {
-		n.sprite.Draw(screen)
+		n.sprite.Draw(camera)
 	} else {
 		if n.usedSprite != nil {
-			n.usedSprite.Draw(screen)
+			n.usedSprite.Draw(camera)
 		}
 	}
 }

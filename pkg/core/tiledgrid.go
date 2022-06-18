@@ -116,7 +116,7 @@ func loadTileSet(ref *TileSetReference) *TileSet {
 	return &tileSet
 }
 
-func (tg *TiledGrid) Draw(screen *ebiten.Image) {
+func (tg *TiledGrid) Draw(camera *Camera) {
 	for _, layer := range tg.Layers {
 		for i, tileIndex := range layer.Data {
 			if tileIndex == 0 {
@@ -132,7 +132,7 @@ func (tg *TiledGrid) Draw(screen *ebiten.Image) {
 			sx := ((tileIndex - ts.FirstGid) % ts.numTilesX) * common.TileSize
 			sy := ((tileIndex - ts.FirstGid) / ts.numTilesX) * common.TileSize
 
-			screen.DrawImage(ts.image.SubImage(image.Rect(sx, sy, sx+common.TileSize, sy+common.TileSize)).(*ebiten.Image), op)
+			camera.DrawImage(ts.image.SubImage(image.Rect(sx, sy, sx+common.TileSize, sy+common.TileSize)).(*ebiten.Image), op)
 		}
 	}
 }

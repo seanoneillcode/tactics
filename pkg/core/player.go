@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/seanoneillcode/go-tactics/pkg/input"
 
-	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/seanoneillcode/go-tactics/pkg/common"
 )
 
@@ -28,8 +27,8 @@ func NewPlayer() *Player {
 	return p
 }
 
-func (p *Player) Draw(screen *ebiten.Image) {
-	p.Character.Draw(screen)
+func (p *Player) Draw(camera *Camera) {
+	p.Character.Draw(camera)
 }
 
 func (p *Player) Update(delta int64, state *State) {

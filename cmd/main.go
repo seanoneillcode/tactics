@@ -101,8 +101,8 @@ func (g *Game) Update() error {
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	g.state.Map.Level.Draw(g.camera.GetBuffer())
-	g.state.Player.Draw(g.camera.GetBuffer())
+	g.state.Map.Level.Draw(g.camera)
+	g.state.Player.Draw(g.camera)
 	g.camera.DrawBuffer(screen)
 	g.dialog.Draw(screen)
 	g.shopUI.Draw(screen)
