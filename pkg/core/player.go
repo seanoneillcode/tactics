@@ -7,6 +7,8 @@ import (
 	"github.com/seanoneillcode/go-tactics/pkg/common"
 )
 
+const PlayerSleepTime = 1000
+
 type Player struct {
 	isActive  bool
 	Character *Character
@@ -14,8 +16,6 @@ type Player struct {
 
 	ActiveShop *ShopData
 
-	// not sure about this
-	isSleeping  bool
 	playerState string
 }
 
@@ -88,7 +88,7 @@ func (p *Player) Update(delta int64, state *State) {
 			}
 			if ti.action != nil {
 				if ti.action.name == "bed" {
-					p.SetSleep(true)
+					state.Map.FadeOut(PlayerSleepTime)
 					state.TeamState.RestoreHealth()
 				}
 			}
@@ -120,10 +120,6 @@ func (p *Player) EnterLevel(level *Level) {
 
 func (p *Player) SetPosition(pos *common.Position) {
 	p.Character.SetPosition(pos)
-}
-
-func (p *Player) SetSleep(b bool) {
-	p.isSleeping = b
 }
 
 func getPickupDialog(name string) *DialogData {

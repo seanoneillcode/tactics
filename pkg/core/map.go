@@ -6,11 +6,16 @@ import (
 	"github.com/seanoneillcode/go-tactics/pkg/common"
 )
 
+const LevelTransitionTime = 200
+
 type Map struct {
 	Level           *Level
 	transitionTimer int64
+	fadeTimer       int64
+	fadeTotalTime   int64
 	link            *Link
 	levels          []*Level
+	fadeOut         bool
 }
 
 func NewMap() *Map {
@@ -35,14 +40,23 @@ func (m *Map) Update(delta int64, state *State) {
 	if m.transitionTimer > 0 {
 		m.transitionTimer = m.transitionTimer - delta
 		if m.transitionTimer <= 0 {
-			m.transitionToLevel(state)
+			if m.link != nil {
+				m.transitionToLevel(state)
+			}
+		}
+	}
+	if m.fadeTimer > 0 {
+		m.fadeTimer = m.fadeTimer - delta
+		if m.fadeTimer < 0 {
+			m.fadeOut = false
 		}
 	}
 	m.Level.Update(delta, state)
 }
 
 func (m *Map) StartTransition(link *Link) {
-	m.transitionTimer = 100
+	m.FadeOut(LevelTransitionTime)
+	m.transitionTimer = LevelTransitionTime
 	m.link = link
 }
 
@@ -71,4 +85,10 @@ func (m *Map) transitionToLevel(state *State) {
 
 	state.Player.SetPosition(offset.Add(common.PositionFromInt(toLink.x, toLink.y)))
 	m.link = nil
+}
+
+func (m *Map) FadeOut(timeAmount int64) {
+	m.fadeOut = true
+	m.fadeTimer = timeAmount
+	m.fadeTotalTime = timeAmount
 }
