@@ -10,6 +10,60 @@
  "tileheight":16,
  "tiles":[
         {
+         "id":0,
+         "properties":[
+                {
+                 "name":"isBlock",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":2,
+         "properties":[
+                {
+                 "name":"isBlock",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":20,
+         "properties":[
+                {
+                 "name":"isBlock",
+                 "type":"bool",
+                 "value":false
+                }]
+        }, 
+        {
+         "id":21,
+         "properties":[
+                {
+                 "name":"isBlock",
+                 "type":"bool",
+                 "value":false
+                }]
+        }, 
+        {
+         "id":22,
+         "properties":[
+                {
+                 "name":"isBlock",
+                 "type":"bool",
+                 "value":false
+                }]
+        }, 
+        {
+         "id":23,
+         "properties":[
+                {
+                 "name":"isBlock",
+                 "type":"bool",
+                 "value":false
+                }]
+        }, 
+        {
          "id":25,
          "properties":[
                 {
@@ -38,6 +92,24 @@
         }, 
         {
          "id":28,
+         "properties":[
+                {
+                 "name":"isBlock",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":40,
+         "properties":[
+                {
+                 "name":"isBlock",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":43,
          "properties":[
                 {
                  "name":"isBlock",
@@ -388,6 +460,60 @@
                 }]
         }, 
         {
+         "id":112,
+         "properties":[
+                {
+                 "name":"isBlock",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":113,
+         "properties":[
+                {
+                 "name":"isBlock",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":114,
+         "properties":[
+                {
+                 "name":"isBlock",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":115,
+         "properties":[
+                {
+                 "name":"isBlock",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":116,
+         "properties":[
+                {
+                 "name":"isBlock",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":117,
+         "properties":[
+                {
+                 "name":"isBlock",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
          "id":121,
          "properties":[
                 {
@@ -515,6 +641,69 @@
         }, 
         {
          "id":175,
+         "properties":[
+                {
+                 "name":"isBlock",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":189,
+         "properties":[
+                {
+                 "name":"isBlock",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":190,
+         "properties":[
+                {
+                 "name":"isBlock",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":201,
+         "properties":[
+                {
+                 "name":"isBlock",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":206,
+         "properties":[
+                {
+                 "name":"isBlock",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":207,
+         "properties":[
+                {
+                 "name":"isBlock",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":209,
+         "properties":[
+                {
+                 "name":"isBlock",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":210,
          "properties":[
                 {
                  "name":"isBlock",
