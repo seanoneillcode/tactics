@@ -138,7 +138,7 @@
                         {
                          "name":"direction",
                          "type":"string",
-                         "value":"right"
+                         "value":"up"
                         }, 
                         {
                          "name":"to-level",
@@ -149,8 +149,8 @@
                  "type":"link",
                  "visible":true,
                  "width":16,
-                 "x":240,
-                 "y":64
+                 "x":208,
+                 "y":32
                 }],
          "opacity":1,
          "type":"objectgroup",
