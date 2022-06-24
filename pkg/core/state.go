@@ -5,6 +5,7 @@ type State struct {
 	TeamState        *TeamState
 	Map              *Map
 	DialogHandler    *DialogHandler
+	ModeManager      *ModeManager
 	Shop             *Shop
 	UI               *UI
 	Control          *Control

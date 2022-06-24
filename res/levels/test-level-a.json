@@ -84,6 +84,17 @@
                  "width":16,
                  "x":80,
                  "y":0
+                }, 
+                {
+                 "height":16,
+                 "id":9,
+                 "name":"slime",
+                 "rotation":0,
+                 "type":"enemy",
+                 "visible":true,
+                 "width":16,
+                 "x":48,
+                 "y":64
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -92,7 +103,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":9,
+ "nextobjectid":12,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.5.0",

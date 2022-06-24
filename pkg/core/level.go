@@ -12,6 +12,7 @@ type Level struct {
 	actions   []*Action
 	shops     []*ShopData
 	tiledGrid *TiledGrid
+	enemies   []*Enemy
 	// enemies ...
 }
 
@@ -26,6 +27,7 @@ func NewLevel(name string) *Level {
 		pickups:   loadPickups(objects),
 		actions:   loadActions(objects),
 		shops:     loadShops(objects),
+		enemies:   loadEnemy(objects),
 		tiledGrid: tiledGrid,
 	}
 }
@@ -34,12 +36,18 @@ func (l *Level) Update(delta int64, state *State) {
 	for _, npc := range l.npcs {
 		npc.Update(delta, state)
 	}
+	for _, enemy := range l.enemies {
+		enemy.Update(delta, state)
+	}
 }
 
 func (l *Level) Draw(camera *Camera) {
 	l.tiledGrid.Draw(camera)
 	for _, npc := range l.npcs {
 		npc.Draw(camera)
+	}
+	for _, enemy := range l.enemies {
+		enemy.Draw(camera)
 	}
 	for _, pickup := range l.pickups {
 		pickup.Draw(camera)
@@ -54,6 +62,13 @@ func (l *Level) GetTileInfo(x int, y int) *TileInfo {
 		nx, ny := common.WorldToTile(npc.GetPosition())
 		if nx == x && ny == y {
 			ti.npc = npc
+			break
+		}
+	}
+	for _, enemy := range l.enemies {
+		nx, ny := common.WorldToTile(enemy.GetPosition())
+		if nx == x && ny == y {
+			ti.enemy = enemy
 			break
 		}
 	}
@@ -96,6 +111,7 @@ type TileInfo struct {
 	pickup   *Pickup
 	action   *Action
 	shop     *ShopData
+	enemy    *Enemy
 
 	// etc
 }
@@ -110,6 +126,18 @@ func loadNpcs(objects []*ObjectData) []*Npc {
 		}
 	}
 	return npcs
+}
+
+func loadEnemy(objects []*ObjectData) []*Enemy {
+	var enemies []*Enemy
+	for _, obj := range objects {
+		if obj.objectType == "enemy" {
+			enemy := NewEnemy(obj.name)
+			enemy.SetPosition(obj.x, obj.y-common.TileSize)
+			enemies = append(enemies, enemy)
+		}
+	}
+	return enemies
 }
 
 func loadPickups(objects []*ObjectData) []*Pickup {

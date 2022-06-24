@@ -81,6 +81,9 @@ func (p *Player) Update(delta int64, state *State) {
 			if ti.npc != nil {
 				state.DialogHandler.SetActiveDialog(ti.npc.GetCurrentDialog())
 			}
+			if ti.enemy != nil {
+				state.ModeManager.SwitchToFightMode(ti.enemy)
+			}
 			if ti.link != nil {
 				state.Map.StartTransition(ti.link)
 			}

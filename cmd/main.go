@@ -29,6 +29,7 @@ func main() {
 			TeamState:        core.NewTeamState(),
 			TotalElapsedTime: 12 * 1000 * 60,
 			DialogHandler:    core.NewDialogHandler(),
+			ModeManager:      core.NewModeManager(),
 		},
 		dialog:      dialog.NewUi(),
 		shopUI:      gui.NewShopUi(),
@@ -37,7 +38,7 @@ func main() {
 		menuUI:      menu.NewUI(),
 		equipmentUI: equipment.NewUI(),
 	}
-	g.state.Map.LoadLevel("pub-level")
+	g.state.Map.LoadLevel("test-level-a")
 	g.state.Player.EnterLevel(g.state.Map.Level)
 
 	ebiten.SetWindowSize(common.ScreenWidth*common.Scale, common.ScreenHeight*common.Scale)
@@ -76,6 +77,7 @@ func (g *Game) Update() error {
 	g.state.Map.Update(delta, g.state)
 	g.state.Player.Update(delta, g.state)
 	g.state.Shop.Update(delta, g.state)
+	g.state.ModeManager.Update(delta, g.state)
 
 	// update camera
 	g.camera.Update(delta, g.state)
