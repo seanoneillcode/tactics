@@ -11,3 +11,10 @@ type State struct {
 	Control          *Control
 	TotalElapsedTime int64
 }
+
+func (r *State) Update(delta int64) {
+	r.Map.Update(delta, r)
+	r.Player.Update(delta, r)
+	r.Shop.Update(delta, r)
+	r.ModeManager.Update(delta, r)
+}

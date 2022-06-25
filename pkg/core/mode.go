@@ -1,42 +1,25 @@
 package core
 
-import "fmt"
-
-const FightFadeTime = 300
-
-type GameMode string
-
-const (
-	ExploreGameMode   = "explore"
-	FightGameMode     = "fight"
-	ShopGameMode      = "shop"
-	InventoryGameMode = "inventory"
+import (
+	"fmt"
+	"github.com/seanoneillcode/go-tactics/pkg/common"
 )
 
 type ModeManager struct {
-	currentMode GameMode
-	oldMode     GameMode
+	NextMode common.Mode
 }
 
 func NewModeManager() *ModeManager {
-	return &ModeManager{}
-}
-
-func (r *ModeManager) Update(delta int64, state *State) {
-	if r.oldMode != r.currentMode {
-		if r.currentMode == FightGameMode {
-			state.Map.fader.FadeOutAndIn(FightFadeTime)
-		}
-
-		r.oldMode = r.currentMode
+	return &ModeManager{
+		NextMode: common.NoneMode,
 	}
 }
 
-func (r *ModeManager) SwitchToFightMode(enemy *Enemy) {
-	r.currentMode = FightGameMode
-	fmt.Println("starting fight mode with: ", enemy.name)
+func (r *ModeManager) Update(delta int64, state *State) {
+
 }
 
-func (r *ModeManager) SwitchToExploreMode() {
-	r.currentMode = ExploreGameMode
+func (r *ModeManager) ChangeMode(mode common.Mode, enemy *Enemy) {
+	r.NextMode = mode
+	fmt.Println("starting fight mode with: ", enemy.name)
 }

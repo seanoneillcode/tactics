@@ -82,7 +82,7 @@ func (p *Player) Update(delta int64, state *State) {
 				state.DialogHandler.SetActiveDialog(ti.npc.GetCurrentDialog())
 			}
 			if ti.enemy != nil {
-				state.ModeManager.SwitchToFightMode(ti.enemy)
+				state.ModeManager.ChangeMode(common.FightMode, ti.enemy)
 			}
 			if ti.link != nil {
 				state.Map.StartTransition(ti.link)
