@@ -6,12 +6,12 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text"
 	"github.com/seanoneillcode/go-tactics/pkg/common"
-	"github.com/seanoneillcode/go-tactics/pkg/core"
+	"github.com/seanoneillcode/go-tactics/pkg/explore"
 	"github.com/seanoneillcode/go-tactics/pkg/gui/elem"
 )
 
 type ShopUI struct {
-	shop           *core.Shop
+	shop           *explore.Shop
 	bg             *elem.StaticImage
 	cursor         *elem.Cursor
 	confirmation   *elem.Button
@@ -75,7 +75,7 @@ func (s *ShopUI) Draw(screen *ebiten.Image) {
 	s.cursor.Draw(screen)
 }
 
-func (s *ShopUI) Update(delta int64, state *core.State) {
+func (s *ShopUI) Update(delta int64, state *explore.State) {
 	s.shop = state.Shop
 	if !s.shop.IsActive {
 		s.isLoaded = false
@@ -88,7 +88,7 @@ func (s *ShopUI) Update(delta int64, state *core.State) {
 		s.shopItems = createListItems(s.shop.Data.Items, listPos.X+offsetX, listPos.Y+offsetY, state.TeamState.Money)
 	}
 	desc := s.shop.Data.Items[s.shop.SelectedListIndex].Item.Description
-	s.infoBox.Update(infoPos, true, core.GetFormattedValueMax(desc, 22))
+	s.infoBox.Update(infoPos, true, explore.GetFormattedValueMax(desc, 22))
 	if s.oldPlayerMoney != state.TeamState.Money {
 		s.updatePlayerMoney(state.TeamState.Money)
 		s.shopItems = createListItems(s.shop.Data.Items, listPos.X+offsetX, listPos.Y+offsetY, state.TeamState.Money)
@@ -121,7 +121,7 @@ func (s *ShopUI) updatePlayerMoney(money int) {
 }
 
 type listItem struct {
-	item *core.ShopItem
+	item *explore.ShopItem
 	name *elem.Text
 	cost *elem.Text
 }
@@ -131,7 +131,7 @@ func (l *listItem) Draw(screen *ebiten.Image) {
 	l.cost.Draw(screen)
 }
 
-func createListItems(items []*core.ShopItem, x int, y int, playerMoney int) []*listItem {
+func createListItems(items []*explore.ShopItem, x int, y int, playerMoney int) []*listItem {
 	var listItems []*listItem
 	var offset = 0
 	for _, item := range items {

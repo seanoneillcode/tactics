@@ -7,7 +7,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text"
 	"github.com/seanoneillcode/go-tactics/pkg/common"
-	"github.com/seanoneillcode/go-tactics/pkg/core"
+	"github.com/seanoneillcode/go-tactics/pkg/explore"
 	"github.com/seanoneillcode/go-tactics/pkg/gui/elem"
 )
 
@@ -31,11 +31,11 @@ func NewList(pos elem.Pos) *List {
 	}
 }
 
-func (r *List) updateList(teamState *core.TeamState, slot string) {
+func (r *List) updateList(teamState *explore.TeamState, slot string) {
 	r.itemList = r.createList(teamState, slot)
 }
 
-func (r *List) createList(teamState *core.TeamState, slot string) []*itemEntry {
+func (r *List) createList(teamState *explore.TeamState, slot string) []*itemEntry {
 	itemNames := teamState.GetItemList()
 	itemMap := teamState.ItemHolders
 	x := r.pos.X + 4
@@ -73,7 +73,7 @@ func (r *List) Draw(screen *ebiten.Image) {
 	}
 }
 
-func (r *List) Update(teamState *core.TeamState, slot string) {
+func (r *List) Update(teamState *explore.TeamState, slot string) {
 	if r.currentIteration != teamState.Iteration {
 		r.currentIteration = teamState.Iteration
 		r.updateList(teamState, slot)
@@ -106,7 +106,7 @@ func (r *List) currentItem() *itemEntry {
 }
 
 type itemEntry struct {
-	itemRef  *core.Item
+	itemRef  *explore.Item
 	name     *elem.Text
 	quantity *elem.Text
 }

@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/seanoneillcode/go-tactics/pkg/common"
-	"github.com/seanoneillcode/go-tactics/pkg/core"
+	"github.com/seanoneillcode/go-tactics/pkg/explore"
 	"github.com/seanoneillcode/go-tactics/pkg/gui/elem"
 )
 
 type Effect struct {
 	pos        elem.Pos
 	bg         *ebiten.Image
-	item       *core.Item
+	item       *explore.Item
 	changeList []*elem.Text
 }
 
@@ -33,7 +33,7 @@ func (r *Effect) Draw(screen *ebiten.Image) {
 	}
 }
 
-func (r *Effect) Update(item *core.Item, cs *core.CharacterState) {
+func (r *Effect) Update(item *explore.Item, cs *explore.CharacterState) {
 	if r.item != item {
 		r.item = item
 		if item != nil && item.Name != elem.RemoveItem {
@@ -44,9 +44,9 @@ func (r *Effect) Update(item *core.Item, cs *core.CharacterState) {
 	}
 }
 
-func (r *Effect) rebuild(item *core.Item, cs *core.CharacterState) {
+func (r *Effect) rebuild(item *explore.Item, cs *explore.CharacterState) {
 	// copy over everything except current item for slot
-	minusCurrentItem := map[string]*core.Item{}
+	minusCurrentItem := map[string]*explore.Item{}
 	for _, ei := range cs.EquippedItems {
 		minusCurrentItem[ei.EquipSlot] = ei
 	}

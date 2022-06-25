@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/seanoneillcode/go-tactics/pkg/common"
-	"github.com/seanoneillcode/go-tactics/pkg/core"
+	"github.com/seanoneillcode/go-tactics/pkg/explore"
 )
 
 type EffectCard struct {
@@ -12,11 +12,11 @@ type EffectCard struct {
 	image      *ebiten.Image
 	bg         *ebiten.Image
 	name       *Text
-	item       *core.Item
+	item       *explore.Item
 	changeList []*Text
 }
 
-func NewEffectCard(cs *core.CharacterState, pos Pos) *EffectCard {
+func NewEffectCard(cs *explore.CharacterState, pos Pos) *EffectCard {
 	r := &EffectCard{
 		pos:   &Pos{pos.X, pos.Y},
 		image: common.LoadImage(fmt.Sprintf("portrait/%s.png", cs.Name)),
@@ -46,7 +46,7 @@ func (r *EffectCard) Draw(screen *ebiten.Image) {
 	}
 }
 
-func (r *EffectCard) Update(item *core.Item, cs *core.CharacterState) {
+func (r *EffectCard) Update(item *explore.Item, cs *explore.CharacterState) {
 	if r.item != item {
 		r.item = item
 		if item != nil {
@@ -57,7 +57,7 @@ func (r *EffectCard) Update(item *core.Item, cs *core.CharacterState) {
 	}
 }
 
-func (r *EffectCard) rebuild(item *core.Item, cs *core.CharacterState) {
+func (r *EffectCard) rebuild(item *explore.Item, cs *explore.CharacterState) {
 	var changes []*Text
 	for _, ef := range item.Effects {
 		changes = append(changes, NewText(0, 0, ef.Description(cs)))

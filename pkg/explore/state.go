@@ -1,4 +1,4 @@
-package core
+package explore
 
 type State struct {
 	Player           *Player

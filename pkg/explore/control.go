@@ -1,4 +1,4 @@
-package core
+package explore
 
 type Control struct {
 	Command string

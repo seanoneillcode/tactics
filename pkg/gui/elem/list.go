@@ -5,7 +5,7 @@ import (
 	"github.com/seanoneillcode/go-tactics/pkg/input"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/seanoneillcode/go-tactics/pkg/core"
+	"github.com/seanoneillcode/go-tactics/pkg/explore"
 )
 
 const RemoveItem = "Remove Equipment"
@@ -57,7 +57,7 @@ func (r *List) Update() {
 	})
 }
 
-func (r *List) CurrentItem() *core.Item {
+func (r *List) CurrentItem() *explore.Item {
 	return r.itemList[r.index].Item()
 }
 
@@ -81,15 +81,15 @@ func (r *List) HandleInput() {
 type ListItem interface {
 	Draw(screen *ebiten.Image)
 	Update(pos Pos)
-	Item() *core.Item
+	Item() *explore.Item
 }
 
 type InventoryListItem struct {
-	itemRef *core.Item
+	itemRef *explore.Item
 	text    *Text
 }
 
-func NewShopListItem(item *core.Item, amount int) *InventoryListItem {
+func NewShopListItem(item *explore.Item, amount int) *InventoryListItem {
 	value := fmt.Sprintf("%2d - %s", amount, item.Name)
 	return &InventoryListItem{
 		itemRef: item,
@@ -105,7 +105,7 @@ func (r *InventoryListItem) Update(pos Pos) {
 	r.text.SetPosition(pos)
 }
 
-func (r *InventoryListItem) Item() *core.Item {
+func (r *InventoryListItem) Item() *explore.Item {
 	return r.itemRef
 }
 
@@ -127,6 +127,6 @@ func (r *UnEquipItem) Update(pos Pos) {
 	r.text.SetPosition(pos)
 }
 
-func (r *UnEquipItem) Item() *core.Item {
+func (r *UnEquipItem) Item() *explore.Item {
 	return nil
 }

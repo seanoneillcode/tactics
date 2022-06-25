@@ -1,4 +1,4 @@
-package core
+package explore
 
 type CharacterState struct {
 	// state

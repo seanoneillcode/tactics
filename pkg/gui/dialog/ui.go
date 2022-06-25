@@ -2,7 +2,7 @@ package dialog
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/seanoneillcode/go-tactics/pkg/core"
+	"github.com/seanoneillcode/go-tactics/pkg/explore"
 	"github.com/seanoneillcode/go-tactics/pkg/input"
 )
 
@@ -26,7 +26,7 @@ func (r *ui) Draw(screen *ebiten.Image) {
 	r.dialogBox.Draw(screen)
 }
 
-func (r *ui) Update(delta int64, state *core.State) {
+func (r *ui) Update(delta int64, state *explore.State) {
 	if !state.DialogHandler.IsActive {
 		r.IsActive = false
 		r.isLoaded = false
@@ -45,7 +45,7 @@ func (r *ui) Update(delta int64, state *core.State) {
 	r.dialogBox.Update(delta, r.activeDialog, state)
 }
 
-func (r *ui) handleInput(state *core.State) {
+func (r *ui) handleInput(state *explore.State) {
 	if input.IsEnterPressed() {
 		if r.activeDialog.IsBuffering() {
 			r.activeDialog.SkipBuffer()

@@ -1,7 +1,7 @@
 package dialog
 
 import (
-	"github.com/seanoneillcode/go-tactics/pkg/core"
+	"github.com/seanoneillcode/go-tactics/pkg/explore"
 )
 
 const letterSpeed = 40
@@ -24,7 +24,7 @@ type lineState struct {
 	FullText string
 }
 
-func NewDialogState(data *core.DialogData) *dialogState {
+func NewDialogState(data *explore.DialogData) *dialogState {
 	d := &dialogState{}
 	var lines []*lineState
 	for _, l := range data.Lines {
@@ -47,7 +47,7 @@ func NewDialogState(data *core.DialogData) *dialogState {
 	}
 	line := d.lines[d.currentLineIndex]
 	d.currentName = line.Name
-	d.formattedText = core.GetFormattedValue(line.FullText)
+	d.formattedText = explore.GetFormattedValue(line.FullText)
 	return d
 }
 
@@ -69,7 +69,7 @@ func (d *dialogState) Reset() {
 	}
 	line := d.lines[d.currentLineIndex]
 	d.currentName = line.Name
-	d.formattedText = core.GetFormattedValue(line.FullText)
+	d.formattedText = explore.GetFormattedValue(line.FullText)
 }
 
 func (d *dialogState) IsBuffering() bool {
@@ -98,7 +98,7 @@ func (d *dialogState) NextLine() {
 		}
 	}
 	d.currentName = l.Name
-	d.formattedText = core.GetFormattedValue(l.FullText)
+	d.formattedText = explore.GetFormattedValue(l.FullText)
 }
 
 func (d *dialogState) GetNameOrder() int {
@@ -110,7 +110,7 @@ func (d *dialogState) GetNextLinesForName() []string {
 	for index, line := range d.lines {
 		if index >= d.currentLineIndex {
 			if d.currentName == line.Name {
-				f = append(f, core.GetFormattedValue(line.FullText))
+				f = append(f, explore.GetFormattedValue(line.FullText))
 			} else {
 				break
 			}

@@ -6,7 +6,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text"
 	"github.com/seanoneillcode/go-tactics/pkg/common"
-	"github.com/seanoneillcode/go-tactics/pkg/core"
+	"github.com/seanoneillcode/go-tactics/pkg/explore"
 	"github.com/seanoneillcode/go-tactics/pkg/gui/elem"
 )
 
@@ -23,14 +23,14 @@ func NewInvItemList() *InvItemList {
 	}
 }
 
-func (i *InvItemList) CurrentItem() *core.Item {
+func (i *InvItemList) CurrentItem() *explore.Item {
 	if len(i.itemList) > 0 {
 		return i.itemList[i.currentIndex].itemRef
 	}
 	return nil
 }
 
-func (i *InvItemList) createItemList(teamState *core.TeamState) []*itemEntry {
+func (i *InvItemList) createItemList(teamState *explore.TeamState) []*itemEntry {
 	itemNames := teamState.GetItemList()
 	itemMap := teamState.ItemHolders
 	x := i.pos.X + offsetX
@@ -62,7 +62,7 @@ func (i *InvItemList) Draw(screen *ebiten.Image) {
 	}
 }
 
-func (i *InvItemList) Update(delta int64, teamState *core.TeamState, currentIndex int) {
+func (i *InvItemList) Update(delta int64, teamState *explore.TeamState, currentIndex int) {
 	i.currentIndex = currentIndex
 	if i.currentIteration != teamState.Iteration {
 		i.currentIteration = teamState.Iteration
@@ -71,7 +71,7 @@ func (i *InvItemList) Update(delta int64, teamState *core.TeamState, currentInde
 }
 
 type itemEntry struct {
-	itemRef  *core.Item
+	itemRef  *explore.Item
 	name     *elem.Text
 	quantity *elem.Text
 }

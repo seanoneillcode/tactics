@@ -1,4 +1,4 @@
-package core
+package explore
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"

@@ -3,7 +3,7 @@ package equipment
 import (
 	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/seanoneillcode/go-tactics/pkg/core"
+	"github.com/seanoneillcode/go-tactics/pkg/explore"
 	"github.com/seanoneillcode/go-tactics/pkg/gui/elem"
 	"github.com/seanoneillcode/go-tactics/pkg/input"
 )
@@ -25,7 +25,7 @@ func NewCard(name string) *card {
 	}
 }
 
-func (r *card) Update(pos elem.Pos, charState *core.CharacterState) {
+func (r *card) Update(pos elem.Pos, charState *explore.CharacterState) {
 	for index, s := range r.slots {
 		isHighlighted := index == r.selectedSlotIndex
 		s.Update(elem.Pos{
@@ -100,7 +100,7 @@ func (r *slotEntry) Draw(screen *ebiten.Image) {
 	r.label.Draw(screen)
 }
 
-func (r *slotEntry) Update(pos elem.Pos, isHighlighted bool, charState *core.CharacterState) {
+func (r *slotEntry) Update(pos elem.Pos, isHighlighted bool, charState *explore.CharacterState) {
 	r.isHighlighted = isHighlighted
 	r.bg.SetPos(&pos)
 	r.bgHighlight.SetPos(&pos)

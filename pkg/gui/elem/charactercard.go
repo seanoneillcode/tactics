@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/seanoneillcode/go-tactics/pkg/common"
-	"github.com/seanoneillcode/go-tactics/pkg/core"
+	"github.com/seanoneillcode/go-tactics/pkg/explore"
 	"strings"
 )
 
@@ -18,7 +18,7 @@ type CharacterCard struct {
 	level  *Text
 }
 
-func NewCharacterCard(cs *core.CharacterState, pos Pos) *CharacterCard {
+func NewCharacterCard(cs *explore.CharacterState, pos Pos) *CharacterCard {
 	r := &CharacterCard{
 		pos:    &Pos{pos.X, pos.Y},
 		image:  common.LoadImage(fmt.Sprintf("portrait/%s.png", cs.Name)),

@@ -3,7 +3,7 @@ package menu
 import (
 	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/seanoneillcode/go-tactics/pkg/core"
+	"github.com/seanoneillcode/go-tactics/pkg/explore"
 	"github.com/seanoneillcode/go-tactics/pkg/gui/elem"
 	"github.com/seanoneillcode/go-tactics/pkg/input"
 	"time"
@@ -62,7 +62,7 @@ func (r *ui) Draw(screen *ebiten.Image) {
 	r.money.Draw(screen)
 }
 
-func (r *ui) Update(delta int64, state *core.State) {
+func (r *ui) Update(delta int64, state *explore.State) {
 	if !state.UI.IsMenuActive() {
 		r.IsActive = false
 		r.isLoaded = false
@@ -85,7 +85,7 @@ func (r *ui) Update(delta int64, state *core.State) {
 	r.time.SetValue(fmt.Sprintf("time: %s", z.Format("15:04:05")))
 }
 
-func (r *ui) handleInput(state *core.State) {
+func (r *ui) handleInput(state *explore.State) {
 	if input.IsCancelPressed() {
 		state.UI.Close()
 		state.Player.Activate()
@@ -119,15 +119,15 @@ func (r *ui) handleInput(state *core.State) {
 		switch r.selectedListIndex {
 		// items
 		case 0:
-			state.UI.Open(core.ItemsUI)
+			state.UI.Open(explore.ItemsUI)
 		case 1:
-			state.UI.Open(core.EquipmentUI)
+			state.UI.Open(explore.EquipmentUI)
 		case 2:
-			state.UI.Open(core.MagicUI)
+			state.UI.Open(explore.MagicUI)
 		case 3:
-			state.UI.Open(core.SettingsUI)
+			state.UI.Open(explore.SettingsUI)
 		case 4:
-			state.UI.Open(core.FileUI)
+			state.UI.Open(explore.FileUI)
 		case 5:
 			state.Control.ExitGame()
 		}
@@ -138,7 +138,7 @@ func (r *ui) reset() {
 	r.selectedListIndex = 0
 }
 
-func (r *ui) rebuild(characters []*core.CharacterState) {
+func (r *ui) rebuild(characters []*explore.CharacterState) {
 	var cards []*elem.CharacterCard
 	pos := elem.Pos{
 		X: 12,

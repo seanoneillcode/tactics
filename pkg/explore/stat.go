@@ -1,4 +1,4 @@
-package core
+package explore
 
 type StatChange interface {
 	Apply(stats *Stats)

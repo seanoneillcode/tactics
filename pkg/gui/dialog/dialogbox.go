@@ -3,7 +3,7 @@ package dialog
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/seanoneillcode/go-tactics/pkg/common"
-	"github.com/seanoneillcode/go-tactics/pkg/core"
+	"github.com/seanoneillcode/go-tactics/pkg/explore"
 	"github.com/seanoneillcode/go-tactics/pkg/gui/elem"
 )
 
@@ -30,7 +30,7 @@ func (r *DialogueBox) Draw(screen *ebiten.Image) {
 	r.textBox.Draw(screen)
 }
 
-func (r *DialogueBox) Update(delta int64, d *dialogState, state *core.State) {
+func (r *DialogueBox) Update(delta int64, d *dialogState, state *explore.State) {
 	name, text := d.GetCurrentLine()
 	if text != r.currentText || name != r.currentName {
 		r.currentText = text
@@ -50,7 +50,7 @@ func (r *DialogueBox) Reset() {
 	r.currentText = ""
 }
 
-func (r *DialogueBox) getOffset(name string, state *core.State) *elem.Pos {
+func (r *DialogueBox) getOffset(name string, state *explore.State) *elem.Pos {
 	offset := &elem.Pos{
 		X: 60,
 		Y: 60 - r.height,

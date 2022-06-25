@@ -2,7 +2,7 @@ package inventory
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/seanoneillcode/go-tactics/pkg/core"
+	"github.com/seanoneillcode/go-tactics/pkg/explore"
 	"github.com/seanoneillcode/go-tactics/pkg/gui/elem"
 	"github.com/seanoneillcode/go-tactics/pkg/input"
 	"log"
@@ -50,13 +50,13 @@ type ui struct {
 	actionBox              *ActionBox
 	bg                     *elem.StaticImage
 	invItemList            *InvItemList
-	teamState              *core.TeamState
+	teamState              *explore.TeamState
 	activeCtx              ctx // list, action, character
 	selectedListIndex      int
 	selectedActionIndex    int
 	selectedCharacterIndex int
 	currentIteration       int
-	//currentItem            *core.Item
+	//currentItem            *explore.Item
 	IsActive         bool
 	actionPos        *elem.Pos
 	listPos          *elem.Pos
@@ -87,7 +87,7 @@ func NewUi() *ui {
 		currentItemImage: nil,
 		itemInfoBg:       elem.NewStaticImage("uis/inventory/item-info-bg.png", float64(invInfoPos.X-3), float64(invInfoPos.Y)),
 	}
-	for _, item := range core.AllItems {
+	for _, item := range explore.AllItems {
 		i.itemImages[item.Type] = elem.NewStaticImage(item.ImagePath, float64(itemImagePos.X), float64(itemImagePos.Y))
 	}
 	return i
@@ -117,7 +117,7 @@ func (r *ui) Draw(screen *ebiten.Image) {
 	r.uiDesc.Draw(screen)
 }
 
-func (r *ui) Update(delta int64, state *core.State) {
+func (r *ui) Update(delta int64, state *explore.State) {
 	if !state.UI.IsInventoryActive() {
 		r.IsActive = false
 		r.isLoaded = false
@@ -133,14 +133,14 @@ func (r *ui) Update(delta int64, state *core.State) {
 	r.invItemList.Update(delta, state.TeamState, r.selectedListIndex)
 
 	var formattedItemDescription string
-	var item *core.Item
+	var item *explore.Item
 	switch r.activeCtx {
 	case listCtx:
 		r.cursorPos.X = r.listPos.X - 8
 		r.cursorPos.Y = r.listPos.Y + (16.0 * r.selectedListIndex)
 		if state.TeamState.HasItems() {
 			item = state.TeamState.GetItemWithName(r.invItemList.CurrentItem().Name)
-			formattedItemDescription = core.GetFormattedValueMax(item.Description, charactersPerInfoLine)
+			formattedItemDescription = explore.GetFormattedValueMax(item.Description, charactersPerInfoLine)
 			r.currentItemImage = r.itemImages[item.Type]
 		} else {
 			r.currentItemImage = nil
@@ -150,7 +150,7 @@ func (r *ui) Update(delta int64, state *core.State) {
 		r.cursorPos.Y = r.actionPos.Y + 5 + (24.0 * r.selectedActionIndex)
 		if state.TeamState.HasItems() {
 			item = state.TeamState.GetItemWithName(r.invItemList.CurrentItem().Name)
-			formattedItemDescription = core.GetFormattedValueMax(item.Description, charactersPerInfoLine)
+			formattedItemDescription = explore.GetFormattedValueMax(item.Description, charactersPerInfoLine)
 			r.currentItemImage = r.itemImages[item.Type]
 		} else {
 			r.currentItemImage = nil
@@ -175,7 +175,7 @@ func (r *ui) Update(delta int64, state *core.State) {
 	}
 }
 
-func (r *ui) handleInput(state *core.State) {
+func (r *ui) handleInput(state *explore.State) {
 	teamState := state.TeamState
 	if teamState == nil {
 		log.Fatal("inventory opened with no team!")
@@ -186,7 +186,7 @@ func (r *ui) handleInput(state *core.State) {
 		case listCtx:
 			r.reset()
 			r.IsActive = false
-			state.UI.Open(core.MenuUI)
+			state.UI.Open(explore.MenuUI)
 		case actionCtx:
 			r.activeCtx = listCtx
 		case characterCtx:
@@ -306,7 +306,7 @@ func (r *ui) reset() {
 	r.selectedActionIndex = 0
 }
 
-func (r *ui) rebuild(characters []*core.CharacterState) {
+func (r *ui) rebuild(characters []*explore.CharacterState) {
 	cards := map[string]*elem.EffectCard{}
 	pos := elem.Pos{
 		X: characterCardsPos.X,

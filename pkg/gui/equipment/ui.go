@@ -2,7 +2,7 @@ package equipment
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/seanoneillcode/go-tactics/pkg/core"
+	"github.com/seanoneillcode/go-tactics/pkg/explore"
 	"github.com/seanoneillcode/go-tactics/pkg/gui/elem"
 	"github.com/seanoneillcode/go-tactics/pkg/input"
 	"log"
@@ -61,7 +61,7 @@ func NewUI() *ui {
 	return i
 }
 
-func createList(teamState *core.TeamState, slot string) []elem.ListItem {
+func createList(teamState *explore.TeamState, slot string) []elem.ListItem {
 	itemNames := teamState.GetItemList()
 	itemMap := teamState.ItemHolders
 	var invItems []elem.ListItem
@@ -94,7 +94,7 @@ func (r *ui) Draw(screen *ebiten.Image) {
 	}
 }
 
-func (r *ui) Update(delta int64, state *core.State) {
+func (r *ui) Update(delta int64, state *explore.State) {
 	if !state.UI.IsEquipmentActive() {
 		r.IsActive = false
 		r.isLoaded = false
@@ -120,7 +120,7 @@ func (r *ui) Update(delta int64, state *core.State) {
 
 }
 
-func (r *ui) handleInput(state *core.State) {
+func (r *ui) handleInput(state *explore.State) {
 	teamState := state.TeamState
 	if teamState == nil {
 		log.Fatal("equipment opened with no team!")
@@ -129,7 +129,7 @@ func (r *ui) handleInput(state *core.State) {
 	if input.IsCancelPressed() {
 		switch r.activeCtx {
 		case slotCtx:
-			state.UI.Open(core.MenuUI)
+			state.UI.Open(explore.MenuUI)
 		case equipmentListCtx:
 			r.activeCtx = slotCtx
 		}

@@ -14,23 +14,23 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/seanoneillcode/go-tactics/pkg/common"
-	"github.com/seanoneillcode/go-tactics/pkg/core"
+	"github.com/seanoneillcode/go-tactics/pkg/explore"
 	"github.com/seanoneillcode/go-tactics/pkg/gui"
 )
 
 func main() {
 	g := &Game{
 		lastUpdateCalled: time.Now(),
-		state: &core.State{
-			Control:          &core.Control{},
-			Player:           core.NewPlayer(),
-			Map:              core.NewMap(),
-			Shop:             core.NewShop(),
-			UI:               core.NewUI(), // todo replace with concept of active element or 'mode' and a unified controller for currently active element
-			TeamState:        core.NewTeamState(),
+		state: &explore.State{
+			Control:          &explore.Control{},
+			Player:           explore.NewPlayer(),
+			Map:              explore.NewMap(),
+			Shop:             explore.NewShop(),
+			UI:               explore.NewUI(), // todo replace with concept of active element or 'mode' and a unified controller for currently active element
+			TeamState:        explore.NewTeamState(),
 			TotalElapsedTime: 12 * 1000 * 60,
-			DialogHandler:    core.NewDialogHandler(),
-			ModeManager:      core.NewModeManager(),
+			DialogHandler:    explore.NewDialogHandler(),
+			ModeManager:      explore.NewModeManager(),
 		},
 		fightState: &fight.State{
 			NextMode:         common.NoneMode,
@@ -42,7 +42,7 @@ func main() {
 		},
 		dialog:      dialog.NewUi(),
 		shopUI:      gui.NewShopUi(),
-		camera:      core.NewCamera(),
+		camera:      explore.NewCamera(),
 		inventoryUI: inventory.NewUi(),
 		menuUI:      menu.NewUI(),
 		equipmentUI: equipment.NewUI(),
@@ -68,9 +68,9 @@ var NormalEscapeError = errors.New("normal escape termination")
 type Game struct {
 	lastUpdateCalled time.Time
 	keys             []ebiten.Key
-	state            *core.State
+	state            *explore.State
 	fightState       *fight.State
-	camera           *core.Camera
+	camera           *explore.Camera
 	dialog           gui.UI
 	shopUI           *gui.ShopUI
 	inventoryUI      gui.UI
