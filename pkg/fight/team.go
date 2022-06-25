@@ -23,3 +23,15 @@ func (r *Team) RemainingActionTokens() int {
 	}
 	return total
 }
+
+func (r *Team) Draw(camera *Camera) {
+	for _, actor := range r.Actors {
+		actor.Draw(camera)
+	}
+}
+
+func (r *Team) Update(delta int64, state *State) {
+	for _, actor := range r.Actors {
+		actor.Update(delta, state)
+	}
+}

@@ -17,11 +17,14 @@ func (s *State) Update(delta int64) {
 	s.AiController.Update(delta, s)
 	s.PlayerController.Update(delta, s)
 	s.Camera.Update(delta, s)
+	s.PlayerTeam.Update(delta, s)
+	s.AiTeam.Update(delta, s)
 }
 
 func (s *State) Draw(camera *Camera) {
 	s.Scene.Draw(camera)
-	// draw teams
+	s.PlayerTeam.Draw(camera)
+	s.AiTeam.Draw(camera)
 }
 
 func (s *State) ChangeMode(mode common.Mode) {
@@ -29,7 +32,7 @@ func (s *State) ChangeMode(mode common.Mode) {
 }
 
 func (s *State) StartFight(playerActors []*Actor, enemyActors []*Actor, sceneName string) {
-	s.Scene = NewScene(sceneName)
+	s.Scene = NewScene(sceneName, playerActors, enemyActors)
 	s.PlayerTeam = NewTeam(playerActors)
 	s.AiTeam = NewTeam(enemyActors)
 	s.PlayerController.StartTurn(s)

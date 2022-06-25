@@ -1,24 +1,43 @@
 package fight
 
-import "github.com/seanoneillcode/go-tactics/pkg/common"
+import (
+	"github.com/seanoneillcode/go-tactics/pkg/common"
+	"math/rand"
+)
 
 type Scene struct {
-	Name                  string
-	tiledGrid             *common.TiledGrid
-	teamOneStartPositions []*common.Position
-	teamTwoStartPositions []*common.Position
+	Name      string
+	tiledGrid *common.TiledGrid
 }
 
-func NewScene(name string) *Scene {
+func NewScene(name string, playerActors []*Actor, enemyActors []*Actor) *Scene {
 	tiledGrid := common.NewTileGrid(name + ".json")
 	objects := tiledGrid.GetObjectData()
 	teamOnePos, teamTwoPos := loadStartPositions(objects)
 
+	numberOnePositions := len(teamOnePos)
+	offset := rand.Intn(numberOnePositions)
+	for i, actor := range playerActors {
+		index := (i + offset) % numberOnePositions
+		actor.Pos = &common.Position{
+			X: teamOnePos[index].X,
+			Y: teamOnePos[index].Y,
+		}
+	}
+
+	numberTwoPositions := len(teamTwoPos)
+	offset = rand.Intn(numberTwoPositions)
+	for i, actor := range enemyActors {
+		index := (i + offset) % numberTwoPositions
+		actor.Pos = &common.Position{
+			X: teamTwoPos[index].X,
+			Y: teamTwoPos[index].Y,
+		}
+	}
+
 	s := &Scene{
-		Name:                  name,
-		tiledGrid:             tiledGrid,
-		teamOneStartPositions: teamOnePos,
-		teamTwoStartPositions: teamTwoPos,
+		Name:      name,
+		tiledGrid: tiledGrid,
 	}
 
 	return s
@@ -45,9 +64,9 @@ func loadStartPositions(objects []*common.ObjectData) ([]*common.Position, []*co
 			for _, p := range obj.Properties {
 				if p.Name == "team" {
 					switch p.Value {
-					case 1:
+					case "1":
 						teamOnePositions = append(teamOnePositions, npc)
-					case 2:
+					case "2":
 						teamTwoPositions = append(teamTwoPositions, npc)
 					}
 				}

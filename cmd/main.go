@@ -10,6 +10,7 @@ import (
 	"github.com/seanoneillcode/go-tactics/pkg/gui/menu"
 	"github.com/seanoneillcode/go-tactics/pkg/input"
 	"log"
+	"math/rand"
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -103,6 +104,7 @@ func (g *Game) Update() error {
 			g.state.ModeManager.NextMode = common.NoneMode
 			g.mode = common.FightMode
 			g.StartFightMode()
+			g.fightState.Update(delta)
 		}
 
 	case common.FightMode:
@@ -151,11 +153,12 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 }
 
 func (g *Game) StartFightMode() {
+	rand.Seed(time.Now().Unix())
 	playerActors := []*fight.Actor{
-		{},
+		fight.NewActor("shane"),
 	}
 	enemyActors := []*fight.Actor{
-		{},
+		fight.NewActor("slime"),
 	}
 	g.fightState.StartFight(playerActors, enemyActors, "forest-scene")
 }
