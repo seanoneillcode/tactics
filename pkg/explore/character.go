@@ -10,7 +10,7 @@ const (
 )
 
 type Character struct {
-	sprite *Sprite
+	sprite *common.Sprite
 	pos    *common.Position
 	// movement
 	isMoving  bool
@@ -25,7 +25,7 @@ type Character struct {
 
 func NewCharacter(imageFileName string) *Character {
 	return &Character{
-		sprite: NewSprite(imageFileName),
+		sprite: common.NewSprite(imageFileName),
 		Direction: &common.Direction{
 			X: 0,
 			Y: 1,
@@ -101,7 +101,7 @@ func (c *Character) TryToMove(dirX int, dirY int, state *State) {
 	tileX = tileX + dirX
 	tileY = tileY + dirY
 	ti := state.Map.Level.GetTileInfo(tileX, tileY)
-	if ti.tileData.isBlock {
+	if ti.tileData.IsBlock {
 		if ti.link == nil {
 			return
 		}

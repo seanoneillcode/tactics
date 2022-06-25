@@ -5,19 +5,19 @@ import (
 )
 
 type Pickup struct {
-	sprite     *Sprite
-	usedSprite *Sprite
+	sprite     *common.Sprite
+	usedSprite *common.Sprite
 	isUsed     bool
 	itemName   string
 }
 
 func NewPickup(name string, itemName string, usedImageName string) *Pickup {
 	p := &Pickup{
-		sprite:   NewSprite(name + ".png"),
+		sprite:   common.NewSprite(name + ".png"),
 		itemName: itemName,
 	}
 	if usedImageName != "" {
-		p.usedSprite = NewSprite(usedImageName + ".png")
+		p.usedSprite = common.NewSprite(usedImageName + ".png")
 	}
 	return p
 }
@@ -31,8 +31,8 @@ func (n *Pickup) SetPosition(x int, y int) {
 
 func (n *Pickup) GetPosition() *common.Position {
 	return &common.Position{
-		X: n.sprite.x,
-		Y: n.sprite.y,
+		X: n.sprite.X,
+		Y: n.sprite.Y,
 	}
 }
 

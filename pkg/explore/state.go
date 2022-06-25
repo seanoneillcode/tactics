@@ -9,6 +9,7 @@ type State struct {
 	Shop             *Shop
 	UI               *UI
 	Control          *Control
+	Camera           *Camera
 	TotalElapsedTime int64
 }
 
@@ -17,4 +18,5 @@ func (r *State) Update(delta int64) {
 	r.Player.Update(delta, r)
 	r.Shop.Update(delta, r)
 	r.ModeManager.Update(delta, r)
+	r.Camera.Update(delta, r)
 }

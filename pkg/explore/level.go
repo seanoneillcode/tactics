@@ -11,13 +11,13 @@ type Level struct {
 	pickups   []*Pickup
 	actions   []*Action
 	shops     []*ShopData
-	tiledGrid *TiledGrid
+	tiledGrid *common.TiledGrid
 	enemies   []*Enemy
 	// enemies ...
 }
 
 func NewLevel(name string) *Level {
-	tiledGrid := NewTileGrid(name + ".json")
+	tiledGrid := common.NewTileGrid(name + ".json")
 	objects := tiledGrid.GetObjectData()
 
 	return &Level{
@@ -105,7 +105,7 @@ func (l *Level) GetTileInfo(x int, y int) *TileInfo {
 
 // TileInfo is a read only struct of references to handle tile based queries
 type TileInfo struct {
-	tileData *TileData
+	tileData *common.TileData
 	npc      *Npc
 	link     *Link
 	pickup   *Pickup
@@ -116,72 +116,72 @@ type TileInfo struct {
 	// etc
 }
 
-func loadNpcs(objects []*ObjectData) []*Npc {
+func loadNpcs(objects []*common.ObjectData) []*Npc {
 	var npcs []*Npc
 	for _, obj := range objects {
-		if obj.objectType == "npc" {
-			npc := NewNpc(obj.name)
-			npc.SetPosition(obj.x, obj.y-common.TileSize)
+		if obj.ObjectType == "npc" {
+			npc := NewNpc(obj.Name)
+			npc.SetPosition(obj.X, obj.Y-common.TileSize)
 			npcs = append(npcs, npc)
 		}
 	}
 	return npcs
 }
 
-func loadEnemy(objects []*ObjectData) []*Enemy {
+func loadEnemy(objects []*common.ObjectData) []*Enemy {
 	var enemies []*Enemy
 	for _, obj := range objects {
-		if obj.objectType == "enemy" {
-			enemy := NewEnemy(obj.name)
-			enemy.SetPosition(obj.x, obj.y-common.TileSize)
+		if obj.ObjectType == "enemy" {
+			enemy := NewEnemy(obj.Name)
+			enemy.SetPosition(obj.X, obj.Y-common.TileSize)
 			enemies = append(enemies, enemy)
 		}
 	}
 	return enemies
 }
 
-func loadPickups(objects []*ObjectData) []*Pickup {
+func loadPickups(objects []*common.ObjectData) []*Pickup {
 	var pickups []*Pickup
 	for _, obj := range objects {
-		if obj.objectType == "pickup" {
+		if obj.ObjectType == "pickup" {
 			var itemName string
 			var usedImageName string
-			for _, p := range obj.properties {
-				if p.name == "item" {
-					itemName = (p.value).(string)
+			for _, p := range obj.Properties {
+				if p.Name == "item" {
+					itemName = (p.Value).(string)
 				}
-				if p.name == "used-image" {
-					usedImageName = (p.value).(string)
+				if p.Name == "used-image" {
+					usedImageName = (p.Value).(string)
 				}
 			}
 
-			pickup := NewPickup(obj.name, itemName, usedImageName)
-			pickup.SetPosition(obj.x, obj.y-common.TileSize)
+			pickup := NewPickup(obj.Name, itemName, usedImageName)
+			pickup.SetPosition(obj.X, obj.Y-common.TileSize)
 			pickups = append(pickups, pickup)
 		}
 	}
 	return pickups
 }
 
-func loadActions(objects []*ObjectData) []*Action {
+func loadActions(objects []*common.ObjectData) []*Action {
 	var actions []*Action
 	for _, obj := range objects {
-		if obj.objectType == "action" {
-			action := NewAction(obj.name, float64(obj.x), float64(obj.y))
+		if obj.ObjectType == "action" {
+			action := NewAction(obj.Name, float64(obj.X), float64(obj.Y))
 			actions = append(actions, action)
 		}
 	}
 	return actions
 }
 
-func loadShops(objects []*ObjectData) []*ShopData {
+func loadShops(objects []*common.ObjectData) []*ShopData {
 	var shops []*ShopData
 	for _, obj := range objects {
-		if obj.objectType == "shop" {
-			s := NewShopData(obj.name, float64(obj.x), float64(obj.y))
-			for _, p := range obj.properties {
-				if p.name == "merchantName" {
-					s.MerchantName = (p.value).(string)
+		if obj.ObjectType == "shop" {
+			s := NewShopData(obj.Name, float64(obj.X), float64(obj.Y))
+			for _, p := range obj.Properties {
+				if p.Name == "merchantName" {
+					s.MerchantName = (p.Value).(string)
 				}
 			}
 			shops = append(shops, s)
@@ -190,21 +190,21 @@ func loadShops(objects []*ObjectData) []*ShopData {
 	return shops
 }
 
-func loadLinks(objects []*ObjectData) []*Link {
+func loadLinks(objects []*common.ObjectData) []*Link {
 	var links []*Link
 	for _, obj := range objects {
-		if obj.objectType == "link" {
+		if obj.ObjectType == "link" {
 			link := &Link{
-				x:    obj.x,
-				y:    obj.y,
-				name: obj.name,
+				x:    obj.X,
+				y:    obj.Y,
+				name: obj.Name,
 			}
-			for _, p := range obj.properties {
-				if p.name == "direction" {
-					link.direction = (p.value).(string)
+			for _, p := range obj.Properties {
+				if p.Name == "direction" {
+					link.direction = (p.Value).(string)
 				}
-				if p.name == "to-level" {
-					link.toLevel = (p.value).(string)
+				if p.Name == "to-level" {
+					link.toLevel = (p.Value).(string)
 				}
 			}
 			links = append(links, link)

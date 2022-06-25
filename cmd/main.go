@@ -31,6 +31,7 @@ func main() {
 			TotalElapsedTime: 12 * 1000 * 60,
 			DialogHandler:    explore.NewDialogHandler(),
 			ModeManager:      explore.NewModeManager(),
+			Camera:           explore.NewCamera(),
 		},
 		fightState: &fight.State{
 			NextMode:         common.NoneMode,
@@ -39,10 +40,10 @@ func main() {
 			PlayerTeam:       nil,
 			AiController:     fight.AiController{},
 			AiTeam:           nil,
+			Camera:           fight.NewCamera(),
 		},
 		dialog:      dialog.NewUi(),
 		shopUI:      gui.NewShopUi(),
-		camera:      explore.NewCamera(),
 		inventoryUI: inventory.NewUi(),
 		menuUI:      menu.NewUI(),
 		equipmentUI: equipment.NewUI(),
@@ -70,13 +71,13 @@ type Game struct {
 	keys             []ebiten.Key
 	state            *explore.State
 	fightState       *fight.State
-	camera           *explore.Camera
-	dialog           gui.UI
-	shopUI           *gui.ShopUI
-	inventoryUI      gui.UI
-	menuUI           gui.UI
-	equipmentUI      gui.UI
-	mode             common.Mode
+
+	dialog      gui.UI
+	shopUI      *gui.ShopUI
+	inventoryUI gui.UI
+	menuUI      gui.UI
+	equipmentUI gui.UI
+	mode        common.Mode
 }
 
 func (g *Game) Update() error {
@@ -89,9 +90,6 @@ func (g *Game) Update() error {
 	case common.ExploreMode:
 		// update state
 		g.state.Update(delta)
-
-		// update camera
-		g.camera.Update(delta, g.state)
 
 		// update UI
 		g.dialog.Update(delta, g.state)
@@ -110,8 +108,6 @@ func (g *Game) Update() error {
 	case common.FightMode:
 		// update state
 		g.fightState.Update(delta)
-
-		// update camera
 
 		// check for mode change
 		if g.fightState.NextMode == common.ExploreMode {
@@ -136,18 +132,17 @@ func (g *Game) Update() error {
 func (g *Game) Draw(screen *ebiten.Image) {
 	switch g.mode {
 	case common.ExploreMode:
-		g.state.Map.Level.Draw(g.camera)
-		g.state.Player.Draw(g.camera)
-		g.camera.DrawBuffer(screen)
+		g.state.Map.Level.Draw(g.state.Camera)
+		g.state.Player.Draw(g.state.Camera)
+		g.state.Camera.DrawBuffer(screen)
 		g.dialog.Draw(screen)
 		g.shopUI.Draw(screen)
 		g.inventoryUI.Draw(screen)
 		g.menuUI.Draw(screen)
 		g.equipmentUI.Draw(screen)
 	case common.FightMode:
-		// draw map
-		// draw teams
-		// camera render
+		g.fightState.Draw(g.fightState.Camera)
+		g.fightState.Camera.DrawBuffer(screen)
 	}
 }
 
@@ -162,5 +157,5 @@ func (g *Game) StartFightMode() {
 	enemyActors := []*fight.Actor{
 		{},
 	}
-	g.fightState.StartFight(playerActors, enemyActors)
+	g.fightState.StartFight(playerActors, enemyActors, "forest-scene")
 }

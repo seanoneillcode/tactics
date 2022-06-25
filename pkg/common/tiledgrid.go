@@ -1,10 +1,9 @@
-package explore
+package common
 
 import (
 	"bytes"
 	"encoding/json"
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/seanoneillcode/go-tactics/pkg/common"
 	"image"
 	_ "image/png"
 	"io/ioutil"
@@ -99,8 +98,8 @@ func loadTileSet(ref *TileSetReference) *TileSet {
 	if err = jsonParser.Decode(&tileSet); err != nil {
 		log.Fatal("parsing config file", err.Error())
 	}
-	tileSet.numTilesX = tileSet.ImageWidth / common.TileSize
-	tileSet.numTilesY = tileSet.ImageHeight / common.TileSize
+	tileSet.numTilesX = tileSet.ImageWidth / TileSize
+	tileSet.numTilesY = tileSet.ImageHeight / TileSize
 
 	b, err := ioutil.ReadFile(filepath.Join(resourceDirectory, tileSet.ImageFileName))
 	if err != nil {
@@ -116,7 +115,7 @@ func loadTileSet(ref *TileSetReference) *TileSet {
 	return &tileSet
 }
 
-func (tg *TiledGrid) Draw(camera *Camera) {
+func (tg *TiledGrid) Draw(camera Camera) {
 	for _, layer := range tg.Layers {
 		for i, tileIndex := range layer.Data {
 			if tileIndex == 0 {
@@ -126,13 +125,13 @@ func (tg *TiledGrid) Draw(camera *Camera) {
 			ts := tg.getTileSetForIndex(tileIndex)
 
 			op := &ebiten.DrawImageOptions{}
-			op.GeoM.Translate(float64(((i)%layer.Width)*common.TileSize), float64(((i)/layer.Height)*common.TileSize))
-			op.GeoM.Scale(common.Scale, common.Scale)
+			op.GeoM.Translate(float64(((i)%layer.Width)*TileSize), float64(((i)/layer.Height)*TileSize))
+			op.GeoM.Scale(Scale, Scale)
 
-			sx := ((tileIndex - ts.FirstGid) % ts.numTilesX) * common.TileSize
-			sy := ((tileIndex - ts.FirstGid) / ts.numTilesX) * common.TileSize
+			sx := ((tileIndex - ts.FirstGid) % ts.numTilesX) * TileSize
+			sy := ((tileIndex - ts.FirstGid) / ts.numTilesX) * TileSize
 
-			camera.DrawImage(ts.image.SubImage(image.Rect(sx, sy, sx+common.TileSize, sy+common.TileSize)).(*ebiten.Image), op)
+			camera.DrawImage(ts.image.SubImage(image.Rect(sx, sy, sx+TileSize, sy+TileSize)).(*ebiten.Image), op)
 		}
 	}
 }
@@ -148,17 +147,17 @@ func (tg *TiledGrid) getTileSetForIndex(index int) *TileSet {
 }
 
 type ObjectData struct {
-	name       string
-	objectType string
-	x          int
-	y          int
-	properties []*ObjectProperty
+	Name       string
+	ObjectType string
+	X          int
+	Y          int
+	Properties []*ObjectProperty
 }
 
 type ObjectProperty struct {
-	name    string
-	objType string
-	value   interface{}
+	Name    string
+	ObjType string
+	Value   interface{}
 }
 
 func (tg *TiledGrid) GetObjectData() []*ObjectData {
@@ -166,17 +165,17 @@ func (tg *TiledGrid) GetObjectData() []*ObjectData {
 	for _, l := range tg.Layers {
 		for _, obj := range l.Objects {
 			od := &ObjectData{
-				name:       obj.Name,
-				objectType: obj.Type,
-				x:          obj.X,
-				y:          obj.Y,
-				properties: []*ObjectProperty{},
+				Name:       obj.Name,
+				ObjectType: obj.Type,
+				X:          obj.X,
+				Y:          obj.Y,
+				Properties: []*ObjectProperty{},
 			}
 			for _, p := range obj.Properties {
-				od.properties = append(od.properties, &ObjectProperty{
-					name:    p.Name,
-					objType: p.Type,
-					value:   p.Value,
+				od.Properties = append(od.Properties, &ObjectProperty{
+					Name:    p.Name,
+					ObjType: p.Type,
+					Value:   p.Value,
 				})
 			}
 			ods = append(ods, od)
@@ -186,33 +185,33 @@ func (tg *TiledGrid) GetObjectData() []*ObjectData {
 }
 
 type TileData struct {
-	x       int
-	y       int
-	isBlock bool
+	X       int
+	Y       int
+	IsBlock bool
 }
 
 func (tg *TiledGrid) GetTileData(x int, y int) *TileData {
 	td := TileData{
-		x: x,
-		y: y,
+		X: x,
+		Y: y,
 	}
 	index := (y * tg.Layers[0].Width) + x
 
 	if index < 0 || index >= len(tg.Layers[0].Data) {
 		// no tile here
-		td.isBlock = true
+		td.IsBlock = true
 		return &td
 	}
 
 	if x < 0 || y < 0 {
 		// no tile here
-		td.isBlock = true
+		td.IsBlock = true
 		return &td
 	}
 
 	tileSetIndex := tg.Layers[0].Data[index]
 	if tileSetIndex == 0 {
-		td.isBlock = true
+		td.IsBlock = true
 		return &td
 	}
 
@@ -222,7 +221,7 @@ func (tg *TiledGrid) GetTileData(x int, y int) *TileData {
 		if tile.Id == tileSetIndex-ts.FirstGid {
 			for _, prop := range tile.Properties {
 				if prop.Name == "isBlock" && prop.Value != nil {
-					td.isBlock = (prop.Value).(bool)
+					td.IsBlock = (prop.Value).(bool)
 				}
 				break
 			}
