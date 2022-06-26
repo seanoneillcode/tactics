@@ -8,6 +8,11 @@ import (
 type Camera struct {
 	pos    *common.Position
 	buffer *ebiten.Image
+	target CameraTarget
+}
+
+type CameraTarget interface {
+	GetPos() *common.Position
 }
 
 func NewCamera() *Camera {
@@ -19,11 +24,11 @@ func NewCamera() *Camera {
 
 func (c *Camera) Update(delta int64, state *State) {
 	c.buffer.Clear()
-	//if c.followPlayer {
-	//	screenOffset := common.PositionFromInt(common.HalfScreenWidth, common.HalfScreenHeight)
-	//	tileOffset := common.PositionFromInt(common.HalfTileSize, common.HalfTileSize)
-	//	c.pos = (state.Player.Character.pos.Sub(screenOffset).Add(tileOffset)).Mul(common.ScaleF)
-	//}
+	if c.target != nil {
+		screenOffset := common.PositionFromInt(common.HalfScreenWidth, common.HalfScreenHeight)
+		tileOffset := common.PositionFromInt(common.HalfTileSize, common.HalfTileSize)
+		c.pos = (c.target.GetPos().Sub(screenOffset).Add(tileOffset)).Mul(common.ScaleF)
+	}
 }
 
 func (c *Camera) DrawBuffer(screen *ebiten.Image) {
@@ -34,4 +39,8 @@ func (c *Camera) DrawBuffer(screen *ebiten.Image) {
 func (c *Camera) DrawImage(img *ebiten.Image, options *ebiten.DrawImageOptions) {
 	options.GeoM.Translate(-c.pos.X, -c.pos.Y)
 	c.buffer.DrawImage(img, options)
+}
+
+func (c *Camera) Target(target CameraTarget) {
+	c.target = target
 }

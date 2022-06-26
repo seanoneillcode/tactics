@@ -10,6 +10,12 @@ type Position struct {
 	Y float64
 }
 
+func CopyPosition(from *Position) *Position {
+	return &Position{
+		X: from.X,
+		Y: from.Y,
+	}
+}
 func PositionFromInt(x int, y int) *Position {
 	return &Position{
 		X: float64(x),

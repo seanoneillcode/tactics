@@ -103,7 +103,7 @@ func (g *Game) Update() error {
 		if g.state.ModeManager.NextMode == common.FightMode {
 			g.state.ModeManager.NextMode = common.NoneMode
 			g.mode = common.FightMode
-			g.StartFightMode()
+			g.StartFightMode(g.state)
 			g.fightState.Update(delta)
 		}
 
@@ -152,11 +152,13 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 	return common.ScreenWidth * common.Scale, common.ScreenHeight * common.Scale
 }
 
-func (g *Game) StartFightMode() {
+func (g *Game) StartFightMode(state *explore.State) {
 	rand.Seed(time.Now().Unix())
-	playerActors := []*fight.Actor{
-		fight.NewActor("shane"),
+	var playerActors []*fight.Actor
+	for _, c := range state.TeamState.Characters {
+		playerActors = append(playerActors, fight.NewActor(c.Name))
 	}
+	// todo get this from state, placed when a fight starts
 	enemyActors := []*fight.Actor{
 		fight.NewActor("slime"),
 	}

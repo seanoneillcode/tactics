@@ -24,3 +24,7 @@ func NewActor(name string) *Actor {
 		Pos:    &common.Position{},
 	}
 }
+
+func (a Actor) GetPos() *common.Position {
+	return a.Pos
+}

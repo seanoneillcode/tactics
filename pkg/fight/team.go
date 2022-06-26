@@ -35,3 +35,16 @@ func (r *Team) Update(delta int64, state *State) {
 		actor.Update(delta, state)
 	}
 }
+
+func (r *Team) GetNextActor(current *Actor) *Actor {
+	for index, a := range r.Actors {
+		if a == current {
+			nextPlayerIndex := index + 1
+			if nextPlayerIndex >= len(r.Actors) {
+				nextPlayerIndex = 0
+			}
+			return r.Actors[nextPlayerIndex]
+		}
+	}
+	return nil
+}

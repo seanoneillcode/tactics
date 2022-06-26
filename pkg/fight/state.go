@@ -23,6 +23,7 @@ func (s *State) Update(delta int64) {
 
 func (s *State) Draw(camera *Camera) {
 	s.Scene.Draw(camera)
+	s.PlayerController.Draw(camera) // hmm this is actually UI
 	s.PlayerTeam.Draw(camera)
 	s.AiTeam.Draw(camera)
 }

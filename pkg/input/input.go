@@ -111,3 +111,7 @@ func IsCancelPressed() bool {
 func IsMenuPressed() bool {
 	return inpututil.IsGamepadButtonJustPressed(0, ebiten.GamepadButton3) || inpututil.IsKeyJustPressed(ebiten.KeySpace)
 }
+
+func IsNextPressed() bool {
+	return inpututil.IsKeyJustPressed(ebiten.KeyV)
+}
