@@ -77,7 +77,7 @@ func (r *ui) Update(delta int64, state *explore.State) {
 		return
 	}
 	r.handleInput(state)
-	highlightPos := &elem.Pos{X: listPos.X, Y: listPos.Y}
+	highlightPos := elem.Pos{X: listPos.X, Y: listPos.Y}
 	highlightPos.Y = listPos.Y + (16.0 * r.selectedListIndex)
 	r.highlight.SetPos(highlightPos)
 	duration := time.Duration(state.TotalElapsedTime) * time.Millisecond

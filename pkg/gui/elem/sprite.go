@@ -26,7 +26,7 @@ func (s *Sprite) Draw(screen *ebiten.Image) {
 	screen.DrawImage(s.image, op)
 }
 
-func (s *Sprite) SetPos(pos *Pos) {
+func (s *Sprite) SetPos(pos Pos) {
 	s.x = float64(pos.X)
 	s.y = float64(pos.Y)
 }

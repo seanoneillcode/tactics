@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/seanoneillcode/go-tactics/pkg/fight"
+	"github.com/seanoneillcode/go-tactics/pkg/gui/action"
 	"github.com/seanoneillcode/go-tactics/pkg/gui/dialog"
 	"github.com/seanoneillcode/go-tactics/pkg/gui/equipment"
 	"github.com/seanoneillcode/go-tactics/pkg/gui/inventory"
@@ -43,6 +44,7 @@ func main() {
 			AiTeam:           nil,
 			Camera:           fight.NewCamera(),
 		},
+		fightAction: action.NewUI(),
 		dialog:      dialog.NewUi(),
 		shopUI:      gui.NewShopUi(),
 		inventoryUI: inventory.NewUi(),
@@ -72,6 +74,7 @@ type Game struct {
 	keys             []ebiten.Key
 	state            *explore.State
 	fightState       *fight.State
+	fightAction      *action.Ui
 
 	dialog      gui.UI
 	shopUI      *gui.ShopUI
@@ -110,6 +113,7 @@ func (g *Game) Update() error {
 	case common.FightMode:
 		// update state
 		g.fightState.Update(delta)
+		g.fightAction.Update(delta, g.fightState)
 
 		// check for mode change
 		if g.fightState.NextMode == common.ExploreMode {
@@ -145,6 +149,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	case common.FightMode:
 		g.fightState.Draw(g.fightState.Camera)
 		g.fightState.Camera.DrawBuffer(screen)
+		g.fightAction.Draw(screen)
 	}
 }
 

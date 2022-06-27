@@ -36,7 +36,7 @@ func (r *card) Update(pos elem.Pos, charState *explore.CharacterState) {
 			charState,
 		)
 	}
-	r.portrait.SetPos(&elem.Pos{
+	r.portrait.SetPos(elem.Pos{
 		X: pos.X + 40,
 		Y: pos.Y,
 	})
@@ -102,8 +102,8 @@ func (r *slotEntry) Draw(screen *ebiten.Image) {
 
 func (r *slotEntry) Update(pos elem.Pos, isHighlighted bool, charState *explore.CharacterState) {
 	r.isHighlighted = isHighlighted
-	r.bg.SetPos(&pos)
-	r.bgHighlight.SetPos(&pos)
+	r.bg.SetPos(pos)
+	r.bgHighlight.SetPos(pos)
 	r.label.SetPosition(elem.Pos{
 		X: pos.X + 16 + 4,
 		Y: pos.Y + 6,
@@ -114,7 +114,7 @@ func (r *slotEntry) Update(pos elem.Pos, isHighlighted bool, charState *explore.
 	} else {
 		r.label.SetValue(item.Name)
 	}
-	r.image.SetPos(&elem.Pos{
+	r.image.SetPos(elem.Pos{
 		X: pos.X + 2,
 		Y: pos.Y + 2,
 	})

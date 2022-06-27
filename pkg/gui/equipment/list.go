@@ -78,7 +78,7 @@ func (r *List) Update(teamState *explore.TeamState, slot string) {
 		r.currentIteration = teamState.Iteration
 		r.updateList(teamState, slot)
 	}
-	r.highlight.SetPos(&elem.Pos{
+	r.highlight.SetPos(elem.Pos{
 		X: r.pos.X,
 		Y: r.pos.Y + (16 * r.index),
 	})

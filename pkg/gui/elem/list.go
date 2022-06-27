@@ -51,7 +51,7 @@ func (r *List) Update() {
 			Y: y + (16 * index),
 		})
 	}
-	r.highlight.SetPos(&Pos{
+	r.highlight.SetPos(Pos{
 		X: r.pos.X,
 		Y: r.pos.Y + (16 * r.index),
 	})
