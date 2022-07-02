@@ -10,6 +10,11 @@ type Position struct {
 	Y float64
 }
 
+type Tile struct {
+	X int
+	Y int
+}
+
 func CopyPosition(from *Position) *Position {
 	return &Position{
 		X: from.X,

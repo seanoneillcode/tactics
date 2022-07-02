@@ -29,6 +29,7 @@ type PlayerController struct {
 	CurrentActions      []Action
 	CurrentTurnPhase    TurnPhase
 	PlayerSelection     *Selection
+	PossibleMoves       *PossibleMoves
 }
 
 func NewPlayerController() *PlayerController {
@@ -39,12 +40,14 @@ func NewPlayerController() *PlayerController {
 			NextAction,
 		},
 		PlayerSelection: NewSelection(),
+		PossibleMoves:   NewPossibleMoves(),
 	}
 }
 
 func (r *PlayerController) StartTurn(state *State) {
 	r.SelectedActor = state.PlayerTeam.Actors[0]
 	r.CurrentTurnPhase = SelectActionTurnPhase
+	r.SelectedActionIndex = 0
 	state.ActiveTeam = state.PlayerTeam
 	state.PlayerTeam.StartTurn()
 }
@@ -65,14 +68,12 @@ func (r *PlayerController) Update(delta int64, state *State) {
 			if r.SelectedActionIndex == -1 {
 				r.SelectedActionIndex = len(r.CurrentActions) - 1
 			}
-			fmt.Println("action: ", r.CurrentActions[r.SelectedActionIndex])
 		}
 		if input.IsDownJustPressed() {
 			r.SelectedActionIndex += 1
 			if r.SelectedActionIndex >= len(r.CurrentActions) {
 				r.SelectedActionIndex = 0
 			}
-			fmt.Println("action: ", r.CurrentActions[r.SelectedActionIndex])
 		}
 		if input.IsEnterPressed() {
 			currentAction := r.CurrentActions[r.SelectedActionIndex]
@@ -83,6 +84,7 @@ func (r *PlayerController) Update(delta int64, state *State) {
 					r.CurrentTurnPhase = SelectMoveTargetTurnPhase
 					r.PlayerSelection.SetPos(r.SelectedActor.Pos.X, r.SelectedActor.Pos.Y)
 					state.Camera.Target(r.PlayerSelection)
+					r.PossibleMoves.GeneratePossibleMoves(state, 3)
 				}
 			case NextAction:
 				r.SelectedActor = state.PlayerTeam.GetNextActor(r.SelectedActor)
@@ -91,20 +93,36 @@ func (r *PlayerController) Update(delta int64, state *State) {
 	case SelectMoveTargetTurnPhase:
 		// select tile to move actor to
 		if input.IsDownJustPressed() {
-			r.PlayerSelection.SetPos(r.PlayerSelection.Pos.X, r.PlayerSelection.Pos.Y+common.TileSize)
+			if r.PossibleMoves.CanMove(r.PlayerSelection.Pos.X, r.PlayerSelection.Pos.Y+common.TileSize) {
+				r.PlayerSelection.SetPos(r.PlayerSelection.Pos.X, r.PlayerSelection.Pos.Y+common.TileSize)
+			}
 		}
 		if input.IsUpJustPressed() {
-			r.PlayerSelection.SetPos(r.PlayerSelection.Pos.X, r.PlayerSelection.Pos.Y-common.TileSize)
+			if r.PossibleMoves.CanMove(r.PlayerSelection.Pos.X, r.PlayerSelection.Pos.Y-common.TileSize) {
+				r.PlayerSelection.SetPos(r.PlayerSelection.Pos.X, r.PlayerSelection.Pos.Y-common.TileSize)
+			}
 		}
 		if input.IsLeftJustPressed() {
-			r.PlayerSelection.SetPos(r.PlayerSelection.Pos.X-common.TileSize, r.PlayerSelection.Pos.Y)
+			if r.PossibleMoves.CanMove(r.PlayerSelection.Pos.X-common.TileSize, r.PlayerSelection.Pos.Y) {
+				r.PlayerSelection.SetPos(r.PlayerSelection.Pos.X-common.TileSize, r.PlayerSelection.Pos.Y)
+			}
 		}
 		if input.IsRightJustPressed() {
-			r.PlayerSelection.SetPos(r.PlayerSelection.Pos.X+common.TileSize, r.PlayerSelection.Pos.Y)
+			if r.PossibleMoves.CanMove(r.PlayerSelection.Pos.X+common.TileSize, r.PlayerSelection.Pos.Y) {
+				r.PlayerSelection.SetPos(r.PlayerSelection.Pos.X+common.TileSize, r.PlayerSelection.Pos.Y)
+			}
 		}
 		if input.IsEnterPressed() {
-			r.SelectedActor.Pos = common.CopyPosition(r.PlayerSelection.Pos)
-			r.SelectedActor.ActionTokensLeft -= 1
+			if !ContainsActor(state, r.PlayerSelection.Pos.X, r.PlayerSelection.Pos.Y) {
+				r.SelectedActor.Pos = common.CopyPosition(r.PlayerSelection.Pos)
+				r.SelectedActor.ActionTokensLeft -= 1
+				if r.SelectedActor.ActionTokensLeft == 0 {
+					r.SelectedActor = state.PlayerTeam.GetNextActor(r.SelectedActor)
+				}
+				r.CurrentTurnPhase = SelectActionTurnPhase
+			}
+		}
+		if input.IsCancelPressed() {
 			r.CurrentTurnPhase = SelectActionTurnPhase
 		}
 	case SelectSkillTargetTurnPhase:
@@ -121,6 +139,25 @@ func (r PlayerController) Draw(camera *Camera) {
 	case SelectActionTurnPhase:
 		// draw actions and highlighted action
 	case SelectMoveTargetTurnPhase:
+		r.PossibleMoves.Draw(camera)
 		r.PlayerSelection.Draw(camera)
 	}
+}
+
+func ContainsActor(state *State, x float64, y float64) bool {
+	ix := int(x / common.TileSize)
+	iy := int(y / common.TileSize)
+	for _, actor := range state.PlayerTeam.Actors {
+		ax, ay := common.WorldToTile(actor.Pos)
+		if ax == ix && ay == iy {
+			return true
+		}
+	}
+	for _, actor := range state.AiTeam.Actors {
+		ax, ay := common.WorldToTile(actor.Pos)
+		if ax == ix && ay == iy {
+			return true
+		}
+	}
+	return false
 }

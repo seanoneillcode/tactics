@@ -37,13 +37,25 @@ func (r *Team) Update(delta int64, state *State) {
 }
 
 func (r *Team) GetNextActor(current *Actor) *Actor {
+
 	for index, a := range r.Actors {
 		if a == current {
-			nextPlayerIndex := index + 1
-			if nextPlayerIndex >= len(r.Actors) {
-				nextPlayerIndex = 0
+
+			startIndex := index
+			nextIndex := index + 1
+			if nextIndex >= len(r.Actors) {
+				nextIndex = 0
 			}
-			return r.Actors[nextPlayerIndex]
+			for nextIndex != startIndex {
+				if r.Actors[nextIndex].ActionTokensLeft > 0 {
+					return r.Actors[nextIndex]
+				}
+				nextIndex = nextIndex + 1
+				if nextIndex >= len(r.Actors) {
+					nextIndex = 0
+				}
+			}
+			return current
 		}
 	}
 	return nil
