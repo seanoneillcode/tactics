@@ -60,14 +60,14 @@ func (r *PlayerController) Update(delta int64, state *State) {
 		if input.IsNextPressed() {
 			r.SelectedActor = state.PlayerTeam.GetNextActor(r.SelectedActor)
 		}
-		if input.IsDownJustPressed() {
+		if input.IsUpJustPressed() {
 			r.SelectedActionIndex -= 1
 			if r.SelectedActionIndex == -1 {
 				r.SelectedActionIndex = len(r.CurrentActions) - 1
 			}
 			fmt.Println("action: ", r.CurrentActions[r.SelectedActionIndex])
 		}
-		if input.IsUpJustPressed() {
+		if input.IsDownJustPressed() {
 			r.SelectedActionIndex += 1
 			if r.SelectedActionIndex >= len(r.CurrentActions) {
 				r.SelectedActionIndex = 0

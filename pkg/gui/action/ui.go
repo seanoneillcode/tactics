@@ -41,6 +41,6 @@ func (r *Ui) Update(delta int64, state *fight.State) {
 
 	r.IsActive = true
 
-	r.list.Update()
+	r.list.Update(state)
 
 }

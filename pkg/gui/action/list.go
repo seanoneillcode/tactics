@@ -3,6 +3,7 @@ package action
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/seanoneillcode/go-tactics/pkg/common"
+	"github.com/seanoneillcode/go-tactics/pkg/fight"
 	"github.com/seanoneillcode/go-tactics/pkg/gui/elem"
 )
 
@@ -11,8 +12,9 @@ type List struct {
 	pos elem.Pos
 
 	// state
-	items []*Entry
-	index int
+	items    []*Entry
+	index    int
+	isActive bool
 }
 
 func NewList(actions []string) *List {
@@ -26,12 +28,16 @@ func NewList(actions []string) *List {
 }
 
 func (r *List) Draw(screen *ebiten.Image) {
+	if !r.isActive {
+		return
+	}
 	for _, item := range r.items {
 		item.Draw(screen)
 	}
 }
 
-func (r *List) Update() {
+func (r *List) Update(state *fight.State) {
+	r.isActive = state.ActiveTeam == state.PlayerTeam
 	r.pos = elem.Pos{
 		X: common.HalfScreenWidth - common.HalfTileSize,
 		Y: common.HalfScreenHeight + common.TileSize,
@@ -40,8 +46,9 @@ func (r *List) Update() {
 		X: r.pos.X,
 		Y: r.pos.Y,
 	}
-	for _, item := range r.items {
-		item.Update(pos)
+	highlightedIndex := state.PlayerController.SelectedActionIndex
+	for index, item := range r.items {
+		item.Update(pos, index == highlightedIndex)
 		pos.Y = pos.Y + 16
 	}
 }
