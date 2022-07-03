@@ -9,11 +9,11 @@ type Actor struct {
 	Pos              *common.Position
 }
 
-func (a Actor) Draw(camera *Camera) {
+func (a *Actor) Draw(camera *Camera) {
 	a.Sprite.Draw(camera)
 }
 
-func (a Actor) Update(delta int64, state *State) {
+func (a *Actor) Update(delta int64, state *State) {
 	a.Sprite.SetPosition(a.Pos.X, a.Pos.Y)
 }
 
@@ -25,6 +25,13 @@ func NewActor(name string) *Actor {
 	}
 }
 
-func (a Actor) GetPos() *common.Position {
+func (a *Actor) GetPos() *common.Position {
 	return a.Pos
+}
+
+func (a *Actor) SetPos(pos *common.Position) {
+	a.Pos = &common.Position{
+		X: pos.X,
+		Y: pos.Y,
+	}
 }

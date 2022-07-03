@@ -159,12 +159,17 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 
 func (g *Game) StartFightMode(state *explore.State) {
 	rand.Seed(time.Now().Unix())
-	var playerActors []*fight.Actor
-	for _, c := range state.TeamState.Characters {
-		playerActors = append(playerActors, fight.NewActor(c.Name))
+	//var playerActors []*fight.Actor
+	//for _, c := range state.TeamState.Characters {
+	//	playerActors = append(playerActors, fight.NewActor(c.Name))
+	//}
+	playerActors := []*fight.Actor{
+		fight.NewActor("bob"),
 	}
 	// todo get this from state, placed when a fight starts
 	enemyActors := []*fight.Actor{
+		fight.NewActor("slime"),
+		fight.NewActor("slime"),
 		fight.NewActor("slime"),
 	}
 	g.fightState.StartFight(playerActors, enemyActors, "forest-scene")

@@ -17,7 +17,6 @@ const (
 )
 
 type TiledGrid struct {
-	//image             *ebiten.Image
 	Layers            []*Layer            `json:"layers"`
 	TileSetReferences []*TileSetReference `json:"tilesets"`
 	TileSet           []*TileSet
@@ -67,7 +66,6 @@ type TileConfigProp struct {
 
 func NewTileGrid(fileName string) *TiledGrid {
 	var tiledGrid TiledGrid
-	//var tileSet TileSet
 
 	configFile, err := os.Open(filepath.Join(resourceDirectory, fileName))
 	if err != nil {
@@ -230,4 +228,26 @@ func (tg *TiledGrid) GetTileData(x int, y int) *TileData {
 	}
 
 	return &td
+}
+
+func GeneratePathGrid(tiledGrid *TiledGrid) PathGrid {
+	w := PathGrid{}
+	x := 0
+	y := 0
+	for x < tiledGrid.Layers[0].Width {
+		for y < tiledGrid.Layers[0].Height {
+			td := tiledGrid.GetTileData(x, y)
+			pt := &PathTile{
+				TileKind: NormalTileKind,
+			}
+			if td.IsBlock {
+				pt.TileKind = BlockerTileKind
+			}
+			w.SetTile(pt, x, y)
+			y += 1
+		}
+		x += 1
+		y = 0
+	}
+	return w
 }
