@@ -23,6 +23,7 @@ func (r *AiController) StartTurn(state *State) {
 	state.AiTeam.StartTurn()
 	r.PathGrid = common.GeneratePathGrid(state.Scene.tiledGrid)
 	r.StepPositions = nil
+	state.Camera.Target(r.CurrentActor)
 }
 
 func (r *AiController) Update(delta int64, state *State) {
@@ -46,6 +47,7 @@ func (r *AiController) Update(delta int64, state *State) {
 					state.PlayerController.StartTurn(state)
 				} else {
 					r.CurrentActor = nextActor
+					state.Camera.Target(r.CurrentActor)
 				}
 				r.StepPositions = nil
 			}
