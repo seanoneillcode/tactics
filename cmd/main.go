@@ -164,13 +164,26 @@ func (g *Game) StartFightMode(state *explore.State) {
 	//	playerActors = append(playerActors, fight.NewActor(c.Name))
 	//}
 	playerActors := []*fight.Actor{
-		fight.NewActor("bob"),
+		fight.NewActor("bob",
+			[]*fight.Skill{
+				fight.SlashSkill(),
+			}),
+		fight.NewActor("alice",
+			[]*fight.Skill{
+				fight.FireBallSkill(),
+				fight.HealSkill(),
+			}),
 	}
 	// todo get this from state, placed when a fight starts
 	enemyActors := []*fight.Actor{
-		fight.NewActor("slime"),
-		fight.NewActor("slime"),
-		fight.NewActor("slime"),
+		fight.NewActor("slime",
+			[]*fight.Skill{
+				fight.SlashSkill(),
+			}),
+		fight.NewActor("slime",
+			[]*fight.Skill{
+				fight.SlashSkill(),
+			}),
 	}
 	g.fightState.StartFight(playerActors, enemyActors, "forest-scene")
 }

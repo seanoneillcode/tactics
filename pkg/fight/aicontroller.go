@@ -58,11 +58,11 @@ func (r *AiController) Update(delta int64, state *State) {
 
 func (r *AiController) GenerateStepPositions(state *State, actor *Actor, tilesToMove int) []*common.Position {
 	target := state.PlayerTeam.Actors[0]
-	x0, y0 := common.WorldToTile(actor.Pos)
-	x1, y1 := common.WorldToTile(target.Pos)
+	pos0 := common.WorldToTile(actor.Pos)
+	pos1 := common.WorldToTile(target.Pos)
 
-	from := r.PathGrid.GetMapTile(x0, y0)
-	to := r.PathGrid.GetMapTile(x1, y1)
+	from := r.PathGrid.GetMapTile(pos0.X, pos0.Y)
+	to := r.PathGrid.GetMapTile(pos1.X, pos1.Y)
 	p, _, _ := astar.Path(from, to)
 
 	tileIndex := len(p) - tilesToMove

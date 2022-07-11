@@ -97,10 +97,10 @@ func (c *Character) TryToMove(dirX int, dirY int, state *State) {
 		Y: dirY,
 	}
 
-	tileX, tileY := common.WorldToTile(c.pos)
-	tileX = tileX + dirX
-	tileY = tileY + dirY
-	ti := state.Map.Level.GetTileInfo(tileX, tileY)
+	tile := common.WorldToTile(c.pos)
+	tile.X = tile.X + dirX
+	tile.Y = tile.Y + dirY
+	ti := state.Map.Level.GetTileInfo(tile)
 	if ti.tileData.IsBlock {
 		if ti.link == nil {
 			return

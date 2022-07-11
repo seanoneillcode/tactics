@@ -71,3 +71,35 @@ func (r *PossibleMoves) CanMove(x float64, y float64) bool {
 
 	return true
 }
+
+type PossibleTargets struct {
+	targets   []common.Tile
+	selection *common.Sprite
+}
+
+func NewPossibleTargets() *PossibleTargets {
+	return &PossibleTargets{
+		selection: common.NewSprite("target-tile-selection.png"),
+	}
+}
+
+func (r *PossibleTargets) CanTarget(f float64, y float64) bool {
+	return true
+}
+
+func (r *PossibleTargets) GeneratePossibleTargets(state *State) {
+	pos := state.PlayerController.SelectedActor.Pos
+	px, py := int(pos.X/common.TileSize), int(pos.Y/common.TileSize)
+
+	skill := state.PlayerController.SelectedActor.Skills[0]
+	r.targets = skill.TargetPattern.GetPattern(common.Tile{X: px, Y: py}, state)
+
+}
+
+func (r *PossibleTargets) Draw(camera *Camera) {
+	for _, m := range r.targets {
+		r.selection.X = float64(m.X * common.TileSize)
+		r.selection.Y = float64(m.Y * common.TileSize)
+		r.selection.Draw(camera)
+	}
+}

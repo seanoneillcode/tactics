@@ -17,13 +17,15 @@ type List struct {
 	isActive bool
 }
 
-func NewList(actions []string) *List {
+func NewList() *List {
 	l := &List{
-		items: []*Entry{},
+		items: []*Entry{
+			NewEntry("move"),
+			NewEntry("skill"),
+			NewEntry("done"),
+		},
 	}
-	for _, action := range actions {
-		l.items = append(l.items, NewEntry(action))
-	}
+
 	return l
 }
 

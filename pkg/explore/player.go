@@ -74,8 +74,9 @@ func (p *Player) Update(delta int64, state *State) {
 			}
 			p.Character.TryToMove(inputX, inputY, state)
 
-			tileX, tileY := common.WorldToTile(p.Character.pos)
-			ti := state.Map.Level.GetTileInfo(inputX+tileX, tileY+inputY)
+			tile := common.WorldToTile(p.Character.pos)
+
+			ti := state.Map.Level.GetTileInfo(common.Tile{X: inputX + tile.X, Y: tile.Y + inputY})
 
 			// check for things on the tile
 			if ti.npc != nil {

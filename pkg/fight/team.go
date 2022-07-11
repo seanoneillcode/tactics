@@ -13,6 +13,7 @@ func NewTeam(actors []*Actor) *Team {
 func (r *Team) StartTurn() {
 	for _, a := range r.Actors {
 		a.ActionTokensLeft = 2
+		a.HasMove = true
 	}
 }
 

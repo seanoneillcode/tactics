@@ -1,4 +1,4 @@
-package action
+package overlay
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
@@ -7,7 +7,7 @@ import (
 
 type Ui struct {
 	// assets
-	list *List
+	list []*Card
 
 	// state
 	IsActive      bool
@@ -17,7 +17,7 @@ type Ui struct {
 
 func NewUI() *Ui {
 	i := &Ui{
-		list: NewList(),
+		list: []*Card{},
 	}
 	return i
 }
@@ -26,7 +26,9 @@ func (r *Ui) Draw(screen *ebiten.Image) {
 	if !r.IsActive {
 		return
 	}
-	r.list.Draw(screen)
+	for _, card := range r.list {
+		card.Draw(screen)
+	}
 }
 
 func (r *Ui) Update(delta int64, state *fight.State) {
@@ -37,6 +39,8 @@ func (r *Ui) Update(delta int64, state *fight.State) {
 
 	r.IsActive = true
 
-	r.list.Update(state)
+	for _, card := range r.list {
+		card.Update(state)
+	}
 
 }

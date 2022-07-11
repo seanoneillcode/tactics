@@ -54,48 +54,48 @@ func (l *Level) Draw(camera *Camera) {
 	}
 }
 
-func (l *Level) GetTileInfo(x int, y int) *TileInfo {
+func (l *Level) GetTileInfo(tile common.Tile) *TileInfo {
 	ti := &TileInfo{
-		tileData: l.tiledGrid.GetTileData(x, y),
+		tileData: l.tiledGrid.GetTileData(tile.X, tile.Y),
 	}
 	for _, npc := range l.npcs {
-		nx, ny := common.WorldToTile(npc.GetPosition())
-		if nx == x && ny == y {
+		pos := common.WorldToTile(npc.GetPosition())
+		if pos.X == tile.X && pos.Y == tile.Y {
 			ti.npc = npc
 			break
 		}
 	}
 	for _, enemy := range l.enemies {
-		nx, ny := common.WorldToTile(enemy.GetPosition())
-		if nx == x && ny == y {
+		pos := common.WorldToTile(enemy.GetPosition())
+		if pos.X == tile.X && pos.Y == tile.Y {
 			ti.enemy = enemy
 			break
 		}
 	}
 	for _, link := range l.links {
-		nx, ny := common.WorldToTileInt(link.GetPosition())
-		if nx == x && ny == y {
+		pos := common.WorldToTileInt(link.GetPosition())
+		if pos.X == tile.X && pos.Y == tile.Y {
 			ti.link = link
 			break
 		}
 	}
 	for _, pickup := range l.pickups {
-		nx, ny := common.WorldToTile(pickup.GetPosition())
-		if nx == x && ny == y {
+		pos := common.WorldToTile(pickup.GetPosition())
+		if pos.X == tile.X && pos.Y == tile.Y {
 			ti.pickup = pickup
 			break
 		}
 	}
 	for _, action := range l.actions {
-		nx, ny := common.WorldToTile(action.GetPosition())
-		if nx == x && ny == y {
+		pos := common.WorldToTile(action.GetPosition())
+		if pos.X == tile.X && pos.Y == tile.Y {
 			ti.action = action
 			break
 		}
 	}
 	for _, s := range l.shops {
-		nx, ny := common.WorldToTile(s.GetPosition())
-		if nx == x && ny == y {
+		pos := common.WorldToTile(s.GetPosition())
+		if pos.X == tile.X && pos.Y == tile.Y {
 			ti.shop = s
 			break
 		}

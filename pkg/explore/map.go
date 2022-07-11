@@ -63,9 +63,9 @@ func (m *Map) transitionToLevel(state *State) {
 	if toLink == nil {
 		log.Fatalf("failed to transition to level with no link")
 	}
-	wx, wy := common.WorldToTile(state.Player.Character.pos)
+	pos := common.WorldToTile(state.Player.Character.pos)
 	// offset of position between tile position while Character is moving
-	offset := state.Player.Character.pos.Sub(common.PositionFromInt(wx*common.TileSize, wy*common.TileSize))
+	offset := state.Player.Character.pos.Sub(common.PositionFromInt(pos.X*common.TileSize, pos.Y*common.TileSize))
 	if state.Player.Character.velocity.X < 0 {
 		// magic
 		offset.X = offset.X - common.TileSize
