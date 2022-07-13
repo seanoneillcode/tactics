@@ -83,8 +83,14 @@ func NewPossibleTargets() *PossibleTargets {
 	}
 }
 
-func (r *PossibleTargets) CanTarget(f float64, y float64) bool {
-	return true
+func (r *PossibleTargets) CanTarget(pos *common.Position) bool {
+	can := common.WorldToTile(pos)
+	for _, t := range r.targets {
+		if t.X == can.X && t.Y == can.Y {
+			return true
+		}
+	}
+	return false
 }
 
 func (r *PossibleTargets) GeneratePossibleTargets(state *State) {

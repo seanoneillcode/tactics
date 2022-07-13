@@ -155,40 +155,59 @@ func (r *PlayerController) Update(delta int64, state *State) {
 	case SelectSkillTargetTurnPhase:
 		// select tile to place skill pattern
 		if input.IsDownJustPressed() {
-			if r.PossibleTargets.CanTarget(r.PlayerSelection.Pos.X, r.PlayerSelection.Pos.Y+common.TileSize) {
-				r.PlayerSelection.SetPos(r.PlayerSelection.Pos.X, r.PlayerSelection.Pos.Y+common.TileSize)
+			next := findNextTile(state, r.PlayerSelection.Pos, 0, 1)
+			if next == nil {
+				next = findNextTile(state, r.SelectedActor.Pos, 0, 1)
 			}
-			effectSourcePos := common.WorldToTile(r.PlayerSelection.Pos)
-			r.EffectedTiles = r.SelectedActor.Skills[0].EffectPattern.GetPattern(effectSourcePos, state)
+			if next != nil {
+				r.PlayerSelection.SetPos(float64(next.X*common.TileSize), float64(next.Y*common.TileSize))
+				effectSourcePos := common.WorldToTile(r.PlayerSelection.Pos)
+				r.EffectedTiles = r.SelectedActor.Skills[0].EffectPattern.GetPattern(effectSourcePos, state)
+			}
 		}
 		if input.IsUpJustPressed() {
-			if r.PossibleTargets.CanTarget(r.PlayerSelection.Pos.X, r.PlayerSelection.Pos.Y-common.TileSize) {
-				r.PlayerSelection.SetPos(r.PlayerSelection.Pos.X, r.PlayerSelection.Pos.Y-common.TileSize)
+			next := findNextTile(state, r.PlayerSelection.Pos, 0, -1)
+			if next == nil {
+				next = findNextTile(state, r.SelectedActor.Pos, 0, -1)
 			}
-			effectSourcePos := common.WorldToTile(r.PlayerSelection.Pos)
-			r.EffectedTiles = r.SelectedActor.Skills[0].EffectPattern.GetPattern(effectSourcePos, state)
+			if next != nil {
+				r.PlayerSelection.SetPos(float64(next.X*common.TileSize), float64(next.Y*common.TileSize))
+				effectSourcePos := common.WorldToTile(r.PlayerSelection.Pos)
+				r.EffectedTiles = r.SelectedActor.Skills[0].EffectPattern.GetPattern(effectSourcePos, state)
+			}
 		}
 		if input.IsLeftJustPressed() {
-			if r.PossibleTargets.CanTarget(r.PlayerSelection.Pos.X-common.TileSize, r.PlayerSelection.Pos.Y) {
-				r.PlayerSelection.SetPos(r.PlayerSelection.Pos.X-common.TileSize, r.PlayerSelection.Pos.Y)
+			next := findNextTile(state, r.PlayerSelection.Pos, -1, 0)
+			if next == nil {
+				next = findNextTile(state, r.SelectedActor.Pos, -1, 0)
 			}
-			effectSourcePos := common.WorldToTile(r.PlayerSelection.Pos)
-			r.EffectedTiles = r.SelectedActor.Skills[0].EffectPattern.GetPattern(effectSourcePos, state)
+			if next != nil {
+				r.PlayerSelection.SetPos(float64(next.X*common.TileSize), float64(next.Y*common.TileSize))
+				effectSourcePos := common.WorldToTile(r.PlayerSelection.Pos)
+				r.EffectedTiles = r.SelectedActor.Skills[0].EffectPattern.GetPattern(effectSourcePos, state)
+			}
 		}
 		if input.IsRightJustPressed() {
-			if r.PossibleTargets.CanTarget(r.PlayerSelection.Pos.X+common.TileSize, r.PlayerSelection.Pos.Y) {
-				r.PlayerSelection.SetPos(r.PlayerSelection.Pos.X+common.TileSize, r.PlayerSelection.Pos.Y)
+			next := findNextTile(state, r.PlayerSelection.Pos, 1, 0)
+			if next == nil {
+				next = findNextTile(state, r.SelectedActor.Pos, 1, 0)
 			}
-			effectSourcePos := common.WorldToTile(r.PlayerSelection.Pos)
-			r.EffectedTiles = r.SelectedActor.Skills[0].EffectPattern.GetPattern(effectSourcePos, state)
+			if next != nil {
+				r.PlayerSelection.SetPos(float64(next.X*common.TileSize), float64(next.Y*common.TileSize))
+				effectSourcePos := common.WorldToTile(r.PlayerSelection.Pos)
+				r.EffectedTiles = r.SelectedActor.Skills[0].EffectPattern.GetPattern(effectSourcePos, state)
+			}
 		}
 		if input.IsEnterPressed() {
-			// do the skill on the selected position
-			r.SelectedActor.ActionTokensLeft -= 1
-			if r.SelectedActor.ActionTokensLeft == 0 {
-				r.SelectedActor = state.PlayerTeam.GetNextActor(r.SelectedActor)
+			if r.PossibleTargets.CanTarget(r.PlayerSelection.Pos) {
+				// do the skill on the selected position
+				r.SelectedActor.ActionTokensLeft -= 1
+				if r.SelectedActor.ActionTokensLeft == 0 {
+					r.SelectedActor = state.PlayerTeam.GetNextActor(r.SelectedActor)
+				}
+				r.CurrentTurnPhase = SelectActionTurnPhase
 			}
-			r.CurrentTurnPhase = SelectActionTurnPhase
+
 		}
 		if input.IsCancelPressed() {
 			r.CurrentTurnPhase = SelectActionTurnPhase
@@ -199,6 +218,61 @@ func (r *PlayerController) Update(delta int64, state *State) {
 	if state.PlayerTeam.RemainingActionTokens() == 0 {
 		state.AiController.StartTurn(state)
 	}
+}
+
+func findNextTile(state *State, pos *common.Position, dx int, dy int) *common.Tile {
+
+	var posmap = map[int]map[int]bool{}
+	for _, t := range state.PlayerController.PossibleTargets.targets {
+		v, ok := posmap[t.X]
+		if !ok {
+			posmap[t.X] = map[int]bool{
+				t.Y: true,
+			}
+		} else {
+			v[t.Y] = true
+		}
+	}
+
+	count := 0
+	start := common.WorldToTile(pos)
+	if dx != 0 {
+		index := start.X
+		for count < 100 {
+			index = index + dx
+			v, ok := posmap[index]
+			if ok {
+				_, oky := v[start.Y]
+				if oky {
+					return &common.Tile{
+						X: index,
+						Y: start.Y,
+					}
+				}
+			}
+			count += 1
+		}
+
+	}
+	if dy != 0 {
+		index := start.Y
+		for count < 100 {
+			index = index + dy
+			v, ok := posmap[start.X]
+			if ok {
+				_, oky := v[index]
+				if oky {
+					return &common.Tile{
+						X: start.X,
+						Y: index,
+					}
+				}
+			}
+			count += 1
+		}
+	}
+
+	return nil
 }
 
 func (r PlayerController) Draw(camera *Camera) {
