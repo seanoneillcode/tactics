@@ -1,6 +1,9 @@
 package fight
 
-import "github.com/seanoneillcode/go-tactics/pkg/common"
+import (
+	"fmt"
+	"github.com/seanoneillcode/go-tactics/pkg/common"
+)
 
 type Actor struct {
 	Name             string
@@ -27,6 +30,7 @@ func NewActor(name string, skills []*Skill) *Actor {
 		Sprite: common.NewSprite("actors/" + name + ".png"),
 		Pos:    &common.Position{},
 		Skills: skills,
+		Health: 2,
 	}
 }
 
@@ -43,8 +47,10 @@ func (a *Actor) SetPos(pos *common.Position) {
 
 func (a *Actor) TakeDamage(amount int) {
 	a.Health -= amount // check death ?
+	fmt.Printf("reduced actor %s health by %v to %v\n", a.Name, amount, a.Health)
 }
 
 func (a *Actor) TakeHealing(amount int) {
 	a.Health += amount // check max ?
+	fmt.Printf("healed actor %s health by %v to %v\n", a.Name, amount, a.Health)
 }

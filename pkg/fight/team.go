@@ -40,7 +40,7 @@ func (r *Team) Update(delta int64, state *State) {
 func (r *Team) GetNextActor(current *Actor) *Actor {
 
 	for index, a := range r.Actors {
-		if a == current {
+		if current == nil || a == current {
 
 			startIndex := index
 			nextIndex := index + 1
@@ -48,7 +48,7 @@ func (r *Team) GetNextActor(current *Actor) *Actor {
 				nextIndex = 0
 			}
 			for nextIndex != startIndex {
-				if r.Actors[nextIndex].ActionTokensLeft > 0 {
+				if r.Actors[nextIndex].ActionTokensLeft > 0 && r.Actors[nextIndex].Health > 0 {
 					return r.Actors[nextIndex]
 				}
 				nextIndex = nextIndex + 1

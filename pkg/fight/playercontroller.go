@@ -25,7 +25,6 @@ const (
 
 type PlayerController struct {
 	SelectedActor        *Actor
-	SelectedSkill        *Skill
 	SelectedActionIndex  int
 	CurrentActions       []Action
 	CurrentTurnPhase     TurnPhase
@@ -140,7 +139,8 @@ func (r *PlayerController) Update(delta int64, state *State) {
 			}
 		}
 		if input.IsEnterPressed() {
-			if GetActorAtPos(state, common.WorldToTile(r.PlayerSelection.Pos)) != nil {
+			actor := GetActorAtPos(state, common.WorldToTile(r.PlayerSelection.Pos))
+			if actor == nil {
 				r.SelectedActor.Pos = common.CopyPosition(r.PlayerSelection.Pos)
 				r.SelectedActor.HasMove = false
 				if r.SelectedActor.ActionTokensLeft == 0 {
@@ -201,6 +201,11 @@ func (r *PlayerController) Update(delta int64, state *State) {
 		if input.IsEnterPressed() {
 			if r.PossibleTargets.CanTarget(r.PlayerSelection.Pos) {
 				// do the skill on the selected position
+				for _, effect := range r.SelectedActor.Skills[0].Effects {
+					for _, target := range r.EffectedTiles {
+						effect.DoEffect(state, target)
+					}
+				}
 				r.SelectedActor.ActionTokensLeft -= 1
 				if r.SelectedActor.ActionTokensLeft == 0 {
 					r.SelectedActor = state.PlayerTeam.GetNextActor(r.SelectedActor)

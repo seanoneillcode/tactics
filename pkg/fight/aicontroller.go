@@ -9,8 +9,9 @@ const AiTurnTime = 500
 const numberEnemyMoveTiles = 3
 
 type AiController struct {
-	CurrentActor *Actor
-	PathGrid     common.PathGrid
+	CurrentActor      *Actor
+	CurrentActorIndex int
+	PathGrid          common.PathGrid
 
 	StepTimer     int64
 	StepPositions []*common.Position
@@ -18,7 +19,20 @@ type AiController struct {
 }
 
 func (r *AiController) StartTurn(state *State) {
-	r.CurrentActor = state.AiTeam.Actors[0]
+
+	r.CurrentActor = nil
+	for _, a := range state.AiTeam.Actors {
+		if a.Health > 0 {
+			r.CurrentActor = a
+			break
+		}
+	}
+
+	if r.CurrentActor == nil {
+		// exit fight, player won
+		panic("fight ended")
+		return
+	}
 	state.ActiveTeam = state.AiTeam
 	state.AiTeam.StartTurn()
 	r.PathGrid = common.GeneratePathGrid(state.Scene.tiledGrid)
@@ -28,6 +42,9 @@ func (r *AiController) StartTurn(state *State) {
 
 func (r *AiController) Update(delta int64, state *State) {
 	if state.ActiveTeam != state.AiTeam {
+		return
+	}
+	if r.CurrentActor == nil {
 		return
 	}
 	if r.StepPositions == nil {
