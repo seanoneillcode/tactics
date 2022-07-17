@@ -24,13 +24,13 @@ func (a *Actor) Update(delta int64, state *State) {
 	// check health
 }
 
-func NewActor(name string, skills []*Skill) *Actor {
+func NewActor(name string, health int, skills []*Skill) *Actor {
 	return &Actor{
 		Name:   name,
 		Sprite: common.NewSprite("actors/" + name + ".png"),
 		Pos:    &common.Position{},
 		Skills: skills,
-		Health: 2,
+		Health: health,
 	}
 }
 

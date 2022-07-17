@@ -19,19 +19,12 @@ type AiController struct {
 }
 
 func (r *AiController) StartTurn(state *State) {
-
 	r.CurrentActor = nil
 	for _, a := range state.AiTeam.Actors {
 		if a.Health > 0 {
 			r.CurrentActor = a
 			break
 		}
-	}
-
-	if r.CurrentActor == nil {
-		// exit fight, player won
-		panic("fight ended")
-		return
 	}
 	state.ActiveTeam = state.AiTeam
 	state.AiTeam.StartTurn()
@@ -58,6 +51,8 @@ func (r *AiController) Update(delta int64, state *State) {
 			r.CurrentActor.SetPos(r.StepPositions[r.StepIndex])
 			r.StepIndex += 1
 			if r.StepIndex == len(r.StepPositions) {
+				// finished moving, now perform attack
+				// once attack is done, check for any alive players
 				r.CurrentActor.ActionTokensLeft = 0
 				nextActor := state.AiTeam.GetNextActor(r.CurrentActor)
 				if nextActor.ActionTokensLeft == 0 {

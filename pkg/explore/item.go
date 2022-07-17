@@ -14,6 +14,7 @@ type Item struct {
 	StatChanges []StatChange
 	EquipSlot   string
 	ImagePath   string
+	Skills      []string
 }
 
 func NewItem(name string) *Item {
@@ -31,6 +32,7 @@ func NewItem(name string) *Item {
 		ImagePath:   i.ImagePath,
 		StatChanges: i.StatChanges,
 		EquipSlot:   i.EquipSlot,
+		Skills:      i.Skills,
 	}
 	return newItem
 }
@@ -154,6 +156,9 @@ var AllItems = map[string]*Item{
 		},
 		EquipSlot: "weapon",
 		ImagePath: "item/short-sword.png",
+		Skills: []string{
+			"slash",
+		},
 	},
 	RapierItemName: {
 		Type:        RapierItemName,
@@ -167,6 +172,9 @@ var AllItems = map[string]*Item{
 		},
 		EquipSlot: "weapon",
 		ImagePath: "item/short-sword.png",
+		Skills: []string{
+			"slash",
+		},
 	},
 	SaberItemName: {
 		Type:        SaberItemName,
@@ -180,6 +188,9 @@ var AllItems = map[string]*Item{
 		},
 		EquipSlot: "weapon",
 		ImagePath: "item/short-sword.png",
+		Skills: []string{
+			"slash",
+		},
 	},
 	KnifeItemName: {
 		Type:        KnifeItemName,
@@ -192,6 +203,9 @@ var AllItems = map[string]*Item{
 		},
 		EquipSlot: "weapon",
 		ImagePath: "item/short-sword.png",
+		Skills: []string{
+			"slash",
+		},
 	},
 	PineStaffItemName: {
 		Type:        PineStaffItemName,
@@ -205,6 +219,9 @@ var AllItems = map[string]*Item{
 		},
 		EquipSlot: "weapon",
 		ImagePath: "item/short-sword.png",
+		Skills: []string{
+			"slash",
+		},
 	},
 	HuntingBowItemName: {
 		Type:        HuntingBowItemName,
@@ -217,6 +234,9 @@ var AllItems = map[string]*Item{
 		},
 		EquipSlot: "weapon",
 		ImagePath: "item/short-sword.png",
+		Skills: []string{
+			"arrow",
+		},
 	},
 	MagicSockItemName: {
 		Type:        MagicSockItemName,
@@ -229,6 +249,9 @@ var AllItems = map[string]*Item{
 		},
 		EquipSlot: "special",
 		ImagePath: "item/ring.png",
+		Skills: []string{
+			"fireball",
+		},
 	},
 	MagicRingItemName: {
 		Type:        MagicRingItemName,

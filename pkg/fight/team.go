@@ -1,5 +1,7 @@
 package fight
 
+const DefaultNumberOfActionTokens = 1
+
 type Team struct {
 	Actors []*Actor
 }
@@ -12,7 +14,7 @@ func NewTeam(actors []*Actor) *Team {
 
 func (r *Team) StartTurn() {
 	for _, a := range r.Actors {
-		a.ActionTokensLeft = 2
+		a.ActionTokensLeft = DefaultNumberOfActionTokens
 		a.HasMove = true
 	}
 }
@@ -60,4 +62,13 @@ func (r *Team) GetNextActor(current *Actor) *Actor {
 		}
 	}
 	return nil
+}
+
+func (r *Team) AreAllActorsAlive() bool {
+	for _, actor := range r.Actors {
+		if actor.Health > 0 {
+			return true
+		}
+	}
+	return false
 }

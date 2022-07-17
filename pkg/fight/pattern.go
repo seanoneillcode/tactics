@@ -6,9 +6,9 @@ type Pattern interface {
 	GetPattern(pos common.Tile, state *State) []common.Tile
 }
 
-type BasicPattern struct{}
+type CrossPattern struct{}
 
-func (r *BasicPattern) GetPattern(pos common.Tile, state *State) []common.Tile {
+func (r *CrossPattern) GetPattern(pos common.Tile, state *State) []common.Tile {
 	return []common.Tile{
 		{
 			X: pos.X + 1,
@@ -80,4 +80,55 @@ func (r *CrossDistancePattern) GetPattern(pos common.Tile, state *State) []commo
 			Y: pos.Y - r.Distance,
 		},
 	}
+}
+
+type LinePattern struct{}
+
+func (r *LinePattern) GetPattern(pos common.Tile, state *State) []common.Tile {
+	var tiles []common.Tile
+
+	tiles = append(tiles, getLineTiles(pos, common.Tile{
+		X: 1,
+		Y: 0,
+	}, state)...)
+	tiles = append(tiles, getLineTiles(pos, common.Tile{
+		X: -1,
+		Y: 0,
+	}, state)...)
+	tiles = append(tiles, getLineTiles(pos, common.Tile{
+		X: 0,
+		Y: 1,
+	}, state)...)
+	tiles = append(tiles, getLineTiles(pos, common.Tile{
+		X: 0,
+		Y: -1,
+	}, state)...)
+
+	return tiles
+}
+
+func getLineTiles(startPos common.Tile, dir common.Tile, state *State) []common.Tile {
+	var tiles = []common.Tile{}
+	indexPos := common.Tile{
+		X: startPos.X,
+		Y: startPos.Y,
+	}
+	for indexPos.X < 100 && indexPos.X >= 0 && indexPos.Y < 100 && indexPos.Y >= 0 {
+		indexPos.X += dir.X
+		indexPos.Y += dir.Y
+		data := state.Scene.tiledGrid.GetTileData(indexPos.X, indexPos.Y)
+		if data.IsBlock {
+			break
+		}
+		tiles = append(tiles, common.Tile{
+			X: indexPos.X,
+			Y: indexPos.Y,
+		})
+		actor := GetActorAtPos(state, indexPos)
+		if actor != nil {
+			// is blocked!
+			break
+		}
+	}
+	return tiles
 }

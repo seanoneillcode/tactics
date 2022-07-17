@@ -8,10 +8,20 @@ type Skill struct {
 
 func SlashSkill() *Skill {
 	return &Skill{
-		TargetPattern: &BasicPattern{},
+		TargetPattern: &CrossPattern{},
 		EffectPattern: &SinglePattern{},
 		Effects: []Effect{
 			&DamageActorEffect{Amount: 2},
+		},
+	}
+}
+
+func ArrowSkill() *Skill {
+	return &Skill{
+		TargetPattern: &LinePattern{},
+		EffectPattern: &SinglePattern{},
+		Effects: []Effect{
+			&DamageActorEffect{Amount: 1},
 		},
 	}
 }

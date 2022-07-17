@@ -77,3 +77,13 @@ func (r *CharacterState) ApplyItemsToStats(items map[string]*Item, stats *Stats)
 	}
 	return newStats
 }
+
+func (r *CharacterState) GetSkills() []string {
+	var skillNames []string
+	for _, item := range r.EquippedItems {
+		for _, skill := range item.Skills {
+			skillNames = append(skillNames, skill)
+		}
+	}
+	return skillNames
+}

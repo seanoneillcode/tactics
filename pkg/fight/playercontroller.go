@@ -25,6 +25,7 @@ const (
 
 type PlayerController struct {
 	SelectedActor        *Actor
+	SelectedSkill        *Skill
 	SelectedActionIndex  int
 	CurrentActions       []Action
 	CurrentTurnPhase     TurnPhase
@@ -100,13 +101,15 @@ func (r *PlayerController) Update(delta int64, state *State) {
 					r.PossibleMoves.GeneratePossibleMoves(state, 3)
 				}
 			case SkillAction:
-				if r.SelectedActor.ActionTokensLeft > 0 {
-					r.CurrentTurnPhase = SelectSkillTargetTurnPhase
-					r.PlayerSelection.SetPos(r.SelectedActor.Pos.X, r.SelectedActor.Pos.Y)
-					state.Camera.Target(r.PlayerSelection)
-					r.PossibleTargets.GeneratePossibleTargets(state)
-					effectSourcePos := common.WorldToTile(r.PlayerSelection.Pos)
-					r.EffectedTiles = r.SelectedActor.Skills[0].EffectPattern.GetPattern(effectSourcePos, state)
+				if r.SelectedActor.Skills != nil && len(r.SelectedActor.Skills) > 0 {
+					if r.SelectedActor.ActionTokensLeft > 0 {
+						r.CurrentTurnPhase = SelectSkillTargetTurnPhase
+						r.PlayerSelection.SetPos(r.SelectedActor.Pos.X, r.SelectedActor.Pos.Y)
+						state.Camera.Target(r.PlayerSelection)
+						r.PossibleTargets.GeneratePossibleTargets(state)
+						effectSourcePos := common.WorldToTile(r.PlayerSelection.Pos)
+						r.EffectedTiles = r.SelectedActor.Skills[0].EffectPattern.GetPattern(effectSourcePos, state)
+					}
 				}
 			case DoneAction:
 				r.SelectedActor.ActionTokensLeft = 0
@@ -212,7 +215,10 @@ func (r *PlayerController) Update(delta int64, state *State) {
 				}
 				r.CurrentTurnPhase = SelectActionTurnPhase
 			}
-
+			if !state.AiTeam.AreAllActorsAlive() {
+				fmt.Println("enemy team is dead")
+				state.ChangeMode(common.ExploreMode)
+			}
 		}
 		if input.IsCancelPressed() {
 			r.CurrentTurnPhase = SelectActionTurnPhase

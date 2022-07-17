@@ -119,6 +119,7 @@ func (g *Game) Update() error {
 		if g.fightState.NextMode == common.ExploreMode {
 			g.fightState.NextMode = common.NoneMode
 			g.mode = common.ExploreMode
+			g.UpdateAfterFight(g.state)
 		}
 	}
 
@@ -159,31 +160,49 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 
 func (g *Game) StartFightMode(state *explore.State) {
 	rand.Seed(time.Now().Unix())
-	//var playerActors []*fight.Actor
-	//for _, c := range state.TeamState.Characters {
-	//	playerActors = append(playerActors, fight.NewActor(c.Name))
-	//}
-	playerActors := []*fight.Actor{
-		fight.NewActor("bob",
-			[]*fight.Skill{
-				fight.SlashSkill(),
-			}),
-		fight.NewActor("alice",
-			[]*fight.Skill{
-				fight.FireBallSkill(),
-				fight.HealSkill(),
-			}),
+	var playerActors []*fight.Actor
+	for _, c := range state.TeamState.Characters {
+		skillNames := c.GetSkills()
+		var skills []*fight.Skill
+		for _, skillName := range skillNames {
+			switch skillName {
+			case "slash":
+				skills = append(skills, fight.SlashSkill())
+			case "arrow":
+				skills = append(skills, fight.ArrowSkill())
+			case "fireball":
+				skills = append(skills, fight.FireBallSkill())
+			case "heal":
+				skills = append(skills, fight.HealSkill())
+			}
+		}
+		newActor := fight.NewActor(
+			c.Name,
+			c.Health,
+			skills,
+		)
+		playerActors = append(playerActors, newActor)
 	}
 	// todo get this from state, placed when a fight starts
+	var SlimeHealth = 2
 	enemyActors := []*fight.Actor{
 		fight.NewActor("slime",
+			SlimeHealth,
 			[]*fight.Skill{
 				fight.SlashSkill(),
 			}),
 		fight.NewActor("slime",
+			SlimeHealth,
 			[]*fight.Skill{
 				fight.SlashSkill(),
 			}),
 	}
 	g.fightState.StartFight(playerActors, enemyActors, "forest-scene")
+}
+
+func (g *Game) UpdateAfterFight(state *explore.State) {
+	// update health
+	// add status ailments
+	// add experience and levels
+	// remove enemy encounter from map
 }
